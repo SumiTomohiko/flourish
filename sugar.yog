@@ -22,8 +22,44 @@ def poll(&block)
 end
 
 class Controller
-  def on_mousebuttondown(which, button, state, x, y)
-    puts("x={0}, y={1}".format(x, y))
+  def on_middle_button_released(x, y)
+  end
+
+  def on_wheelup_button_released(x, y)
+  end
+
+  def on_wheeldown_button_released(x, y)
+  end
+
+  def on_right_button_released(x, y)
+  end
+
+  def on_left_button_released(x, y)
+  end
+
+  def on_middle_button_pressed(x, y)
+  end
+
+  def on_wheelup_button_pressed(x, y)
+  end
+
+  def on_wheeldown_button_pressed(x, y)
+  end
+
+  def on_right_button_pressed(x, y)
+  end
+
+  def on_left_button_pressed(x, y)
+  end
+
+  def on_mousebuttondown(button, state, x, y)
+    BUTTON2NAME = {
+      sdl.SDL_BUTTON_LEFT: "left", sdl.SDL_BUTTON_MIDDLE: "middle",
+      sdl.SDL_BUTTON_RIGHT: "right", sdl.SDL_BUTTON_WHEELUP: "wheelup",
+      sdl.SDL_BUTTON_WHEELDOWN: "wheeldown" }
+    STATE2NAME = { sdl.SDL_PRESSED: "pressed", sdl.SDL_RELEASED: "released" }
+    name = "on_{0}_button_{1}".format(BUTTON2NAME[button], STATE2NAME[state])
+    return self.get_attr(name)(x, y)
   end
 
   def dispatch(event)
@@ -32,12 +68,11 @@ class Controller
     end
     if event.type == sdl.SDL_MOUSEBUTTONDOWN
       mouse_button_event = event.button
-      which = mouse_button_event.which
       button = mouse_button_event.button
       state = mouse_button_event.state
       x = mouse_button_event.x
       y = mouse_button_event.y
-      return self.on_mousebuttondown(which, button, state, x, y)
+      return self.on_mousebuttondown(button, state, x, y)
     end
   end
 end

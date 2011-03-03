@@ -1,0 +1,37 @@
+
+import sdl
+
+def init(&block)
+  sdl.SDL_Init(sdl.SDL_INIT_VIDEO)
+  try
+    block()
+  finally
+    sdl.SDL_Quit()
+  end
+end
+
+def poll(&block)
+  event = sdl.SDL_Event.new()
+  loop() do
+    if (sdl.SDL_PollEvent(event) != 0) && block(event)
+      return
+    end
+  end
+end
+
+def main()
+  init() do
+    sdl.SDL_SetVideoMode(640, 480, 8, sdl.SDL_SWSURFACE | sdl.SDL_DOUBLEBUF)
+    poll() do [event]
+      if event.type == sdl.SDL_QUIT
+        next true
+      end
+    end
+  end
+end
+
+if ARGV.get(0) == __FILE__
+  main()
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

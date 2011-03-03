@@ -1,9 +1,11 @@
 
 import sdl
 
-def init(&block)
+def init(width, height, bpp, &block)
   sdl.SDL_Init(sdl.SDL_INIT_VIDEO)
   try
+    flags = sdl.SDL_SWSURFACE | sdl.SDL_DOUBLEBUF | sdl.SDL_ANYFORMAT
+    sdl.SDL_SetVideoMode(width, height, bpp, flags)
     block()
   finally
     sdl.SDL_Quit()
@@ -28,8 +30,7 @@ class Controller
 end
 
 def main()
-  init() do
-    sdl.SDL_SetVideoMode(640, 480, 8, sdl.SDL_SWSURFACE | sdl.SDL_DOUBLEBUF)
+  init(640, 480, 8) do
     ctrl = Controller.new()
     poll() do [event]
       next ctrl.dispatch(event)

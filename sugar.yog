@@ -19,13 +19,20 @@ def poll(&block)
   end
 end
 
+class Controller
+  def dispatch(event)
+    if event.type == sdl.SDL_QUIT
+      return true
+    end
+  end
+end
+
 def main()
   init() do
     sdl.SDL_SetVideoMode(640, 480, 8, sdl.SDL_SWSURFACE | sdl.SDL_DOUBLEBUF)
+    ctrl = Controller.new()
     poll() do [event]
-      if event.type == sdl.SDL_QUIT
-        next true
-      end
+      next ctrl.dispatch(event)
     end
   end
 end

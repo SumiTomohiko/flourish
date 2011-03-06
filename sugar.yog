@@ -1,23 +1,26 @@
 
 import sdl
+sdl.SDL_BlitSurface = sdl.SDL_UpperBlit
 
 def init(width, height, bpp, &block)
   sdl.SDL_Init(sdl.SDL_INIT_VIDEO)
   try
     flags = sdl.SDL_SWSURFACE | sdl.SDL_DOUBLEBUF | sdl.SDL_ANYFORMAT
-    sdl.SDL_SetVideoMode(width, height, bpp, flags)
-    block()
+    block(sdl.SDL_SetVideoMode(width, height, bpp, flags))
   finally
     sdl.SDL_Quit()
   end
 end
 
-def poll(&block)
+def run(controller, view)
   event = sdl.SDL_Event.new()
   loop() do
-    if (sdl.SDL_PollEvent(event) != 0) && block(event)
-      return
+    sdl.SDL_PollEvent.while(0, event) do
+      if controller.dispatch(event)
+        return
+      end
     end
+    view.draw()
   end
 end
 
@@ -77,12 +80,64 @@ class Controller
   end
 end
 
+class PlayerCharacter
+  def init(x, y, direction)
+    self.x = x
+    self.y = y
+    self.direction = direction # 'north, 'east, 'west or 'south
+  end
+end
+
+MAP_UNIT_SIZE = 8
+
+def pos2x(pos)
+  return MAP_UNIT_SIZE * pos + MAP_UNIT_SIZE // 2
+end
+
+class StageController > Controller
+  def init(map, pc)
+    self.map = map
+    self.pc = pc
+  end
+
+  def xy2map_unit(x, y)
+    return self.map[x // MAP_UNIT_SIZE][y // MAP_UNIT_SIZE]
+  end
+end
+
+def load_image(path)
+  # TODO: Error handling
+  return sdl.SDL_LoadBMP(path)
+end
+
+class View
+  def init(map, pc, screen)
+    self.map = map
+    self.pc = pc
+    self.screen = screen
+
+    self.img = load_image("pc.bmp".to_path())
+  end
+
+  def draw()
+    sdl.SDL_BlitSurface(self.img, nil, self.screen, nil)
+    sdl.SDL_Flip(self.screen)
+  end
+end
+
 def main()
-  init(640, 480, 8) do
-    ctrl = Controller.new()
-    poll() do [event]
-      next ctrl.dispatch(event)
-    end
+  init(640, 480, 32) do [screen]
+    map = [
+      ['wall, 'wall, 'wall, 'wall, 'wall, 'wall, 'wall, 'wall],
+      ['wall, nil, nil, nil, nil, nil, nil, 'wall],
+      ['wall, nil, nil, nil, nil, nil, nil, 'wall],
+      ['wall, nil, nil, nil, nil, nil, nil, 'wall],
+      ['wall, nil, nil, nil, nil, nil, nil, 'wall],
+      ['wall, nil, nil, nil, nil, nil, nil, 'wall],
+      ['wall, nil, nil, nil, nil, nil, nil, 'wall],
+      ['wall, 'wall, 'wall, 'wall, 'wall, 'wall, 'wall, 'wall]]
+    pc = PlayerCharacter.new(pos2x(1), pos2x(1), 'south)
+    run(StageController.new(map, pc), View.new(map, pc, screen))
   end
 end
 

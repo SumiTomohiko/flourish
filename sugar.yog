@@ -111,12 +111,17 @@ def load_image(path)
 end
 
 class View
-  def init(map, pc, screen)
+  def init(map, pc, screen, &block)
     self.map = map
     self.pc = pc
     self.screen = screen
 
     self.img = load_image("pc.bmp".to_path())
+    try
+      block(self)
+    finally
+      sdl.SDL_FreeSurface(self.img)
+    end
   end
 
   def draw()
@@ -137,7 +142,9 @@ def main()
       ['wall, nil, nil, nil, nil, nil, nil, 'wall],
       ['wall, 'wall, 'wall, 'wall, 'wall, 'wall, 'wall, 'wall]]
     pc = PlayerCharacter.new(pos2x(1), pos2x(1), 'south)
-    run(StageController.new(map, pc), View.new(map, pc, screen))
+    View.new(map, pc, screen) do [view]
+      run(StageController.new(map, pc), view)
+    end
   end
 end
 

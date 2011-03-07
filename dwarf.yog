@@ -16,7 +16,7 @@ end
 def run(controller, view)
   event = sdl.SDL_Event.new()
   loop() do
-    sdl.SDL_PollEvent.while(0, event) do
+    sdl.SDL_PollEvent.while(1, event) do
       if controller.dispatch(event)
         return
       end
@@ -24,6 +24,11 @@ def run(controller, view)
     view.draw()
   end
 end
+
+BUTTON2NAME = {
+  sdl.SDL_BUTTON_LEFT: "left", sdl.SDL_BUTTON_MIDDLE: "middle",
+  sdl.SDL_BUTTON_RIGHT: "right", sdl.SDL_BUTTON_WHEELUP: "wheelup",
+  sdl.SDL_BUTTON_WHEELDOWN: "wheeldown" }
 
 class Controller
   def on_middle_button_released(x, y)
@@ -56,14 +61,25 @@ class Controller
   def on_left_button_pressed(x, y)
   end
 
-  def on_mousebuttondown(button, state, x, y)
-    BUTTON2NAME = {
-      sdl.SDL_BUTTON_LEFT: "left", sdl.SDL_BUTTON_MIDDLE: "middle",
-      sdl.SDL_BUTTON_RIGHT: "right", sdl.SDL_BUTTON_WHEELUP: "wheelup",
-      sdl.SDL_BUTTON_WHEELDOWN: "wheeldown" }
-    STATE2NAME = { sdl.SDL_PRESSED: "pressed", sdl.SDL_RELEASED: "released" }
-    name = "on_{0}_button_{1}".format(BUTTON2NAME[button], STATE2NAME[state])
+  def default_mousebutton_handler(button, x, y, suffix)
+    name = "on_{0}_button_{1}".format(BUTTON2NAME[button], suffix)
     return self.get_attr(name)(x, y)
+  end
+
+  def on_mousebuttonup(button, x, y)
+    return self.default_mousebutton_handler(button, x, y, "released")
+  end
+
+  def on_mousebuttondown(button, x, y)
+    return self.default_mousebutton_handler(button, x, y, "pressed")
+  end
+
+  def fire_mousebutton_handler(event, f)
+    mouse_button_event = event.button
+    button = mouse_button_event.button
+    x = mouse_button_event.x
+    y = mouse_button_event.y
+    return f(button, x, y)
   end
 
   def dispatch(event)
@@ -71,12 +87,10 @@ class Controller
       return true
     end
     if event.type == sdl.SDL_MOUSEBUTTONDOWN
-      mouse_button_event = event.button
-      button = mouse_button_event.button
-      state = mouse_button_event.state
-      x = mouse_button_event.x
-      y = mouse_button_event.y
-      return self.on_mousebuttondown(button, state, x, y)
+      return self.fire_mousebutton_handler(event, self.on_mousebuttondown)
+    end
+    if event.type == sdl.SDL_MOUSEBUTTONUP
+      return self.fire_mousebutton_handler(event, self.on_mousebuttonup)
     end
   end
 end
@@ -99,6 +113,10 @@ class StageController > Controller
   def init(map, pc)
     self.map = map
     self.pc = pc
+  end
+
+  def on_left_button_pressed(x, y)
+    self.pc.y -= CELL_SIZE
   end
 end
 

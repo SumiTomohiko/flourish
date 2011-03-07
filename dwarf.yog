@@ -1,5 +1,6 @@
 
 import sdl
+# XXX: h2yog cannot output SDL_BlitSurface. Wait for fixing this bug.
 sdl.SDL_BlitSurface = sdl.SDL_UpperBlit
 
 def init(width, height, bpp, &block)
@@ -88,10 +89,10 @@ class PlayerCharacter
   end
 end
 
-MAP_UNIT_SIZE = 8
+CELL_SIZE = 80
 
 def pos2x(pos)
-  return MAP_UNIT_SIZE * pos + MAP_UNIT_SIZE // 2
+  return CELL_SIZE * pos + CELL_SIZE // 2
 end
 
 class StageController > Controller
@@ -99,33 +100,134 @@ class StageController > Controller
     self.map = map
     self.pc = pc
   end
+end
 
-  def xy2map_unit(x, y)
-    return self.map[x // MAP_UNIT_SIZE][y // MAP_UNIT_SIZE]
-  end
+class DwarfException > Exception
 end
 
 def load_image(path)
-  # TODO: Error handling
-  return sdl.SDL_LoadBMP(path)
+  if (img = sdl.SDL_LoadBMP(path)) == nil
+    # TODO: Give error messages from SDL
+    raise DwarfException.new("Cannot load image of {0}".format(path))
+  end
+  return img
 end
 
+MAIN_VIEW_X = 120
+MAIN_VIEW_Y = 40
+MAIN_VIEW_WIDTH = 400
+MAIN_VIEW_HEIGHT = 400
+MAIN_VIEW_PC_X = MAIN_VIEW_WIDTH // 2
+MAIN_VIEW_PC_Y = MAIN_VIEW_HEIGHT - CELL_SIZE
+
 class View
+  def cleanup_images()
+    [self.pc_img, self.wall_img, self.ground_img].select() do [img]
+      next img != nil
+    end.each() do [img]
+      sdl.SDL_FreeSurface(img)
+    end
+  end
+
   def init(map, pc, screen, &block)
     self.map = map
     self.pc = pc
     self.screen = screen
 
-    self.img = load_image("pc.bmp".to_path())
+    self.pc_img = nil
+    self.wall_img = nil
+    self.ground_img = nil
     try
+      self.pc_img = load_image("pc.bmp".to_path())
+      self.wall_img = load_image("wall.bmp".to_path())
+      self.ground_img = load_image("ground.bmp".to_path())
       block(self)
     finally
-      sdl.SDL_FreeSurface(self.img)
+      self.cleanup_images()
     end
   end
 
+  def get_surface(x, y)
+    if (x < 0) || (y < 0)
+      return nil
+    end
+    try
+      geometry = self.map[y][x]
+    except KeyError
+      return nil
+    end
+    return { 'wall: self.wall_img }.get(geometry, self.ground_img)
+  end
+
+  def blit_surface(src, srcrect, dstrect)
+    if src == nil
+      return
+    end
+    if sdl.SDL_BlitSurface(src, srcrect, self.screen, dstrect) != 0
+      raise DwarfException.new("SDL_BlitSurface failed")
+    end
+  end
+
+  def min(n, m)
+    return n < m ? n : m
+  end
+
+  def draw_north()
+    pc = self.pc
+    left = pc.x - MAIN_VIEW_PC_X
+    top = pc.y - MAIN_VIEW_PC_Y
+    right = left + MAIN_VIEW_WIDTH
+    bottom = top + MAIN_VIEW_HEIGHT
+
+    srcrect = sdl.SDL_Rect.new()
+    dstrect = sdl.SDL_Rect.new()
+
+    y = top
+    dstrect.y = MAIN_VIEW_Y
+    j = y // CELL_SIZE
+    while y < bottom
+      srcrect.y = y - j * CELL_SIZE
+      srcrect.h = self.min(bottom - y, CELL_SIZE)
+      dstrect.h = srcrect.h
+
+      x = left
+      dstrect.x = MAIN_VIEW_X
+      i = x // CELL_SIZE
+      while x < right
+        src = self.get_surface(i, j)
+        srcrect.x = x - i * CELL_SIZE
+        srcrect.w = self.min(right - x, CELL_SIZE)
+        dstrect.w = srcrect.w
+        self.blit_surface(src, srcrect, dstrect)
+
+        x += dstrect.w
+        dstrect.x += dstrect.w
+        i += 1
+      end
+
+      y += dstrect.h
+      dstrect.y += dstrect.h
+      j += 1
+    end
+  end
+
+  def draw_east()
+    # TODO
+  end
+
+  def draw_west()
+    # TODO
+  end
+
+  def draw_south()
+    # TODO
+  end
+
   def draw()
-    sdl.SDL_BlitSurface(self.img, nil, self.screen, nil)
+    {
+      'north: self.draw_north, 'east: self.draw_east, 'west: self.draw_west,
+      'south: self.draw_south }[self.pc.direction]()
+
     sdl.SDL_Flip(self.screen)
   end
 end
@@ -141,7 +243,7 @@ def main()
       ['wall, nil, nil, nil, nil, nil, nil, 'wall],
       ['wall, nil, nil, nil, nil, nil, nil, 'wall],
       ['wall, 'wall, 'wall, 'wall, 'wall, 'wall, 'wall, 'wall]]
-    pc = PlayerCharacter.new(pos2x(1), pos2x(1), 'south)
+    pc = PlayerCharacter.new(pos2x(1), pos2x(6), 'north)
     View.new(map, pc, screen) do [view]
       run(StageController.new(map, pc), view)
     end

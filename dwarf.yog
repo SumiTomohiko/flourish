@@ -194,6 +194,13 @@ class View
     return n < m ? n : m
   end
 
+  def fill_rect()
+    if sdl.SDL_FillRect(self.screen, nil, 0) != 0
+      # TODO: Add SDL error messages
+      raise DwarfException.new("SDL_FillRect failed")
+    end
+  end
+
   def draw_north()
     pc = self.pc
     left = pc.x - MAIN_VIEW_PC_X
@@ -246,6 +253,8 @@ class View
   end
 
   def draw()
+    self.fill_rect()
+
     {
       'north: self.draw_north, 'east: self.draw_east, 'west: self.draw_west,
       'south: self.draw_south }[self.pc.direction]()

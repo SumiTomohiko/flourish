@@ -116,7 +116,11 @@ class StageController > Controller
   end
 
   def on_left_button_pressed(x, y)
-    self.pc.y -= CELL_SIZE
+    pc = self.pc
+    if pc.y < CELL_SIZE
+      return
+    end
+    pc.y -= CELL_SIZE
   end
 end
 

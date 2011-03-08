@@ -21,6 +21,7 @@ def run(controller, view)
         return
       end
     end
+    controller.animate()
     view.draw()
   end
 end
@@ -113,6 +114,19 @@ class StageController > Controller
   def init(map, pc)
     self.map = map
     self.pc = pc
+
+    self.coroutine = nil
+  end
+
+  def animate()
+    if self.coroutine == nil
+      return
+    end
+    if self.coroutine.dead?
+      self.coroutine = nil
+      return
+    end
+    self.coroutine.resume()
   end
 
   def on_left_button_pressed(x, y)
@@ -120,7 +134,12 @@ class StageController > Controller
     if pc.y < CELL_SIZE
       return
     end
-    pc.y -= CELL_SIZE
+    self.coroutine = Coroutine.new() do
+      CELL_SIZE.times() do
+        pc.y -= 1
+        Coroutine.yield()
+      end
+    end
   end
 end
 

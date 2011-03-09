@@ -148,8 +148,8 @@ end
 
 def load_image(path)
   if (img = sdl.SDL_LoadBMP(path)) == nil
-    # TODO: Give error messages from SDL
-    raise DwarfException.new("Cannot load image of {0}".format(path))
+    msg = "SDL_LoadBMP failed: {1}".format(path, sdl.SDL_GetError())
+    raise DwarfException.new(msg)
   end
   return img
 end
@@ -205,7 +205,8 @@ class View
       return
     end
     if sdl.SDL_BlitSurface(src, srcrect, self.screen, dstrect) != 0
-      raise DwarfException.new("SDL_BlitSurface failed")
+      msg = "SDL_BlitSurface failed: {0}".format(sdl.SDL_GetError())
+      raise DwarfException.new(msg)
     end
   end
 
@@ -215,8 +216,8 @@ class View
 
   def fill_rect()
     if sdl.SDL_FillRect(self.screen, nil, 0) != 0
-      # TODO: Add SDL error messages
-      raise DwarfException.new("SDL_FillRect failed")
+      msg = "SDL_FillRect failed: {0}".format(sdl.SDL_GetError())
+      raise DwarfException.new(msg)
     end
   end
 

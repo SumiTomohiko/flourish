@@ -148,7 +148,7 @@ end
 
 def load_image(path)
   if (img = sdl.SDL_LoadBMP(path)) == nil
-    msg = "SDL_LoadBMP failed: {1}".format(path, sdl.SDL_GetError())
+    msg = "SDL_LoadBMP failed: {0}".format(sdl.SDL_GetError())
     raise DwarfException.new(msg)
   end
   return img

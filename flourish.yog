@@ -143,13 +143,13 @@ class StageController > Controller
   end
 end
 
-class DwarfException > Exception
+class FlourishException > Exception
 end
 
 def load_image(path)
   if (img = sdl.SDL_LoadBMP(path)) == nil
     msg = "SDL_LoadBMP failed: {0}".format(sdl.SDL_GetError())
-    raise DwarfException.new(msg)
+    raise FlourishException.new(msg)
   end
   return img
 end
@@ -206,7 +206,7 @@ class View
     end
     if sdl.SDL_BlitSurface(src, srcrect, self.screen, dstrect) != 0
       msg = "SDL_BlitSurface failed: {0}".format(sdl.SDL_GetError())
-      raise DwarfException.new(msg)
+      raise FlourishException.new(msg)
     end
   end
 
@@ -217,7 +217,7 @@ class View
   def fill_rect()
     if sdl.SDL_FillRect(self.screen, nil, 0) != 0
       msg = "SDL_FillRect failed: {0}".format(sdl.SDL_GetError())
-      raise DwarfException.new(msg)
+      raise FlourishException.new(msg)
     end
   end
 

@@ -270,9 +270,7 @@ class View
     j = pc.y // CELL_SIZE - MAIN_VIEW_PC_Y // CELL_SIZE
     while y < bottom
       srcrect.y = y - j * CELL_SIZE
-      # TODO: Rewrite with min builtins function
-      # srcrect.h = min(CELL_SIZE - srcrect.y, bottom - y, CELL_SIZE)
-      srcrect.h = self.min(self.min(CELL_SIZE - srcrect.y, bottom - y), CELL_SIZE)
+      srcrect.h = min(CELL_SIZE - srcrect.y, bottom - y, CELL_SIZE)
       dstrect.h = srcrect.h
 
       x = left

@@ -7,20 +7,26 @@ sdl.SDL_BlitSurface = sdl.SDL_UpperBlit
 class FlourishException > Exception
 end
 
+def init_img(&block)
+  flags = sdl.image.IMG_INIT_PNG
+  if sdl.image.IMG_Init(flags) != flags
+    msg = "IMG_Init failed: {0}".format(sdl.image.IMG_GetError())
+    raise FlourishException.new(msg)
+  end
+  try
+    block()
+  finally
+    sdl.image.IMG_Quit()
+  end
+end
+
 def init(width, height, bpp, caption, &block)
   sdl.SDL_Init(sdl.SDL_INIT_VIDEO)
   try
-    img_flags = sdl.image.IMG_INIT_PNG
-    if sdl.image.IMG_Init(img_flags) != img_flags
-      msg = "IMG_Init failed: {0}".format(sdl.image.IMG_GetError())
-      raise FlourishException.new(msg)
-    end
-    try
+    init_img() do
       sdl.SDL_WM_SetCaption(caption, nil)
       flags = sdl.SDL_SWSURFACE | sdl.SDL_DOUBLEBUF | sdl.SDL_ANYFORMAT
       block(sdl.SDL_SetVideoMode(width, height, bpp, flags))
-    finally
-      sdl.image.IMG_Quit()
     end
   finally
     sdl.SDL_Quit()

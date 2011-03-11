@@ -171,12 +171,12 @@ def load_image2(name)
     raise SdlError.new("IMG_Load failed")
   end
   try
-    optimized = sdl.SDL_DisplayFormat(img)
+    optimized = sdl.SDL_DisplayFormatAlpha(img)
   finally
     sdl.SDL_FreeSurface(img)
   end
   if optimized == nil
-    raise SdlError.new("SDL_DisplayFormat failed")
+    raise SdlError.new("SDL_DisplayFormatAlpha failed")
   end
   key = sdl.SDL_MapRGB(optimized.format, 0xff, 0, 0xff)
   sdl.SDL_SetColorKey(optimized, sdl.SDL_SRCCOLORKEY, key)

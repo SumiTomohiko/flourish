@@ -4,14 +4,16 @@ import sdl.image
 # XXX: h2yog cannot output SDL_BlitSurface. Wait for fixing this bug.
 sdl.SDL_BlitSurface = sdl.SDL_UpperBlit
 
-class FlourishException > Exception
+class SdlError > Exception
+  def init(msg)
+    super("{0}: {1}".format(msg, sdl.SDL_GetError()))
+  end
 end
 
 def init_img(&block)
   flags = sdl.image.IMG_INIT_PNG
   if sdl.image.IMG_Init(flags) != flags
-    msg = "IMG_Init failed: {0}".format(sdl.image.IMG_GetError())
-    raise FlourishException.new(msg)
+    raise SdlError.new("IMG_Init failed")
   end
   try
     block()
@@ -163,10 +165,28 @@ class StageController > Controller
   end
 end
 
-def load_image(path)
+def load_image2(name)
+  path = __FILE__.dirname / name
+  if (img = sdl.image.IMG_Load(path)) == nil
+    raise SdlError.new("IMG_Load failed")
+  end
+  try
+    optimized = sdl.SDL_DisplayFormat(img)
+  finally
+    sdl.SDL_FreeSurface(img)
+  end
+  if optimized == nil
+    raise SdlError.new("SDL_DisplayFormat failed")
+  end
+  key = sdl.SDL_MapRGB(optimized.format, 0xff, 0, 0xff)
+  sdl.SDL_SetColorKey(optimized, sdl.SDL_SRCCOLORKEY, key)
+  return optimized
+end
+
+def load_image(name)
+  path = __FILE__.dirname / name
   if (img = sdl.SDL_LoadBMP(path)) == nil
-    msg = "SDL_LoadBMP failed: {0}".format(sdl.SDL_GetError())
-    raise FlourishException.new(msg)
+    raise SdlError.new("SDL_LoadBMP failed")
   end
   return img
 end
@@ -180,11 +200,10 @@ MAIN_VIEW_PC_Y = MAIN_VIEW_HEIGHT - CELL_SIZE
 
 class View
   def cleanup_images()
-    [self.pc_img, self.wall_img, self.ground_img].select() do [img]
+    imgs = [self.mouse_area_img, self.pc_img, self.wall_img, self.ground_img]
+    imgs.select() do [img]
       next img != nil
-    end.each() do [img]
-      sdl.SDL_FreeSurface(img)
-    end
+    end.each(&sdl.SDL_FreeSurface)
   end
 
   def init(map, pc, screen, &block)
@@ -195,10 +214,12 @@ class View
     self.pc_img = nil
     self.wall_img = nil
     self.ground_img = nil
+    self.mouse_area_img = nil
     try
       self.pc_img = load_image("pc.bmp".to_path())
       self.wall_img = load_image("wall.bmp".to_path())
       self.ground_img = load_image("ground.bmp".to_path())
+      self.mouse_area_img = load_image2("mouse_area.png".to_path())
       block(self)
     finally
       self.cleanup_images()
@@ -222,8 +243,7 @@ class View
       return
     end
     if sdl.SDL_BlitSurface(src, srcrect, self.screen, dstrect) != 0
-      msg = "SDL_BlitSurface failed: {0}".format(sdl.SDL_GetError())
-      raise FlourishException.new(msg)
+      raise SdlError.new("SDL_BlitSurface failed")
     end
   end
 
@@ -233,8 +253,7 @@ class View
 
   def fill_rect()
     if sdl.SDL_FillRect(self.screen, nil, 0) != 0
-      msg = "SDL_FillRect failed: {0}".format(sdl.SDL_GetError())
-      raise FlourishException.new(msg)
+      raise SdlError.new("SDL_FillRect failed")
     end
   end
 
@@ -291,12 +310,30 @@ class View
     # TODO
   end
 
+  def draw_mouse_area()
+    MOUSE_AREA_WIDTH = 3 * CELL_SIZE
+    MOUSE_AREA_HIGHT = 2 * CELL_SIZE + CELL_SIZE // 2
+
+    srcrect = sdl.SDL_Rect.new()
+    srcrect.x = 0
+    srcrect.y = 0
+    srcrect.w = MOUSE_AREA_WIDTH
+    srcrect.h = MOUSE_AREA_HIGHT
+    dstrect = sdl.SDL_Rect.new()
+    dstrect.x = MAIN_VIEW_X + (MAIN_VIEW_WIDTH - MOUSE_AREA_WIDTH) // 2
+    dstrect.y = MAIN_VIEW_Y + MAIN_VIEW_HEIGHT - MOUSE_AREA_HIGHT
+    dstrect.w = srcrect.w
+    dstrect.h = srcrect.h
+    self.blit_surface(self.mouse_area_img, srcrect, dstrect)
+  end
+
   def draw()
     self.fill_rect()
 
     {
       'north: self.draw_north, 'east: self.draw_east, 'west: self.draw_west,
       'south: self.draw_south }[self.pc.direction]()
+    self.draw_mouse_area()
 
     sdl.SDL_Flip(self.screen)
   end

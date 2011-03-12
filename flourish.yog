@@ -133,7 +133,7 @@ def pos2x(pos)
 end
 
 class Rect
-  def init(x, y, width, height)
+  def init(x, y, width=CELL_SIZE, height=CELL_SIZE)
     self.x = x
     self.y = y
     self.width = width
@@ -158,7 +158,11 @@ class StageController > Controller
 
     self.coroutine = nil
 
-    self.forward_area = Rect.new(MAIN_VIEW_X + MAIN_VIEW_PC_X - CELL_SIZE // 2, MAIN_VIEW_Y + MAIN_VIEW_PC_Y - CELL_SIZE - CELL_SIZE // 2, CELL_SIZE, CELL_SIZE)
+    pc_x = MAIN_VIEW_X + MAIN_VIEW_PC_X
+    pc_y = MAIN_VIEW_Y + MAIN_VIEW_PC_Y
+    self.forward_area = Rect.new(pc_x - CELL_SIZE // 2, pc_y - CELL_SIZE - CELL_SIZE // 2)
+    self.left_turn_area = Rect.new(pc_x - CELL_SIZE - CELL_SIZE // 2, pc_y - CELL_SIZE)
+    self.right_turn_area = Rect.new(pc_x + CELL_SIZE // 2, pc_y - CELL_SIZE)
   end
 
   def animate()
@@ -172,20 +176,49 @@ class StageController > Controller
     self.coroutine.resume()
   end
 
-  def on_left_button_pressed(x, y)
-    if !self.forward_area.include?(x, y)
-      return
-    end
-
+  def move_forward()
     pc = self.pc
     if pc.y < CELL_SIZE
       return
     end
     self.coroutine = Coroutine.new() do
       CELL_SIZE.times() do
-        pc.y -= 1
+        direction = pc.direction
+        if direction == 'north
+          pc.y -= 1
+        elif direction == 'east
+          pc.x += 1
+        elif direction == 'south
+          pc.y += 1
+        else
+          pc.x -= 1
+        end
         Coroutine.yield()
       end
+    end
+  end
+
+  def turn_right()
+    pc = self.pc
+    tbl = { 'north: 'east, 'east: 'south, 'south: 'west, 'west: 'north }
+    pc.direction = tbl[pc.direction]
+  end
+
+  def turn_left()
+    pc = self.pc
+    tbl = { 'north: 'west, 'west: 'south, 'south: 'east, 'east: 'north }
+    pc.direction = tbl[pc.direction]
+  end
+
+  def on_left_button_pressed(x, y)
+    if self.forward_area.include?(x, y)
+      return self.move_forward()
+    end
+    if self.left_turn_area.include?(x, y)
+      return self.turn_left()
+    end
+    if self.right_turn_area.include?(x, y)
+      return self.turn_right()
     end
   end
 end

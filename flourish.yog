@@ -212,6 +212,24 @@ class StageController > Controller
 
   def move_right()
     pc = self.pc
+    direction = pc.direction
+    if direction == 'north
+      x = pc.x + CELL_SIZE
+      y = pc.y
+    elif direction == 'east
+      x = pc.x
+      y = pc.y + CELL_SIZE
+    elif direction == 'west
+      x = pc.x
+      y = pc.y - CELL_SIZE
+    else
+      x = pc.x - CELL_SIZE
+      y = pc.y
+    end
+    if self.wall?(x, y)
+      return
+    end
+
     self.coroutine = Coroutine.new() do
       CELL_SIZE.times() do
         direction = pc.direction
@@ -231,6 +249,24 @@ class StageController > Controller
 
   def move_left()
     pc = self.pc
+    direction = pc.direction
+    if direction == 'north
+      x = pc.x - CELL_SIZE
+      y = pc.y
+    elif direction == 'east
+      x = pc.x
+      y = pc.y - CELL_SIZE
+    elif direction == 'west
+      x = pc.x
+      y = pc.y + CELL_SIZE
+    else
+      x = pc.x + CELL_SIZE
+      y = pc.y
+    end
+    if self.wall?(x, y)
+      return
+    end
+
     self.coroutine = Coroutine.new() do
       CELL_SIZE.times() do
         direction = pc.direction
@@ -250,6 +286,24 @@ class StageController > Controller
 
   def move_backword()
     pc = self.pc
+    direction = pc.direction
+    if direction == 'north
+      x = pc.x
+      y = pc.y + CELL_SIZE
+    elif direction == 'east
+      x = pc.x - CELL_SIZE
+      y = pc.y
+    elif direction == 'west
+      x = pc.x + CELL_SIZE
+      y = pc.y
+    else
+      x = pc.x
+      y = pc.y - CELL_SIZE
+    end
+    if self.wall?(x, y)
+      return
+    end
+
     self.coroutine = Coroutine.new() do
       CELL_SIZE.times() do
         direction = pc.direction
@@ -267,11 +321,30 @@ class StageController > Controller
     end
   end
 
+  def wall?(x, y)
+    return self.map[y // CELL_SIZE][x // CELL_SIZE] == 'wall
+  end
+
   def move_forward()
     pc = self.pc
-    if pc.y < CELL_SIZE
+    direction = pc.direction
+    if direction == 'north
+      x = pc.x
+      y = pc.y - CELL_SIZE
+    elif direction == 'east
+      x = pc.x + CELL_SIZE
+      y = pc.y
+    elif direction == 'west
+      x = pc.x - CELL_SIZE
+      y = pc.y
+    else
+      x = pc.x
+      y = pc.y + CELL_SIZE
+    end
+    if self.wall?(x, y)
       return
     end
+
     self.coroutine = Coroutine.new() do
       CELL_SIZE.times() do
         direction = pc.direction

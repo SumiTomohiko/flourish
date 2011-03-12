@@ -511,7 +511,9 @@ class View
       'south: self.draw_south }[self.pc.direction]()
     self.draw_mouse_area()
 
-    sdl.SDL_Flip(self.screen)
+    if sdl.SDL_Flip(self.screen) != 0
+      raise SdlError.new("SDL_Flip failed")
+    end
   end
 end
 

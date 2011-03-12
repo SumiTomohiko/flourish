@@ -309,6 +309,95 @@ class View
     end
   end
 
+  def draw_west()
+    pc = self.pc
+    top = pc.y - MAIN_VIEW_PC_X
+    left = pc.x - MAIN_VIEW_PC_Y
+    bottom = top + MAIN_VIEW_WIDTH
+    right = left + MAIN_VIEW_HEIGHT
+
+    srcrect = sdl.SDL_Rect.new()
+    dstrect = sdl.SDL_Rect.new()
+
+    x = left
+    dstrect.y = MAIN_VIEW_Y
+    while x < right
+      if x + CELL_SIZE <= 0
+        height = CELL_SIZE
+        x += height
+        dstrect.y += height
+        next
+      end
+
+      # FIXME: Yog doesn't define the result of "(-200) // 80".
+      i = x // CELL_SIZE + (x < 0 ? -1 : 0)
+      srcrect.y = x - i * CELL_SIZE
+      srcrect.h = min(CELL_SIZE - srcrect.y, right - x)
+
+      height = srcrect.h
+      dstrect.h = height
+
+      y = bottom
+      dstrect.x = MAIN_VIEW_X
+      j = y // CELL_SIZE
+      while top < y
+        src = self.get_surface(i, j)
+        srcrect.x = max(0, CELL_SIZE - (y - j * CELL_SIZE))
+        width = CELL_SIZE - srcrect.x
+        srcrect.w = width
+        dstrect.w = width
+        self.blit_surface(src, srcrect, dstrect)
+
+        y -= width
+        dstrect.x += width
+        j -= 1
+      end
+
+      x += height
+      dstrect.y += height
+      i += 1
+    end
+  end
+
+  def draw_east()
+    pc = self.pc
+    top = pc.y - MAIN_VIEW_PC_X
+    right = pc.x + MAIN_VIEW_PC_Y
+    bottom = top + MAIN_VIEW_WIDTH
+    left = right - MAIN_VIEW_HEIGHT
+
+    srcrect = sdl.SDL_Rect.new()
+    dstrect = sdl.SDL_Rect.new()
+
+    x = right
+    dstrect.y = MAIN_VIEW_Y
+    i = right // CELL_SIZE
+    while left < x
+      srcrect.y = CELL_SIZE - (x - i * CELL_SIZE)
+      srcrect.h = min(CELL_SIZE - srcrect.y, x - left, CELL_SIZE)
+      dstrect.h = srcrect.h
+
+      y = top
+      dstrect.x = MAIN_VIEW_X
+      j = y // CELL_SIZE
+      while y < bottom
+        src = self.get_surface(i, j)
+        srcrect.x = y - j * CELL_SIZE
+        srcrect.w = min(bottom - y, CELL_SIZE)
+        dstrect.w = srcrect.w
+        self.blit_surface(src, srcrect, dstrect)
+
+        y += dstrect.w
+        dstrect.x += dstrect.w
+        j += 1
+      end
+
+      x -= dstrect.h
+      dstrect.y += dstrect.h
+      i -= 1
+    end
+  end
+
   def draw_north()
     pc = self.pc
     left = pc.x - MAIN_VIEW_PC_X
@@ -348,16 +437,53 @@ class View
     end
   end
 
-  def draw_east()
-    # TODO
-  end
-
-  def draw_west()
-    # TODO
-  end
-
   def draw_south()
-    # TODO
+    pc = self.pc
+    bottom = pc.y + MAIN_VIEW_PC_Y
+    left = pc.x - MAIN_VIEW_PC_X
+    top = bottom - MAIN_VIEW_HEIGHT
+    right = left + MAIN_VIEW_WIDTH
+
+    srcrect = sdl.SDL_Rect.new()
+    dstrect = sdl.SDL_Rect.new()
+
+    y = bottom
+    dstrect.y = MAIN_VIEW_Y
+    while top < y
+      if y + CELL_SIZE <= 0
+        y -= CELL_SIZE
+        dstrect.y += CELL_SIZE
+        next
+      end
+
+      # FIXME: Yog doesn't define the result of "(-200) // 80".
+      i = (y - 1) // CELL_SIZE + ((y - 1) < 0 ? -1 : 0)
+      srcrect.y = CELL_SIZE - (y - i * CELL_SIZE)
+      srcrect.h = min(CELL_SIZE - srcrect.y, y - top)
+
+      height = srcrect.h
+      dstrect.h = height
+
+      x = right
+      dstrect.x = MAIN_VIEW_X
+      j = x // CELL_SIZE
+      while left < x
+        src = self.get_surface(j, i)
+        srcrect.x = max(0, CELL_SIZE - (x - j * CELL_SIZE))
+        width = CELL_SIZE - srcrect.x
+        srcrect.w = width
+        dstrect.w = width
+        self.blit_surface(src, srcrect, dstrect)
+
+        x -= width
+        dstrect.x += width
+        j -= 1
+      end
+
+      y -= height
+      dstrect.y += height
+      i -= 1
+    end
   end
 
   def draw_mouse_area()

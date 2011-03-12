@@ -156,6 +156,13 @@ TURN_RIGHT_TABLE = {
 TURN_LEFT_TABLE = {
   'north: 'west, 'west: 'south, 'south: 'east, 'east: 'north }
 
+class Rect2Act
+  def init(rect, act)
+    self.pred? = rect.include?
+    self.act = act
+  end
+end
+
 class StageController > Controller
   def init(map, pc)
     self.map = map
@@ -182,6 +189,14 @@ class StageController > Controller
     move_side_y = turn_area_y + CELL_SIZE
     self.move_left_area = Rect.new(pc_cell_left_x - CELL_SIZE, move_side_y)
     self.move_right_area = Rect.new(pc_cell_right_x, move_side_y)
+
+    self.rect2act = [
+      Rect2Act.new(self.move_forward_area, self.move_forward),
+      Rect2Act.new(self.turn_left_area, self.turn_left),
+      Rect2Act.new(self.turn_right_area, self.turn_right),
+      Rect2Act.new(self.move_backward_area, self.move_backword),
+      Rect2Act.new(self.move_left_area, self.move_left),
+      Rect2Act.new(self.move_right_area, self.move_right)]
   end
 
   def animate()
@@ -285,23 +300,13 @@ class StageController > Controller
   end
 
   def on_left_button_pressed(x, y)
-    if self.move_forward_area.include?(x, y)
-      return self.move_forward()
+    if self.coroutine != nil
+      return
     end
-    if self.turn_left_area.include?(x, y)
-      return self.turn_left()
-    end
-    if self.turn_right_area.include?(x, y)
-      return self.turn_right()
-    end
-    if self.move_backward_area.include?(x, y)
-      return self.move_backword()
-    end
-    if self.move_left_area.include?(x, y)
-      return self.move_left()
-    end
-    if self.move_right_area.include?(x, y)
-      return self.move_right()
+    self.rect2act.each() do [obj]
+      if obj.pred?(x, y)
+        return obj.act()
+      end
     end
   end
 end

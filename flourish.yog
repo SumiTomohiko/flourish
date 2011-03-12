@@ -163,6 +163,9 @@ class Rect2Act
   end
 end
 
+VELOCITY = 2
+STEP_TO_MOVE = CELL_SIZE // VELOCITY
+
 class StageController > Controller
   def init(map, pc)
     self.map = map
@@ -231,16 +234,16 @@ class StageController > Controller
     end
 
     self.coroutine = Coroutine.new() do
-      CELL_SIZE.times() do
+      STEP_TO_MOVE.times() do
         direction = pc.direction
         if direction == 'north
-          pc.x += 1
+          pc.x += VELOCITY
         elif direction == 'east
-          pc.y += 1
+          pc.y += VELOCITY
         elif direction == 'south
-          pc.x -= 1
+          pc.x -= VELOCITY
         else
-          pc.y -= 1
+          pc.y -= VELOCITY
         end
         Coroutine.yield()
       end
@@ -269,16 +272,16 @@ class StageController > Controller
     end
 
     self.coroutine = Coroutine.new() do
-      CELL_SIZE.times() do
+      STEP_TO_MOVE.times() do
         direction = pc.direction
         if direction == 'north
-          pc.x -= 1
+          pc.x -= VELOCITY
         elif direction == 'east
-          pc.y -= 1
+          pc.y -= VELOCITY
         elif direction == 'south
-          pc.x += 1
+          pc.x += VELOCITY
         else
-          pc.y += 1
+          pc.y += VELOCITY
         end
         Coroutine.yield()
       end
@@ -307,16 +310,16 @@ class StageController > Controller
     end
 
     self.coroutine = Coroutine.new() do
-      CELL_SIZE.times() do
+      STEP_TO_MOVE.times() do
         direction = pc.direction
         if direction == 'north
-          pc.y += 1
+          pc.y += VELOCITY
         elif direction == 'east
-          pc.x -= 1
+          pc.x -= VELOCITY
         elif direction == 'south
-          pc.y -= 1
+          pc.y -= VELOCITY
         else
-          pc.x += 1
+          pc.x += VELOCITY
         end
         Coroutine.yield()
       end
@@ -365,16 +368,16 @@ class StageController > Controller
     end
 
     self.coroutine = Coroutine.new() do
-      CELL_SIZE.times() do
+      STEP_TO_MOVE.times() do
         direction = pc.direction
         if direction == 'north
-          pc.y -= 1
+          pc.y -= VELOCITY
         elif direction == 'east
-          pc.x += 1
+          pc.x += VELOCITY
         elif direction == 'south
-          pc.y += 1
+          pc.y += VELOCITY
         else
-          pc.x -= 1
+          pc.x -= VELOCITY
         end
         Coroutine.yield()
       end

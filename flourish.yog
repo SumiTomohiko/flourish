@@ -303,7 +303,7 @@ class View
     end
   end
 
-  def fill_rect()
+  def cls()
     if sdl.SDL_FillRect(self.screen, nil, 0) != 0
       raise SdlError.new("SDL_FillRect failed")
     end
@@ -504,7 +504,7 @@ class View
   end
 
   def draw()
-    self.fill_rect()
+    self.cls()
 
     {
       'north: self.draw_north, 'east: self.draw_east, 'west: self.draw_west,

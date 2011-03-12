@@ -244,6 +244,7 @@ class StageController > Controller
         end
         Coroutine.yield()
       end
+      self.check_goal()
     end
   end
 
@@ -281,6 +282,7 @@ class StageController > Controller
         end
         Coroutine.yield()
       end
+      self.check_goal()
     end
   end
 
@@ -318,11 +320,28 @@ class StageController > Controller
         end
         Coroutine.yield()
       end
+      self.check_goal()
     end
   end
 
+  def geometry?(x, y, expected)
+    return self.map[y // CELL_SIZE][x // CELL_SIZE] == expected
+  end
+
   def wall?(x, y)
-    return self.map[y // CELL_SIZE][x // CELL_SIZE] == 'wall
+    return self.geometry?(x, y, 'wall)
+  end
+
+  def goal?()
+    pc = self.pc
+    return self.geometry?(pc.x, pc.y, 'goal)
+  end
+
+  def check_goal()
+    if !self.goal?()
+      return
+    end
+    puts("Conglaturation!")
   end
 
   def move_forward()
@@ -359,6 +378,7 @@ class StageController > Controller
         end
         Coroutine.yield()
       end
+      self.check_goal()
     end
   end
 
@@ -682,7 +702,7 @@ end
 def main()
   init(640, 480, 32, "Flourish") do [screen]
     map = [
-      ['wall, 'wall, 'wall, 'wall, 'wall, 'wall, 'wall, 'wall],
+      ['wall, 'wall, 'wall, 'wall, 'wall, 'wall, 'goal, 'wall],
       ['wall, nil, nil, nil, nil, nil, nil, 'wall],
       ['wall, nil, nil, nil, nil, nil, nil, 'wall],
       ['wall, nil, nil, nil, nil, nil, nil, 'wall],

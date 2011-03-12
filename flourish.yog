@@ -329,8 +329,7 @@ class View
         next
       end
 
-      # FIXME: Yog doesn't define the result of "(-200) // 80".
-      i = x // CELL_SIZE + (x < 0 ? -1 : 0)
+      i = x // CELL_SIZE
       srcrect.y = x - i * CELL_SIZE
       srcrect.h = min(CELL_SIZE - srcrect.y, right - x)
 
@@ -456,8 +455,7 @@ class View
         next
       end
 
-      # FIXME: Yog doesn't define the result of "(-200) // 80".
-      i = (y - 1) // CELL_SIZE + ((y - 1) < 0 ? -1 : 0)
+      i = (y - 1) // CELL_SIZE
       srcrect.y = CELL_SIZE - (y - i * CELL_SIZE)
       srcrect.h = min(CELL_SIZE - srcrect.y, y - top)
 

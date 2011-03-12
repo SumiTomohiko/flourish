@@ -132,12 +132,33 @@ def pos2x(pos)
   return CELL_SIZE * pos + CELL_SIZE // 2
 end
 
+class Rect
+  def init(x, y, width, height)
+    self.x = x
+    self.y = y
+    self.width = width
+    self.height = height
+  end
+
+  def include?(x, y)
+    if (x < self.x) || (self.x + self.width < x)
+      return false
+    end
+    if (y < self.y) || (self.y + self.height < y)
+      return false
+    end
+    return true
+  end
+end
+
 class StageController > Controller
   def init(map, pc)
     self.map = map
     self.pc = pc
 
     self.coroutine = nil
+
+    self.forward_area = Rect.new(MAIN_VIEW_X + MAIN_VIEW_PC_X - CELL_SIZE // 2, MAIN_VIEW_Y + MAIN_VIEW_PC_Y - CELL_SIZE - CELL_SIZE // 2, CELL_SIZE, CELL_SIZE)
   end
 
   def animate()
@@ -152,6 +173,10 @@ class StageController > Controller
   end
 
   def on_left_button_pressed(x, y)
+    if !self.forward_area.include?(x, y)
+      return
+    end
+
     pc = self.pc
     if pc.y < CELL_SIZE
       return

@@ -303,10 +303,6 @@ class View
     end
   end
 
-  def min(n, m)
-    return n < m ? n : m
-  end
-
   def fill_rect()
     if sdl.SDL_FillRect(self.screen, nil, 0) != 0
       raise SdlError.new("SDL_FillRect failed")
@@ -337,7 +333,7 @@ class View
       while x < right
         src = self.get_surface(i, j)
         srcrect.x = x - i * CELL_SIZE
-        srcrect.w = self.min(right - x, CELL_SIZE)
+        srcrect.w = min(right - x, CELL_SIZE)
         dstrect.w = srcrect.w
         self.blit_surface(src, srcrect, dstrect)
 

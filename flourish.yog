@@ -151,6 +151,11 @@ class Rect
   end
 end
 
+TURN_RIGHT_TABLE = {
+  'north: 'east, 'east: 'south, 'south: 'west, 'west: 'north }
+TURN_LEFT_TABLE = {
+  'north: 'west, 'west: 'south, 'south: 'east, 'east: 'north }
+
 class StageController > Controller
   def init(map, pc)
     self.map = map
@@ -200,14 +205,12 @@ class StageController > Controller
 
   def turn_right()
     pc = self.pc
-    tbl = { 'north: 'east, 'east: 'south, 'south: 'west, 'west: 'north }
-    pc.direction = tbl[pc.direction]
+    pc.direction = TURN_RIGHT_TABLE[pc.direction]
   end
 
   def turn_left()
     pc = self.pc
-    tbl = { 'north: 'west, 'west: 'south, 'south: 'east, 'east: 'north }
-    pc.direction = tbl[pc.direction]
+    pc.direction = TURN_LEFT_TABLE[pc.direction]
   end
 
   def on_left_button_pressed(x, y)
@@ -276,6 +279,11 @@ class View
       self.wall_img = load_image("wall.bmp".to_path())
       self.ground_img = load_image("ground.bmp".to_path())
       self.mouse_area_img = load_image2("mouse_area.png".to_path())
+
+      self.main_view_drawers = {
+        'north: self.draw_north, 'east: self.draw_east, 'west: self.draw_west,
+        'south: self.draw_south }
+
       block(self)
     finally
       self.cleanup_images()
@@ -504,9 +512,7 @@ class View
   def draw()
     self.cls()
 
-    {
-      'north: self.draw_north, 'east: self.draw_east, 'west: self.draw_west,
-      'south: self.draw_south }[self.pc.direction]()
+    self.main_view_drawers[self.pc.direction]()
     self.draw_mouse_area()
 
     if sdl.SDL_Flip(self.screen) != 0

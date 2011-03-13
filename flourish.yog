@@ -702,18 +702,56 @@ class View
   end
 end
 
+MAP_SIZE = 32
+
+def generate_map(data)
+  map_func = { "w": 'wall, "g": 'goal, " ":nil }.[]
+  lines = data.rtrim().split("\n")
+  if lines.size != MAP_SIZE
+    raise SyntaxError.new("Invalid Map height: {0}".format(lines.size))
+  end
+  return lines.map() do [line]
+    next (line + (MAP_SIZE - line.size) * " ").split("").map(&map_func)
+  end
+end
+
 def main()
   init(640, 480, 32, "Flourish") do [screen]
-    map = [
-      ['wall, 'wall, 'wall, 'wall, 'wall, 'wall, 'goal, 'wall],
-      ['wall, nil, nil, nil, nil, nil, nil, 'wall],
-      ['wall, nil, nil, nil, nil, nil, nil, 'wall],
-      ['wall, nil, nil, nil, nil, nil, nil, 'wall],
-      ['wall, nil, nil, nil, nil, nil, nil, 'wall],
-      ['wall, nil, nil, nil, nil, nil, nil, 'wall],
-      ['wall, nil, nil, nil, nil, nil, nil, 'wall],
-      ['wall, 'wall, 'wall, 'wall, 'wall, 'wall, 'wall, 'wall]]
-    pc = PlayerCharacter.new(pos2x(1), pos2x(6), 'north)
+    map = generate_map(<<EOF)
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwgw
+w    w w w w w w w w w w w w w w
+wwww w                         w
+w      w w w w w w w w w w w w w
+w wwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+w       w   w   w              w
+www www w w w w   w wwwwwwwwww w
+w   ww  w   w wwwwwww          w
+w w  w ww w w ww    w          w
+w ww w w  w     w   w          w
+w ww w   wwwwwwww   w wwwwwwwwww
+wwww wwwww                     w
+w         w wwwwwwwwwwwwwwwwwwww
+w wwwwwww w  w w       ww      w
+w     w ww w   w w       wwww ww
+w wwwww     w  w w             w
+w     w w  www   wwww wwwwwwww w
+w www   ww   wwww        w     w
+w   wwwww     w   wwwww  w wwwww
+w       w    w  ww       w     w
+wwwwww ww     w  wwwwwwwwwwwww w
+w  www  ww  ww  wwww           w
+w         w      w    www wwwwww
+wwwwwwwww w   w   w  w     w   w
+w       w     w    w w wwww  www
+w    www    www   w w          w
+www    w    w w      wwwwww  www
+w      w          w w      w  ww
+w   www w          w  www w w  w
+w  ww   ww wwwwww w  w  w w  w w
+w     w      ww     w         ww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+EOF
+    pc = PlayerCharacter.new(pos2x(13), pos2x(28), 'north)
     View.new(map, pc, screen) do [view]
       run(StageController.new(map, pc), view)
     end

@@ -456,6 +456,10 @@ class Point
     return Point.new(self.x + point.x, self.y + point.y)
   end
 
+  def *(n)
+    return Point.new(n * self.x, n * self.y)
+  end
+
   def to_s()
     return "<Point x={0}, y={1}>".format(self.x, self.y)
   end
@@ -739,10 +743,11 @@ class View
 
   def shrink_floor(rect)
     max_height = 2 * CELL_SIZE - self.wall_img.h - self.ceil_img.h
-    if rect.h < max_height
+    if max_height < rect.y
+      rect.h = 0
       return
     end
-    rect.h = max_height
+    rect.h = max_height - rect.y
   end
 
   def cut_srcrect_y(srcrect, src, dst)
@@ -823,9 +828,58 @@ class View
     return [0, 1]
   end
 
+  def get_upper_point(direction)
+    return Point.new(*self.get_upper_diff(direction))
+  end
+
   def get_upper_neighbor(index)
-    upper_index = index + Point.new(*self.get_upper_diff(self.pc.direction))
-    return self.get_geometry(upper_index)
+    return self.get_geometry(index + self.get_upper_point(self.pc.direction))
+  end
+
+  def find_wall_end(index, diff)
+    neighbor = index + diff
+    if self.get_geometry(neighbor) != 'wall
+      return index
+    end
+    return self.find_wall_end(neighbor, diff)
+  end
+
+  def draw_ceil_on_cell(dst, diff)
+    src = self.ceil_img
+    srcrect = sdl.SDL_Rect.new()
+    (CELL_SIZE // self.ceil_img.h).times() do [n]
+      y = dst.y - (CELL_SIZE * diff + n * src.h)
+      if y < 0
+        next
+      end
+      d = Point.new(dst.x, y)
+      self.cut_surface(srcrect, src, d)
+      self.draw_surface(src, srcrect, d)
+    end
+  end
+
+  def draw_neighbor_ceils(dst, index)
+    direction = self.pc.direction
+    diff = self.get_upper_point(direction)
+    from_index = index + diff * 2
+    end_index = self.find_wall_end(from_index, diff)
+    d = Point.new(dst.x, dst.y - 2 * CELL_SIZE)
+    if direction == 'north
+      return end_index.y.to(from_index.y + 1) do [n]
+        self.draw_ceil_on_cell(d, from_index.y - n)
+      end
+    elif direction == 'east
+      return from_index.x.to(end_index.x + 1) do [n]
+        self.draw_ceil_on_cell(d, n - from_index.x)
+      end
+    elif direction == 'west
+      return end_index.x.to(from_index.x + 1) do [n]
+        self.draw_ceil_on_cell(d, from_index.x - n)
+      end
+    end
+    return from_index.y.to(end_index.y + 1) do [n]
+      self.draw_ceil_on_cell(d, n - from_index.y)
+    end
   end
 
   def draw_ceils(dst, index)
@@ -834,7 +888,7 @@ class View
       return
     end
     self.draw_ceil_on_wall(dst, self.ceil_img.h)
-    # TODO: draw neighbor ceils
+    self.draw_neighbor_ceils(dst, index)
     # TODO: draw a ceil hidding a floor
   end
 
@@ -960,9 +1014,9 @@ w                              w
 w                              w
 w                              w
 w                              w
-w                              w
-w            ww                w
-w            ww                w
+w           www                w
+w           www                w
+w           www                w
 w                              w
 w                              w
 w                              w

@@ -452,6 +452,10 @@ class Point
     self.y = y
   end
 
+  def +(point)
+    return Point.new(self.x + point.x, self.y + point.y)
+  end
+
   def to_s()
     return "<Point x={0}, y={1}>".format(self.x, self.y)
   end
@@ -798,6 +802,20 @@ class View
     self.draw_surface(src, srcrect, dst)
   end
 
+  def draw_ceil_on_wall(dst)
+    src = self.ceil_img
+    srcrect = sdl.SDL_Rect.new()
+    d = dst + Point.new(0, -self.wall_img.h)
+    self.cut_surface(srcrect, src, d)
+    self.draw_surface(src, srcrect, d)
+  end
+
+  def draw_ceils(dst, index)
+    self.draw_ceil_on_wall(dst)
+    # TODO: draw neighbor ceils
+    # TODO: draw a ceil hidding a floor
+  end
+
   def draw_main_view(data)
     data.each_cells() do [dst, index, neighbor]
       geometry = self.get_geometry(neighbor)
@@ -809,7 +827,7 @@ class View
         next
       end
       self.draw_wall(dst)
-      # TODO: draw ceil
+      self.draw_ceils(dst, index)
     end
   end
 

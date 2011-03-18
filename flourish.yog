@@ -603,7 +603,7 @@ class DrawDataWest > DrawData
   end
 
   def first_dst2point(x, y)
-    return Point.new(y, x)
+    return Point.new(-y, x)
   end
 
   def get_index_of_neighbor(index)
@@ -635,7 +635,7 @@ class DrawDataSouth > DrawData
   end
 
   def first_dst2point(x, y)
-    return Point.new(x, -y)
+    return Point.new(-x, -y)
   end
 
   def get_index_of_neighbor(index)

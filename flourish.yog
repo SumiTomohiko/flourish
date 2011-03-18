@@ -767,30 +767,49 @@ class View
     srcrect.w = src.w
   end
 
+  def cut_surface(srcrect, src, dst)
+    self.cut_srcrect_x(srcrect, src, dst)
+    self.cut_srcrect_y(srcrect, src, dst)
+  end
+
   def draw_floor(dst, neighbor)
     src = self.get_surface(nil)
     srcrect = sdl.SDL_Rect.new()
-    self.cut_srcrect_x(srcrect, src, dst)
-    self.cut_srcrect_y(srcrect, src, dst)
-    if self.get_geometry(neighbor) == 'wall
+    self.cut_surface(srcrect, src, dst)
+    if neighbor == 'wall
       self.shrink_floor(srcrect)
     end
+    self.draw_surface(src, srcrect, dst)
+  end
+
+  def draw_surface(src, srcrect, dst)
     dstrect = sdl.SDL_Rect.new()
     dstrect.x = MAIN_VIEW_X + dst.x + srcrect.x
     dstrect.w = srcrect.w
-    dstrect.y = MAIN_VIEW_Y + dst.y + srcrect.y - CELL_SIZE
+    dstrect.y = MAIN_VIEW_Y + dst.y + srcrect.y - src.h
     dstrect.h = srcrect.h
     self.blit_surface(src, srcrect, dstrect)
   end
 
+  def draw_wall(dst)
+    src = self.get_surface('wall)
+    srcrect = sdl.SDL_Rect.new()
+    self.cut_surface(srcrect, src, dst)
+    self.draw_surface(src, srcrect, dst)
+  end
+
   def draw_main_view(data)
     data.each_cells() do [dst, index, neighbor]
-      if (geometry = self.get_geometry(index)) == nil
-        self.draw_floor(dst, neighbor)
+      geometry = self.get_geometry(neighbor)
+      if self.get_geometry(index) == nil
+        self.draw_floor(dst, geometry)
         next
       end
-      # wall
-      # TODO
+      if geometry != nil
+        next
+      end
+      self.draw_wall(dst)
+      # TODO: draw ceil
     end
   end
 

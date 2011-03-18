@@ -143,6 +143,7 @@ end
 
 CELL_SIZE = 80
 
+# TODO: Rename this to index2pos
 def pos2x(pos)
   return CELL_SIZE * pos + CELL_SIZE // 2
 end
@@ -445,6 +446,228 @@ MAIN_VIEW_HEIGHT = 400
 MAIN_VIEW_PC_X = MAIN_VIEW_WIDTH // 2
 MAIN_VIEW_PC_Y = MAIN_VIEW_HEIGHT - CELL_SIZE
 
+class Point
+  def init(x=nil, y=nil)
+    self.x = x
+    self.y = y
+  end
+
+  def to_s()
+    return "<Point x={0}, y={1}>".format(self.x, self.y)
+  end
+end
+
+Delta = Point
+
+class DrawData
+  def init(pc, pc2top_left, top_left2dst, pos2index_diff)
+    main_view_top_left = self.compute_main_view_top_left(pc, pc2top_left)
+    self.dst = self.compute_first_dst(main_view_top_left, top_left2dst)
+    self.index = self.pos2index(main_view_top_left, pos2index_diff)
+  end
+
+  def floor(n)
+    return n // CELL_SIZE * CELL_SIZE
+  end
+
+  def pos2index(p, diff)
+    #return Point.new((p.x + diff.x) // CELL_SIZE, (p.y + diff.y) // CELL_SIZE)
+    return Point.new(p.x // CELL_SIZE, p.y // CELL_SIZE)
+  end
+
+  def compute_diff(n, delta)
+    return self.floor(n) + delta - n
+  end
+
+  def compute_first_dst(top_left, top_left2dst)
+    x = self.compute_diff(top_left.x, top_left2dst.x)
+    y = self.compute_diff(top_left.y, top_left2dst.y)
+    return self.first_dst2point(x, y)
+  end
+
+  def compute_main_view_top_left(pc, pc2top_left)
+    return Point.new(pc.x + pc2top_left.x, pc.y + pc2top_left.y)
+  end
+
+  def first_dst2point(x, y)
+    raise NotImplementedError.new()
+  end
+
+  def init_horizontally(index)
+    raise NotImplementedError.new()
+  end
+
+  def init_vertically(index)
+    raise NotImplementedError.new()
+  end
+
+  def move_horizontally(index)
+    raise NotImplementedError.new()
+  end
+
+  def move_vertically(index)
+    raise NotImplementedError.new()
+  end
+
+  def get_index_of_neighbor(index)
+    raise NotImplementedError.new()
+  end
+
+  def each_cells(&block)
+    index = Point.new()
+    dst = self.dst
+    self.init_vertically(index)
+    point = Point.new()
+    dst.y.to(MAIN_VIEW_HEIGHT + CELL_SIZE, CELL_SIZE) do [y]
+      self.init_horizontally(index)
+      point.y = y
+      dst.x.to(MAIN_VIEW_WIDTH, CELL_SIZE) do [x]
+        point.x = x
+        block(point, index, self.get_index_of_neighbor(index))
+        self.move_horizontally(index)
+      end
+      self.move_vertically(index)
+    end
+  end
+end
+
+class DrawDataNorth > DrawData
+  def init(pc)
+    pc2top_left = Delta.new(-MAIN_VIEW_PC_X, -MAIN_VIEW_PC_Y)
+    top_left2dst = Delta.new(0, CELL_SIZE)
+    super(pc, pc2top_left, top_left2dst, Delta.new(0, 0))
+  end
+
+  def first_dst2point(x, y)
+    return Point.new(x, y)
+  end
+
+  def get_index_of_neighbor(index)
+    return Point.new(index.x, index.y + 1)
+  end
+
+  def init_horizontally(index)
+    index.x = self.index.x
+  end
+
+  def init_vertically(index)
+    index.y = self.index.y
+  end
+
+  def move_horizontally(index)
+    index.x += 1
+  end
+
+  def move_vertically(index)
+    index.y += 1
+  end
+end
+
+class DrawDataEast > DrawData
+  def init(pc)
+    pc2top_left = Delta.new(MAIN_VIEW_PC_Y - 1, -MAIN_VIEW_PC_X)
+    top_left2dst = Delta.new(-1, 0)
+    super(pc, pc2top_left, top_left2dst, Delta.new(0, 0))
+  end
+
+  def first_dst2point(x, y)
+    return Point.new(y, -x)
+  end
+
+  def get_index_of_neighbor(index)
+    return Point.new(index.x - 1, index.y)
+  end
+
+  def init_horizontally(index)
+    index.y = self.index.y
+  end
+
+  def init_vertically(index)
+    index.x = self.index.x
+  end
+
+  def move_horizontally(index)
+    index.y += 1
+  end
+
+  def move_vertically(index)
+    index.x -= 1
+  end
+end
+
+class DrawDataWest > DrawData
+  def init(pc)
+    pc2top_left = Delta.new(-MAIN_VIEW_PC_Y, MAIN_VIEW_PC_X - 1)
+    top_left2dst = Delta.new(CELL_SIZE, CELL_SIZE - 1)
+    super(pc, pc2top_left, top_left2dst, Delta.new(0, -1))
+  end
+
+  def first_dst2point(x, y)
+    return Point.new(y, x)
+  end
+
+  def get_index_of_neighbor(index)
+    return Point.new(index.x + 1, index.y)
+  end
+
+  def init_horizontally(index)
+    index.y = self.index.y
+  end
+
+  def init_vertically(index)
+    index.x = self.index.x
+  end
+
+  def move_horizontally(index)
+    index.y -= 1
+  end
+
+  def move_vertically(index)
+    index.x += 1
+  end
+end
+
+class DrawDataSouth > DrawData
+  def init(pc)
+    pc2top_left = Delta.new(MAIN_VIEW_PC_X - 1, MAIN_VIEW_PC_Y - 1)
+    top_left2dst = Delta.new(CELL_SIZE - 1, -1)
+    super(pc, pc2top_left, top_left2dst, Delta.new(-1, 0))
+  end
+
+  def first_dst2point(x, y)
+    return Point.new(x, -y)
+  end
+
+  def get_index_of_neighbor(index)
+    return Point.new(index.x, index.y - 1)
+  end
+
+  def init_horizontally(index)
+    index.x = self.index.x
+  end
+
+  def init_vertically(index)
+    index.y = self.index.y
+  end
+
+  def move_horizontally(index)
+    index.x -= 1
+  end
+
+  def move_vertically(index)
+    index.y -= 1
+  end
+end
+
+def dump_point(filename, lineno, point)
+  puts("{0}:{1} x={2}, y={3}".format(filename, lineno, point.x, point.y))
+end
+
+def dump_rect(filename, lineno, rect)
+  fmt = "{0}:{1} x={2}, y={3}, w={4}, h={5}"
+  puts(fmt.format(filename, lineno, rect.x, rect.y, rect.w, rect.h))
+end
+
 class View
   def cleanup_images()
     imgs = [self.mouse_area_img, self.pc_img, self.wall_img, self.ground_img]
@@ -468,9 +691,10 @@ class View
       self.ground_img = load_image("ground.png".to_path())
       self.mouse_area_img = load_image("mouse_area.png".to_path())
 
-      self.main_view_drawers = {
-        'north: self.draw_north, 'east: self.draw_east, 'west: self.draw_west,
-        'south: self.draw_south }
+      self.draw_data = {
+        'north: DrawDataNorth, 'east: DrawDataEast, 'west: DrawDataWest,
+        'south: DrawDataSouth }
+      self.geometry2img = { 'wall: self.wall_img }
 
       block(self)
     finally
@@ -478,22 +702,22 @@ class View
     end
   end
 
-  def get_surface(x, y)
-    if (x < 0) || (y < 0)
-      return nil
+  def get_geometry(index)
+    if (index.x < 0) || (index.y < 0)
+      return 'wall
     end
     try
-      geometry = self.map[y][x]
+      return self.map[index.y][index.x]
     except IndexError
-      return nil
+      return 'wall
     end
-    return { 'wall: self.wall_img }.get(geometry, self.ground_img)
+  end
+
+  def get_surface(geometry)
+    return self.geometry2img.get(geometry, self.ground_img)
   end
 
   def blit_surface(src, srcrect, dstrect)
-    if src == nil
-      return
-    end
     if sdl.SDL_BlitSurface(src, srcrect, self.screen, dstrect) != 0
       raise SdlError.new("SDL_BlitSurface failed")
     end
@@ -505,178 +729,53 @@ class View
     end
   end
 
-  def draw_west()
-    pc = self.pc
-    top = pc.y - MAIN_VIEW_PC_X
-    left = pc.x - MAIN_VIEW_PC_Y
-    bottom = top + MAIN_VIEW_WIDTH
-    right = left + MAIN_VIEW_HEIGHT
+  def cut_srcrect_y(srcrect, src, dst)
+    if dst.y - src.h < 0
+      srcrect.y = src.h - dst.y
+      srcrect.h = src.h - srcrect.y
+      return
+    end
+    if MAIN_VIEW_HEIGHT < dst.y - CELL_SIZE + src.h
+      srcrect.h = src.h - (dst.y - MAIN_VIEW_HEIGHT)
+      return
+    end
+    srcrect.h = src.h
+  end
 
+  def cut_srcrect_x(srcrect, src, dst)
+    if dst.x < 0
+      srcrect.x = -dst.x
+      srcrect.w = src.w - srcrect.x
+      return
+    end
+    if MAIN_VIEW_WIDTH < dst.x + src.w
+      srcrect.w = MAIN_VIEW_WIDTH - dst.x
+      return
+    end
+    srcrect.w = src.w
+  end
+
+  def draw_floor(dst, neighbor)
+    src = self.get_surface(nil)
     srcrect = sdl.SDL_Rect.new()
+    self.cut_srcrect_x(srcrect, src, dst)
+    self.cut_srcrect_y(srcrect, src, dst)
     dstrect = sdl.SDL_Rect.new()
+    dstrect.x = MAIN_VIEW_X + dst.x + srcrect.x
+    dstrect.w = srcrect.w
+    dstrect.y = MAIN_VIEW_Y + dst.y + srcrect.y - CELL_SIZE
+    dstrect.h = srcrect.h
+    self.blit_surface(src, srcrect, dstrect)
+  end
 
-    x = left
-    dstrect.y = MAIN_VIEW_Y
-    while x < right
-      if x + CELL_SIZE <= 0
-        height = CELL_SIZE
-        x += height
-        dstrect.y += height
+  def draw_main_view(data)
+    data.each_cells() do [dst, index, neighbor]
+      if (geometry = self.get_geometry(index)) == nil
+        self.draw_floor(dst, neighbor)
         next
       end
-
-      i = x // CELL_SIZE
-      srcrect.y = x - i * CELL_SIZE
-      srcrect.h = min(CELL_SIZE - srcrect.y, right - x)
-
-      height = srcrect.h
-      dstrect.h = height
-
-      y = bottom
-      dstrect.x = MAIN_VIEW_X
-      j = y // CELL_SIZE
-      while top < y
-        src = self.get_surface(i, j)
-        srcrect.x = max(0, CELL_SIZE - (y - j * CELL_SIZE))
-        width = CELL_SIZE - srcrect.x
-        srcrect.w = width
-        dstrect.w = width
-        self.blit_surface(src, srcrect, dstrect)
-
-        y -= width
-        dstrect.x += width
-        j -= 1
-      end
-
-      x += height
-      dstrect.y += height
-      i += 1
-    end
-  end
-
-  def draw_east()
-    pc = self.pc
-    top = pc.y - MAIN_VIEW_PC_X
-    right = pc.x + MAIN_VIEW_PC_Y
-    bottom = top + MAIN_VIEW_WIDTH
-    left = right - MAIN_VIEW_HEIGHT
-
-    srcrect = sdl.SDL_Rect.new()
-    dstrect = sdl.SDL_Rect.new()
-
-    x = right
-    dstrect.y = MAIN_VIEW_Y
-    i = right // CELL_SIZE
-    while left < x
-      srcrect.y = CELL_SIZE - (x - i * CELL_SIZE)
-      srcrect.h = min(CELL_SIZE - srcrect.y, x - left, CELL_SIZE)
-      dstrect.h = srcrect.h
-
-      y = top
-      dstrect.x = MAIN_VIEW_X
-      j = y // CELL_SIZE
-      while y < bottom
-        src = self.get_surface(i, j)
-        srcrect.x = y - j * CELL_SIZE
-        srcrect.w = min(bottom - y, CELL_SIZE)
-        dstrect.w = srcrect.w
-        self.blit_surface(src, srcrect, dstrect)
-
-        y += dstrect.w
-        dstrect.x += dstrect.w
-        j += 1
-      end
-
-      x -= dstrect.h
-      dstrect.y += dstrect.h
-      i -= 1
-    end
-  end
-
-  def draw_north()
-    pc = self.pc
-    left = pc.x - MAIN_VIEW_PC_X
-    top = pc.y - MAIN_VIEW_PC_Y
-    right = left + MAIN_VIEW_WIDTH
-    bottom = top + MAIN_VIEW_HEIGHT
-
-    srcrect = sdl.SDL_Rect.new()
-    dstrect = sdl.SDL_Rect.new()
-
-    y = top
-    dstrect.y = MAIN_VIEW_Y
-    j = pc.y // CELL_SIZE - MAIN_VIEW_PC_Y // CELL_SIZE
-    while y < bottom
-      srcrect.y = y - j * CELL_SIZE
-      srcrect.h = min(CELL_SIZE - srcrect.y, bottom - y, CELL_SIZE)
-      dstrect.h = srcrect.h
-
-      x = left
-      dstrect.x = MAIN_VIEW_X
-      i = x // CELL_SIZE
-      while x < right
-        src = self.get_surface(i, j)
-        srcrect.x = x - i * CELL_SIZE
-        srcrect.w = min(right - x, CELL_SIZE)
-        dstrect.w = srcrect.w
-        self.blit_surface(src, srcrect, dstrect)
-
-        x += dstrect.w
-        dstrect.x += dstrect.w
-        i += 1
-      end
-
-      y += dstrect.h
-      dstrect.y += dstrect.h
-      j += 1
-    end
-  end
-
-  def draw_south()
-    pc = self.pc
-    bottom = pc.y + MAIN_VIEW_PC_Y
-    left = pc.x - MAIN_VIEW_PC_X
-    top = bottom - MAIN_VIEW_HEIGHT
-    right = left + MAIN_VIEW_WIDTH
-
-    srcrect = sdl.SDL_Rect.new()
-    dstrect = sdl.SDL_Rect.new()
-
-    y = bottom
-    dstrect.y = MAIN_VIEW_Y
-    while top < y
-      if y + CELL_SIZE <= 0
-        y -= CELL_SIZE
-        dstrect.y += CELL_SIZE
-        next
-      end
-
-      i = (y - 1) // CELL_SIZE
-      srcrect.y = CELL_SIZE - (y - i * CELL_SIZE)
-      srcrect.h = min(CELL_SIZE - srcrect.y, y - top)
-
-      height = srcrect.h
-      dstrect.h = height
-
-      x = right
-      dstrect.x = MAIN_VIEW_X
-      j = x // CELL_SIZE
-      while left < x
-        src = self.get_surface(j, i)
-        srcrect.x = max(0, CELL_SIZE - (x - j * CELL_SIZE))
-        width = CELL_SIZE - srcrect.x
-        srcrect.w = width
-        dstrect.w = width
-        self.blit_surface(src, srcrect, dstrect)
-
-        x -= width
-        dstrect.x += width
-        j -= 1
-      end
-
-      y -= height
-      dstrect.y += height
-      i -= 1
+      # wall
+      # TODO
     end
   end
 
@@ -700,7 +799,8 @@ class View
   def draw()
     self.cls()
 
-    self.main_view_drawers[self.pc.direction]()
+    pc = self.pc
+    self.draw_main_view(self.draw_data[pc.direction].new(pc))
     self.draw_mouse_area()
 
     if sdl.SDL_Flip(self.screen) != 0
@@ -724,6 +824,7 @@ end
 
 def main()
   init(640, 480, 32, "Flourish") do [screen]
+    (:
     map = generate_map(<<EOF)
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwgw
 w    w w w w w w w w w w w w w w
@@ -756,6 +857,41 @@ w      w          w w      w  ww
 w   www w          w  www w w  w
 w  ww   ww wwwwww w  w  w w  w w
 w     w      ww     w         ww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+EOF
+    :)
+    map = generate_map(<<EOF)
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 EOF
     pc = PlayerCharacter.new(pos2x(13), pos2x(28), 'north)

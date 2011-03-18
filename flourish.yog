@@ -802,16 +802,38 @@ class View
     self.draw_surface(src, srcrect, dst)
   end
 
-  def draw_ceil_on_wall(dst)
+  def draw_ceil_on_wall(dst, diff)
     src = self.ceil_img
     srcrect = sdl.SDL_Rect.new()
-    d = dst + Point.new(0, -self.wall_img.h)
+    d = dst + Point.new(0, -self.wall_img.h - diff)
     self.cut_surface(srcrect, src, d)
     self.draw_surface(src, srcrect, d)
   end
 
+  def get_upper_diff(direction)
+    if direction == 'north
+      return [0, -1]
+    end
+    if direction == 'east
+      return [1, 0]
+    end
+    if direction == 'west
+      return [-1, 0]
+    end
+    return [0, 1]
+  end
+
+  def get_upper_neighbor(index)
+    upper_index = index + Point.new(*self.get_upper_diff(self.pc.direction))
+    return self.get_geometry(upper_index)
+  end
+
   def draw_ceils(dst, index)
-    self.draw_ceil_on_wall(dst)
+    self.draw_ceil_on_wall(dst, 0)
+    if self.get_upper_neighbor(index) != 'wall
+      return
+    end
+    self.draw_ceil_on_wall(dst, self.ceil_img.h)
     # TODO: draw neighbor ceils
     # TODO: draw a ceil hidding a floor
   end
@@ -939,9 +961,9 @@ w                              w
 w                              w
 w                              w
 w                              w
+w            ww                w
+w            ww                w
 w                              w
-w                              w
-w             w                w
 w                              w
 w                              w
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww

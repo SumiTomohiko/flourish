@@ -858,12 +858,9 @@ class View
     end
   end
 
-  def draw_neighbor_ceils(dst, index)
-    direction = self.pc.direction
-    diff = self.get_upper_point(direction)
-    from_index = index + diff * 2
-    end_index = self.find_wall_end(from_index, diff)
+  def draw_neighbor_ceils(dst, from_index, end_index)
     d = Point.new(dst.x, dst.y - 2 * CELL_SIZE)
+    direction = self.pc.direction
     if direction == 'north
       return end_index.y.to(from_index.y + 1) do [n]
         self.draw_ceil_on_cell(d, from_index.y - n)
@@ -882,14 +879,50 @@ class View
     end
   end
 
+  def draw_end_ceil(dst, index)
+    src = self.ceil_img
+    height = self.wall_img.h + src.h - CELL_SIZE
+    srcrect = sdl.SDL_Rect.new()
+    (height // src.h).times() do [n]
+      y = dst.y - n * src.h
+      if y < 0
+        next
+      end
+      d = Point.new(dst.x, y)
+      self.cut_surface(srcrect, src, d)
+      self.draw_surface(src, srcrect, d)
+    end
+  end
+
+  def compute_ceils_size(from_index, end_index)
+    direction = self.pc.direction
+    if direction == 'north
+      return from_index.y - end_index.y + 1
+    end
+    if direction == 'east
+      return end_index.x - from_index.x + 1
+    end
+    if direction == 'west
+      return from_index.x - end_index.x + 1
+    end
+    return end_index.y - from_index.y + 1
+  end
+
   def draw_ceils(dst, index)
     self.draw_ceil_on_wall(dst, 0)
     if self.get_upper_neighbor(index) != 'wall
       return
     end
     self.draw_ceil_on_wall(dst, self.ceil_img.h)
-    self.draw_neighbor_ceils(dst, index)
-    # TODO: draw a ceil hidding a floor
+
+    diff = self.get_upper_point(self.pc.direction)
+    from_index = index + diff * 2
+    end_index = self.find_wall_end(from_index, diff)
+    self.draw_neighbor_ceils(dst, from_index, end_index)
+
+    size = self.compute_ceils_size(from_index, end_index)
+    d = Point.new(dst.x, dst.y - CELL_SIZE * (2 + size))
+    self.draw_end_ceil(d, end_index + diff)
   end
 
   def draw_main_view(data)

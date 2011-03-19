@@ -681,7 +681,7 @@ class View
   def cleanup_images()
     imgs = [
       self.mouse_area_img, self.pc_img, self.wall_img, self.ceil_img,
-      self.ground_img]
+      self.floor_img]
     imgs.select() do [img]
       next img != nil
     end.each(&sdl.SDL_FreeSurface)
@@ -695,13 +695,13 @@ class View
     self.pc_img = nil
     self.wall_img = nil
     self.ceil_img = nil
-    self.ground_img = nil
+    self.floor_img = nil
     self.mouse_area_img = nil
     try
       self.pc_img = load_image("pc.png".to_path())
       self.wall_img = load_image("wall.png".to_path())
       self.ceil_img = load_image("ceil.png".to_path())
-      self.ground_img = load_image("ground.png".to_path())
+      self.floor_img = load_image("floor.png".to_path())
       self.mouse_area_img = load_image("mouse_area.png".to_path())
 
       self.draw_data = {
@@ -727,7 +727,7 @@ class View
   end
 
   def get_surface(geometry)
-    return self.geometry2img.get(geometry, self.ground_img)
+    return self.geometry2img.get(geometry, self.floor_img)
   end
 
   def blit_surface(src, srcrect, dstrect)

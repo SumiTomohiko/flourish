@@ -795,7 +795,7 @@ class View
     src = self.get_surface(nil)
     srcrect = sdl.SDL_Rect.new()
     self.cut_surface(srcrect, src, dst)
-    if neighbor == 'wall
+    if (neighbor == 'wall) && (dst.y < MAIN_VIEW_HEIGHT)
       self.shrink_floor(srcrect)
     end
     self.draw_surface(src, srcrect, dst)

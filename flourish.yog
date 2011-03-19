@@ -527,11 +527,12 @@ class DrawData
     self.init_vertically(index)
     point = Point.new()
     dst.y.to(MAIN_VIEW_HEIGHT + 2 * CELL_SIZE, CELL_SIZE) do [y]
+      bottom? = MAIN_VIEW_HEIGHT + CELL_SIZE < y
       self.init_horizontally(index)
       point.y = y
       dst.x.to(MAIN_VIEW_WIDTH, CELL_SIZE) do [x]
         point.x = x
-        block(point, index, self.get_index_of_neighbor(index))
+        block(point, index, self.get_index_of_neighbor(index), bottom?)
         self.move_horizontally(index)
       end
       self.move_vertically(index)
@@ -752,7 +753,7 @@ class View
 
   def cut_srcrect_y(srcrect, src, dst)
     y = dst.y - src.h
-    if MAIN_VIEW_HEIGHT < y
+    if MAIN_VIEW_HEIGHT <= y
       srcrect.h = 0
       return
     end
@@ -761,7 +762,7 @@ class View
       srcrect.h = src.h - srcrect.y
       return
     end
-    if MAIN_VIEW_HEIGHT < dst.y - CELL_SIZE + src.h
+    if MAIN_VIEW_HEIGHT <= dst.y
       srcrect.h = src.h - (dst.y - MAIN_VIEW_HEIGHT)
       return
     end
@@ -849,7 +850,7 @@ class View
     return self.find_wall_end(neighbor, diff)
   end
 
-  def draw_ceil_on_cell(dst, diff)
+  def draw_ceil_overlapping_floor(dst, diff)
     src = self.ceil_img
     srcrect = sdl.SDL_Rect.new()
     (CELL_SIZE // self.ceil_img.h).times() do [n]
@@ -864,23 +865,22 @@ class View
   end
 
   def draw_neighbor_ceils(dst, from_index, end_index)
-    d = Point.new(dst.x, dst.y - 2 * CELL_SIZE)
     direction = self.pc.direction
     if direction == 'north
       return end_index.y.to(from_index.y + 1) do [n]
-        self.draw_ceil_on_cell(d, from_index.y - n)
+        self.draw_ceil_overlapping_floor(dst, from_index.y - n)
       end
     elif direction == 'east
       return from_index.x.to(end_index.x + 1) do [n]
-        self.draw_ceil_on_cell(d, n - from_index.x)
+        self.draw_ceil_overlapping_floor(dst, n - from_index.x)
       end
     elif direction == 'west
       return end_index.x.to(from_index.x + 1) do [n]
-        self.draw_ceil_on_cell(d, from_index.x - n)
+        self.draw_ceil_overlapping_floor(dst, from_index.x - n)
       end
     end
     return from_index.y.to(end_index.y + 1) do [n]
-      self.draw_ceil_on_cell(d, n - from_index.y)
+      self.draw_ceil_overlapping_floor(dst, n - from_index.y)
     end
   end
 
@@ -923,7 +923,8 @@ class View
     diff = self.get_upper_point(self.pc.direction)
     from_index = index + diff * 2
     end_index = self.find_wall_end(from_index, diff)
-    self.draw_neighbor_ceils(dst, from_index, end_index)
+    d = Point.new(dst.x, dst.y - 2 * CELL_SIZE)
+    self.draw_neighbor_ceils(d, from_index, end_index)
 
     size = self.compute_ceils_size(from_index, end_index)
     d = Point.new(dst.x, dst.y - CELL_SIZE * (2 + size))
@@ -931,17 +932,26 @@ class View
   end
 
   def draw_main_view(data)
-    data.each_cells() do [dst, index, neighbor]
+    data.each_cells() do [dst, index, neighbor, bottom?]
       geometry = self.get_geometry(neighbor)
       if self.get_geometry(index) == nil
         self.draw_floor(dst, geometry)
         next
       end
-      if geometry != nil
+      if geometry == nil
+        self.draw_wall(dst)
+        self.draw_ceils(dst, index)
         next
       end
-      self.draw_wall(dst)
-      self.draw_ceils(dst, index)
+      if bottom?
+        diff = self.get_upper_point(self.pc.direction)
+        end_index = self.find_wall_end(index, diff)
+        self.draw_neighbor_ceils(dst, index, end_index)
+
+        size = self.compute_ceils_size(index, end_index)
+        d = Point.new(dst.x, dst.y - CELL_SIZE * size)
+        self.draw_end_ceil(d, end_index + diff)
+      end
     end
   end
 

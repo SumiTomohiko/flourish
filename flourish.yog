@@ -1001,10 +1001,44 @@ def generate_map(data)
   end
 end
 
-def main()
-  init(640, 480, 32, "Flourish") do [screen]
-    (:
-    map = generate_map(<<EOF)
+def get_config(type)
+  if type == "simple"
+    return <<EOF, Point.new(15, 26), 'south
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w           www                w
+w           www                w
+w           www                w
+w                              w
+w                              w
+w                              w
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+EOF
+  end
+  return <<EOF, Point.new(13, 28), 'north
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwgw
 w    w w w w w w w w w w w w w w
 wwww w                         w
@@ -1038,42 +1072,13 @@ w  ww   ww wwwwww w  w  w w  w w
 w     w      ww     w         ww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 EOF
-    :)
-    map = generate_map(<<EOF)
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-w                              w
-w                              w
-w                              w
-w                              w
-w                              w
-w                              w
-w                              w
-w                              w
-w                              w
-w                              w
-w                              w
-w                              w
-w                              w
-w                              w
-w                              w
-w                              w
-w                              w
-w                              w
-w                              w
-w                              w
-w                              w
-w                              w
-w                              w
-w                              w
-w           www                w
-w           www                w
-w           www                w
-w                              w
-w                              w
-w                              w
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-EOF
-    pc = PlayerCharacter.new(pos2x(15), pos2x(26), 'south)
+end
+
+def main(args)
+  init(640, 480, 32, "Flourish") do [screen]
+    txt, pos, direction = get_config(args.get(0))
+    map = generate_map(txt)
+    pc = PlayerCharacter.new(pos2x(pos.x), pos2x(pos.y), direction)
     View.new(map, pc, screen) do [view]
       run(StageController.new(map, pc), view)
     end
@@ -1081,7 +1086,7 @@ EOF
 end
 
 if ARGV.get(0) == __FILE__
-  main()
+  main(ARGV.slice(1))
 end
 
 # vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

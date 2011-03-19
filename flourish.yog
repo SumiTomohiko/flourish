@@ -717,12 +717,12 @@ class View
 
   def get_geometry(index)
     if (index.x < 0) || (index.y < 0)
-      return 'wall
+      return nil
     end
     try
       return self.map[index.y][index.x]
     except IndexError
-      return 'wall
+      return nil
     end
   end
 
@@ -752,13 +752,17 @@ class View
   end
 
   def cut_srcrect_y(srcrect, src, dst)
-    y = dst.y - src.h
-    if MAIN_VIEW_HEIGHT <= y
+    if dst.y < 0
       srcrect.h = 0
       return
     end
-    if y < 0
-      srcrect.y = src.h - dst.y
+    top = dst.y - src.h
+    if MAIN_VIEW_HEIGHT <= top
+      srcrect.h = 0
+      return
+    end
+    if top < 0
+      srcrect.y = -top
       srcrect.h = src.h - srcrect.y
       return
     end
@@ -843,11 +847,10 @@ class View
   end
 
   def find_wall_end(index, diff)
-    neighbor = index + diff
-    if self.get_geometry(neighbor) != 'wall
+    if self.get_geometry(index) != 'wall
       return index
     end
-    return self.find_wall_end(neighbor, diff)
+    return self.find_wall_end(index + diff, diff)
   end
 
   def draw_ceil_overlapping_floor(dst, diff)
@@ -867,19 +870,19 @@ class View
   def draw_neighbor_ceils(dst, from_index, end_index)
     direction = self.pc.direction
     if direction == 'north
-      return end_index.y.to(from_index.y + 1) do [n]
+      return (end_index.y + 1).to(from_index.y + 1) do [n]
         self.draw_ceil_overlapping_floor(dst, from_index.y - n)
       end
     elif direction == 'east
-      return from_index.x.to(end_index.x + 1) do [n]
+      return from_index.x.to(end_index.x) do [n]
         self.draw_ceil_overlapping_floor(dst, n - from_index.x)
       end
     elif direction == 'west
-      return end_index.x.to(from_index.x + 1) do [n]
+      return (end_index.x + 1).to(from_index.x + 1) do [n]
         self.draw_ceil_overlapping_floor(dst, from_index.x - n)
       end
     end
-    return from_index.y.to(end_index.y + 1) do [n]
+    return from_index.y.to(end_index.y) do [n]
       self.draw_ceil_overlapping_floor(dst, n - from_index.y)
     end
   end
@@ -902,15 +905,15 @@ class View
   def compute_ceils_size(from_index, end_index)
     direction = self.pc.direction
     if direction == 'north
-      return from_index.y - end_index.y + 1
+      return from_index.y - end_index.y
     end
     if direction == 'east
-      return end_index.x - from_index.x + 1
+      return end_index.x - from_index.x
     end
     if direction == 'west
-      return from_index.x - end_index.x + 1
+      return from_index.x - end_index.x
     end
-    return end_index.y - from_index.y + 1
+    return end_index.y - from_index.y
   end
 
   def draw_ceils(dst, index)
@@ -1070,7 +1073,7 @@ w                              w
 w                              w
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 EOF
-    pc = PlayerCharacter.new(pos2x(13), pos2x(28), 'north)
+    pc = PlayerCharacter.new(pos2x(15), pos2x(26), 'south)
     View.new(map, pc, screen) do [view]
       run(StageController.new(map, pc), view)
     end

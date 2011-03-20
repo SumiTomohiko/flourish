@@ -1,2 +1,11 @@
 .gdb_history
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache
+config.log
+config.status
+configure
 core
+data/mouse_area.png
+data/wall.png

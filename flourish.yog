@@ -743,12 +743,8 @@ class View
   end
 
   def shrink_floor(rect)
-    max_height = 2 * CELL_SIZE - self.wall_img.h - self.ceil_img.h
-    if max_height < rect.y
-      rect.h = 0
-      return
-    end
-    rect.h = max_height - rect.y
+    max_height = 2 * CELL_SIZE - self.wall_img.h
+    rect.h = max_height < rect.y ? 0 : max_height - rect.y
   end
 
   def cut_srcrect_y(srcrect, src, dst)

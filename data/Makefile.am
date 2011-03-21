@@ -1,5 +1,5 @@
 
-PNGS = wall.png mouse_area.png
+PNGS = wall.png mouse_area.png floor.png
 
 all: $(PNGS)
 

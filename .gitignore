@@ -7,5 +7,6 @@ config.log
 config.status
 configure
 core
+data/floor.png
 data/mouse_area.png
 data/wall.png

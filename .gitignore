@@ -9,4 +9,5 @@ configure
 core
 data/floor.png
 data/mouse_area.png
+data/pc.png
 data/wall.png

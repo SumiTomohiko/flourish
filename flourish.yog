@@ -446,10 +446,18 @@ MAIN_VIEW_HEIGHT = 400
 MAIN_VIEW_PC_X = MAIN_VIEW_WIDTH // 2
 MAIN_VIEW_PC_Y = MAIN_VIEW_HEIGHT - CELL_SIZE
 
+@include(Comparable)
 class Point
   def init(x=nil, y=nil)
     self.x = x
     self.y = y
+  end
+
+  def <=>(point)
+    if (diff = (point.x - self.x)) != 0
+      return diff
+    end
+    return point.y - self.y
   end
 
   def +(point)
@@ -930,27 +938,65 @@ class View
     self.draw_end_ceil(d, end_index + diff)
   end
 
-  def draw_main_view(data)
-    data.each_cells() do [dst, index, neighbor, bottom?]
-      geometry = self.get_geometry(neighbor)
-      if self.get_geometry(index) == nil
-        self.draw_floor(dst, geometry)
-        next
-      end
-      if geometry == nil
-        self.draw_wall(dst)
-        self.draw_ceils(dst, index)
-        next
-      end
-      if bottom?
-        diff = self.get_upper_point(self.pc.direction)
-        end_index = self.find_wall_end(index, diff)
-        self.draw_neighbor_ceils(dst, index, end_index)
+  def decide_pc_pos()
+    pc = self.pc
+    x = pc.x - CELL_SIZE // 2
+    y = pc.y - CELL_SIZE // 2
+    direction = pc.direction
+    if direction == 'north
+      return Point.new(
+        (x + CELL_SIZE - 1) // CELL_SIZE,
+        (y + CELL_SIZE - 1) // CELL_SIZE)
+    elif direction == 'east
+      return Point.new(x // CELL_SIZE, (y + CELL_SIZE - 1) // CELL_SIZE)
+    elif direction == 'west
+      return Point.new((x + CELL_SIZE - 1) // CELL_SIZE, y // CELL_SIZE)
+    end
+    return Point.new(x // CELL_SIZE, y // CELL_SIZE)
+  end
 
-        size = self.compute_ceils_size(index, end_index)
-        d = Point.new(dst.x, dst.y - CELL_SIZE * size)
-        self.draw_end_ceil(d, end_index + diff)
+  def draw_geometry(dst, index, neighbor, bottom?)
+    geometry = self.get_geometry(neighbor)
+    if self.get_geometry(index) == nil
+      self.draw_floor(dst, geometry)
+      return
+    end
+    if geometry == nil
+      self.draw_wall(dst)
+      self.draw_ceils(dst, index)
+      return
+    end
+    if !bottom?
+      return
+    end
+    diff = self.get_upper_point(self.pc.direction)
+    end_index = self.find_wall_end(index, diff)
+    self.draw_neighbor_ceils(dst, index, end_index)
+
+    size = self.compute_ceils_size(index, end_index)
+    d = Point.new(dst.x, dst.y - CELL_SIZE * size)
+    self.draw_end_ceil(d, end_index + diff)
+  end
+
+  def draw_pc()
+    src = self.pc_img
+    x = MAIN_VIEW_PC_X - CELL_SIZE // 2
+    y = MAIN_VIEW_PC_Y + CELL_SIZE // 2
+    dst = Point.new(x, y)
+    srcrect = sdl.SDL_Rect.new()
+    self.cut_surface(srcrect, src, dst)
+    self.draw_surface(src, srcrect, dst)
+  end
+
+  def draw_main_view(data)
+    pos = self.decide_pc_pos()
+
+    data.each_cells() do [dst, index, neighbor, bottom?]
+      self.draw_geometry(dst, index, neighbor, bottom?)
+      if pos != index
+        next
       end
+      self.draw_pc()
     end
   end
 

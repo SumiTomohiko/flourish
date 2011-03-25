@@ -689,7 +689,7 @@ class View
   def cleanup_images()
     imgs = [
       self.mouse_area_img, self.pc_img, self.wall_img, self.ceil_img,
-      self.floor_img]
+      self.floor_img, self.external_img]
     imgs.select() do [img]
       next img != nil
     end.each(&sdl.SDL_FreeSurface)
@@ -705,17 +705,19 @@ class View
     self.ceil_img = nil
     self.floor_img = nil
     self.mouse_area_img = nil
+    self.external_img = nil
     try
       self.pc_img = load_image("pc.png".to_path())
       self.wall_img = load_image("wall.png".to_path())
       self.ceil_img = load_image("ceil.png".to_path())
       self.floor_img = load_image("floor.png".to_path())
       self.mouse_area_img = load_image("mouse_area.png".to_path())
+      self.external_img = load_image("external.png".to_path())
 
       self.draw_data = {
         'north: DrawDataNorth, 'east: DrawDataEast, 'west: DrawDataWest,
         'south: DrawDataSouth }
-      self.geometry2img = { 'wall: self.wall_img }
+      self.geometry2img = { 'wall: self.wall_img, 'external: self.external_img }
 
       block(self)
     finally
@@ -725,12 +727,12 @@ class View
 
   def get_geometry(index)
     if (index.x < 0) || (index.y < 0)
-      return nil
+      return 'external
     end
     try
       return self.map[index.y][index.x]
     except IndexError
-      return nil
+      return 'external
     end
   end
 
@@ -795,8 +797,8 @@ class View
     self.cut_srcrect_y(srcrect, src, dst)
   end
 
-  def draw_floor(dst, neighbor)
-    src = self.get_surface(nil)
+  def draw_floor(geometry, dst, neighbor)
+    src = self.get_surface(geometry)
     srcrect = sdl.SDL_Rect.new()
     self.cut_surface(srcrect, src, dst)
     if (neighbor == 'wall) && (dst.y < MAIN_VIEW_HEIGHT)
@@ -957,8 +959,9 @@ class View
 
   def draw_geometry(dst, index, neighbor, bottom?)
     geometry = self.get_geometry(neighbor)
-    if self.get_geometry(index) == nil
-      self.draw_floor(dst, geometry)
+    g = self.get_geometry(index)
+    if (g == nil) || (g == 'external)
+      self.draw_floor(g, dst, geometry)
       return
     end
     if geometry == nil

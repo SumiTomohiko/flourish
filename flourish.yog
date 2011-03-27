@@ -133,11 +133,27 @@ class Controller
   end
 end
 
+class Flourish
+  def init()
+    self.pc_img_walk0 = nil
+    self.pc_img_walk1 = nil
+  end
+end
+
+flourish = Flourish.new()
+
+def cleanup()
+  ['pc_img_walk0, 'pc_img_walk1].each() do [sym]
+    sdl.SDL_FreeSurface(flourish.get_attr(sym))
+  end
+end
+
 class PlayerCharacter
   def init(x, y, direction)
     self.x = x
     self.y = y
     self.direction = direction # 'north, 'east, 'west or 'south
+    self.img = flourish.pc_img_walk0
   end
 end
 
@@ -250,7 +266,7 @@ class StageController > Controller
     end
 
     self.coroutine = Coroutine.new() do
-      STEP_TO_MOVE.times() do
+      STEP_TO_MOVE.times() do [i]
         direction = pc.direction
         if direction == 'north
           pc.x += VELOCITY
@@ -261,6 +277,7 @@ class StageController > Controller
         else
           pc.y -= VELOCITY
         end
+        pc.img = i % 2 == 0 ? flourish.pc_img_walk0 : flourish.pc_img_walk1
         Coroutine.yield()
       end
       self.check_goal()
@@ -288,7 +305,7 @@ class StageController > Controller
     end
 
     self.coroutine = Coroutine.new() do
-      STEP_TO_MOVE.times() do
+      STEP_TO_MOVE.times() do [i]
         direction = pc.direction
         if direction == 'north
           pc.x -= VELOCITY
@@ -299,6 +316,7 @@ class StageController > Controller
         else
           pc.y += VELOCITY
         end
+        pc.img = i % 2 == 0 ? flourish.pc_img_walk0 : flourish.pc_img_walk1
         Coroutine.yield()
       end
       self.check_goal()
@@ -326,7 +344,7 @@ class StageController > Controller
     end
 
     self.coroutine = Coroutine.new() do
-      STEP_TO_MOVE.times() do
+      STEP_TO_MOVE.times() do [i]
         direction = pc.direction
         if direction == 'north
           pc.y += VELOCITY
@@ -337,6 +355,7 @@ class StageController > Controller
         else
           pc.x += VELOCITY
         end
+        pc.img = i % 2 == 0 ? flourish.pc_img_walk0 : flourish.pc_img_walk1
         Coroutine.yield()
       end
       self.check_goal()
@@ -384,7 +403,7 @@ class StageController > Controller
     end
 
     self.coroutine = Coroutine.new() do
-      STEP_TO_MOVE.times() do
+      STEP_TO_MOVE.times() do [i]
         direction = pc.direction
         if direction == 'north
           pc.y -= VELOCITY
@@ -395,6 +414,7 @@ class StageController > Controller
         else
           pc.x -= VELOCITY
         end
+        pc.img = i % 2 == 0 ? flourish.pc_img_walk0 : flourish.pc_img_walk1
         Coroutine.yield()
       end
       self.check_goal()
@@ -688,7 +708,7 @@ end
 class View
   def cleanup_images()
     imgs = [
-      self.mouse_area_img, self.pc_img, self.wall_img, self.ceil_img,
+      self.mouse_area_img, self.wall_img, self.ceil_img,
       self.floor_img, self.external_img]
     imgs.select() do [img]
       next img != nil
@@ -700,14 +720,12 @@ class View
     self.pc = pc
     self.screen = screen
 
-    self.pc_img = nil
     self.wall_img = nil
     self.ceil_img = nil
     self.floor_img = nil
     self.mouse_area_img = nil
     self.external_img = nil
     try
-      self.pc_img = load_image("pc.png".to_path())
       self.wall_img = load_image("wall.png".to_path())
       self.ceil_img = load_image("ceil.png".to_path())
       self.floor_img = load_image("floor.png".to_path())
@@ -982,7 +1000,7 @@ class View
   end
 
   def draw_pc()
-    src = self.pc_img
+    src = self.pc.img
     x = MAIN_VIEW_PC_X - CELL_SIZE // 2
     y = MAIN_VIEW_PC_Y + CELL_SIZE // 2
     dst = Point.new(x, y)
@@ -1121,6 +1139,8 @@ end
 
 def main(args)
   init(640, 480, 32, "Flourish") do [screen]
+    flourish.pc_img_walk0 = load_image("pc/walk0.png")
+    flourish.pc_img_walk1 = load_image("pc/walk1.png")
     txt, pos, direction = get_config(args.get(0))
     map = generate_map(txt)
     pc = PlayerCharacter.new(pos2x(pos.x), pos2x(pos.y), direction)
@@ -1128,6 +1148,7 @@ def main(args)
       run(StageController.new(map, pc), view)
     end
   end
+  cleanup()
 end
 
 if ARGV.get(0) == __FILE__

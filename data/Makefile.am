@@ -1,5 +1,5 @@
 
-PNGS = external.png floor.png mouse_area.png pc.png wall.png
+PNGS = external.png floor.png mouse_area.png pc/walk0.png pc/walk1.png wall.png
 
 all: $(PNGS)
 

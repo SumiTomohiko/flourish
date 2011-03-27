@@ -7,4 +7,7 @@ all: $(PNGS)
 .xcf.png:
 	xcf2png $< > $@
 
+clean:
+	rm -rf $(PNGS)
+
 # vim: tabstop=8 shiftwidth=8 noexpandtab

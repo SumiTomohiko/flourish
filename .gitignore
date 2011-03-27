@@ -10,6 +10,7 @@ core
 data/external.png
 data/floor.png
 data/mouse_area.png
-data/pc/walk0.png
-data/pc/walk1.png
+data/pc/*.png
+data/pc/*.png
+data/slime/*.png
 data/wall.png

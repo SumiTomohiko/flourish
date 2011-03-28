@@ -1,0 +1,31 @@
+#!/bin/sh
+
+echo="/bin/echo"
+
+lib=""
+yog="yog-generational"
+
+while getopts l:y: opt
+do
+    case ${opt} in
+        l) lib=${OPTARG};;
+        y) yog=${OPTARG};;
+        *)
+            ${echo} "usage: $0 [-y yog] [-l lib]"
+            exit 1
+            ;;
+    esac
+done
+shift $((${OPTIND} - 1))
+
+opts=""
+if [ ! -z "${lib}" ]; then
+    opts="${opts} --libpath=\"${lib}\""
+fi
+
+exec "${yog}" ${opts} <<EOF
+from flourish import main
+main()
+EOF
+
+# vim: tabstop=4 shiftwidth=4 expandtab softtabstop=4

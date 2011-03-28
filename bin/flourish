@@ -20,7 +20,7 @@ shift $((${OPTIND} - 1))
 
 opts=""
 if [ ! -z "${lib}" ]; then
-    opts="${opts} --libpath=\"${lib}\""
+    opts="${opts} --lib-path=\"${lib}\""
 fi
 
 exec "${yog}" ${opts} <<EOF

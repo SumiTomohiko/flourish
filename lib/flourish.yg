@@ -4,7 +4,7 @@ import yogame
 import sdl
 
 def determine_data_dir()
-  data_dir = __FILE__.dirname / "data"
+  data_dir = __FILE__.dirname / ".." / "data"
   landmark = data_dir / "mouse_area.png"
   try
     File.open(landmark) do
@@ -1010,7 +1010,7 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 EOF
 end
 
-def main(args)
+def main(args=[])
   init(640, 480, 32, "Flourish") do [screen]
     flourish.pc_img_walk0 = load_image("pc/walk0.png")
     flourish.pc_img_walk1 = load_image("pc/walk1.png")

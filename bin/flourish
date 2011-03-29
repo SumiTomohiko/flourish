@@ -20,10 +20,10 @@ shift $((${OPTIND} - 1))
 
 opts=""
 if [ ! -z "${lib}" ]; then
-    opts="${opts} --lib-path=\"${lib}\""
+    opts="${opts} --lib-path=${lib}"
 fi
 
-exec "${yog}" ${opts} <<EOF
+exec "${yog}" --young-heap-size=4M ${opts} <<EOF
 from flourish import main
 main()
 EOF

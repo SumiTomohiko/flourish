@@ -23,7 +23,7 @@ if [ ! -z "${lib}" ]; then
     opts="${opts} --lib-path=${lib}"
 fi
 
-exec "${yog}" --young-heap-size=4M ${opts} <<EOF
+exec "${yog}" --heap-size=5M --young-heap-size=4M ${opts} <<EOF
 from flourish import main
 main()
 EOF

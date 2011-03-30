@@ -1,4 +1,5 @@
 
+from flourish.char import Character
 from flourish.core import Images
 
 images = Images.new("pc", ["walk0.png", "walk1.png"])
@@ -11,8 +12,9 @@ def free_resources()
   images.free()
 end
 
-class PlayerCharacter
+class PlayerCharacter > Character
   def init(x, y, direction)
+    super(32, 32)
     self.x = x
     self.y = y
     self.direction = direction # 'north, 'east, 'west or 'south

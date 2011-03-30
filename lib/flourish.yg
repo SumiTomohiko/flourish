@@ -1,12 +1,12 @@
 
 from yogame import init, run
 
+from flourish.char.pc import PlayerCharacter
 from flourish.core import CELL_SIZE
 from flourish.core.ctrl import Controller
 from flourish.core.view import View
-from flourish.pc import PlayerCharacter
 from flourish.stage import generate_map
-import flourish.pc
+import flourish.char.pc
 import flourish.stage.cave
 import flourish.stage.simple
 
@@ -23,7 +23,7 @@ end
 
 def main(name="cave")
   init(640, 480, 32, "Flourish") do [screen]
-    flourish.pc.allocate_resources()
+    flourish.char.pc.allocate_resources()
     try
       stage = get_stage(name)
       map = generate_map(stage.map)
@@ -34,7 +34,7 @@ def main(name="cave")
         run(Controller.new(map, pc), view)
       end
     finally
-      flourish.pc.free_resources()
+      flourish.char.pc.free_resources()
     end
   end
 end

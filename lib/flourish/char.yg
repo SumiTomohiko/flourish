@@ -1,0 +1,9 @@
+
+class Character
+  def init(life, strength)
+    self.life = life
+    self.strength = strength
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

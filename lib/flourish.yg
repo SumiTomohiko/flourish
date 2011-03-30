@@ -47,8 +47,7 @@ end
 
 CELL_SIZE = 80
 
-# TODO: Rename this to index2pos
-def pos2x(pos)
+def index2pos(pos)
   return CELL_SIZE * pos + CELL_SIZE // 2
 end
 
@@ -1015,7 +1014,7 @@ def main(args=[])
     flourish.pc_img_walk1 = load_image("pc/walk1.png")
     txt, pos, direction = get_config(args.get(0))
     map = generate_map(txt)
-    pc = PlayerCharacter.new(pos2x(pos.x), pos2x(pos.y), direction)
+    pc = PlayerCharacter.new(index2pos(pos.x), index2pos(pos.y), direction)
     View.new(map, pc, screen) do [view]
       run(StageController.new(map, pc), view)
     end

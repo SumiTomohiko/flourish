@@ -1,0 +1,113 @@
+
+import sdl
+import yogame
+
+def determine_data_dir()
+  data_dir = __FILE__.dirname / ".." / ".." / "data"
+  landmark = data_dir / "mouse_area.png"
+  try
+    File.open(landmark, &nop)
+  except SystemError
+  else
+    return data_dir
+  end
+  return __FILE__.dirname / ".." / ".." / "share" / "games" / "flourish"
+end
+
+DATA_DIR = determine_data_dir()
+
+def load_image(name)
+  return yogame.load_image(DATA_DIR / name)
+end
+
+CELL_SIZE = 80
+
+MAIN_VIEW_X = 120
+MAIN_VIEW_Y = 40
+MAIN_VIEW_WIDTH = 400
+MAIN_VIEW_HEIGHT = 400
+MAIN_VIEW_PC_X = MAIN_VIEW_WIDTH // 2
+MAIN_VIEW_PC_Y = MAIN_VIEW_HEIGHT - CELL_SIZE
+
+class Rect
+  def init(x, y, width=CELL_SIZE, height=CELL_SIZE)
+    self.x = x
+    self.y = y
+    self.width = width
+    self.height = height
+  end
+
+  def include?(x, y)
+    if (x < self.x) || (self.x + self.width < x)
+      return false
+    end
+    if (y < self.y) || (self.y + self.height < y)
+      return false
+    end
+    return true
+  end
+end
+
+@include(Comparable)
+class Point
+  def init(x=nil, y=nil)
+    self.x = x
+    self.y = y
+  end
+
+  def <=>(point)
+    if (diff = (point.x - self.x)) != 0
+      return diff
+    end
+    return point.y - self.y
+  end
+
+  def +(point)
+    return Point.new(self.x + point.x, self.y + point.y)
+  end
+
+  def *(n)
+    return Point.new(n * self.x, n * self.y)
+  end
+
+  def to_s()
+    return "<Point x={0}, y={1}>".format(self.x, self.y)
+  end
+end
+
+class Images
+  def init(dir, names)
+    self.dir = dir
+    self.names = names
+    self.map = nil
+  end
+
+  def allocate()
+    self.map = {}
+    self.names.each() do [name]
+      self.map[name] = load_image(self.dir / name)
+    end
+  end
+
+  def free()
+    self.map.each() do [key, value]
+      sdl.SDL_FreeSurface(value)
+    end
+    self.map = nil
+  end
+
+  def [](name)
+    return self.map[name]
+  end
+end
+
+def dump_point(filename, lineno, point)
+  puts("{0}:{1} x={2}, y={3}".format(filename, lineno, point.x, point.y))
+end
+
+def dump_rect(filename, lineno, rect)
+  fmt = "{0}:{1} x={2}, y={3}, w={4}, h={5}"
+  puts(fmt.format(filename, lineno, rect.x, rect.y, rect.w, rect.h))
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

@@ -1,0 +1,89 @@
+
+from flourish.core import Images
+
+images = Images.new("pc", ["walk0.png", "walk1.png"])
+
+def allocate_resources()
+  images.allocate()
+end
+
+def free_resources()
+  images.free()
+end
+
+class PlayerCharacter
+  def init(x, y, direction)
+    self.x = x
+    self.y = y
+    self.direction = direction # 'north, 'east, 'west or 'south
+    self.img_index = 0
+  end
+
+  def get_img()
+    return images[self.img_index == 0 ? "walk0.png" : "walk1.png"]
+  end
+
+  img = property(get_img)
+
+  def move_right(len)
+    direction = self.direction
+    if direction == 'north
+      self.x += len
+    elif direction == 'east
+      self.y += len
+    elif direction == 'south
+      self.x -= len
+    else
+      self.y -= len
+    end
+    self.switch_image()
+  end
+
+  def switch_image()
+    self.img_index = self.img_index == 0 ? 1 : 0
+  end
+
+  def move_left(len)
+    direction = self.direction
+    if direction == 'north
+      self.x -= len
+    elif direction == 'east
+      self.y -= len
+    elif direction == 'south
+      self.x += len
+    else
+      self.y += len
+    end
+    self.switch_image()
+  end
+
+  def move_backword(len)
+    direction = self.direction
+    if direction == 'north
+      self.y += len
+    elif direction == 'east
+      self.x -= len
+    elif direction == 'south
+      self.y -= len
+    else
+      self.x += len
+    end
+    self.switch_image()
+  end
+
+  def move_forward(len)
+    direction = self.direction
+    if direction == 'north
+      self.y -= len
+    elif direction == 'east
+      self.x += len
+    elif direction == 'south
+      self.y += len
+    else
+      self.x -= len
+    end
+    self.switch_image()
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

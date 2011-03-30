@@ -1,0 +1,24 @@
+
+MAP_SIZE = 32
+
+def generate_map(data)
+  map_func = { "w": 'wall, "g": 'goal, " ":nil }.[]
+  lines = data.rtrim().split("\n")
+  if lines.size != MAP_SIZE
+    raise SyntaxError.new("Invalid Map height: {0}".format(lines.size))
+  end
+  return lines.map() do [line]
+    next (line + (MAP_SIZE - line.size) * " ").split("").map(&map_func)
+  end
+end
+
+class Stage
+  def init(map, x, y, direction)
+    self.map = map
+    self.x = x
+    self.y = y
+    self.direction = direction
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

@@ -1,8 +1,17 @@
 
 class Character
-  def init(life, strength)
+  def init(life, strength, x=0, y=0, direction='north)
     self.life = life
     self.strength = strength
+    self.x = x
+    self.y = y
+    self.direction = direction # 'north, 'east, 'west or 'south
+  end
+end
+
+class NonPlayerCharacter > Character
+  def act()
+    raise NotImplementedError.new()
   end
 end
 

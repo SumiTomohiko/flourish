@@ -1,0 +1,25 @@
+
+from flourish.char import NonPlayerCharacter
+from flourish.core import Images
+
+images = Images.new("slime", ["walk0.png", "walk1.png"])
+
+def allocate_resources()
+  images.allocate()
+end
+
+def free_resources()
+  images.free()
+end
+
+class Slime > NonPlayerCharacter
+  def init()
+    super(4, 4)
+    self.img = images["walk0.png"]
+  end
+
+  def act()
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

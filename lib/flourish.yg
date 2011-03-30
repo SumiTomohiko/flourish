@@ -7,8 +7,7 @@ def determine_data_dir()
   data_dir = __FILE__.dirname / ".." / "data"
   landmark = data_dir / "mouse_area.png"
   try
-    File.open(landmark) do
-    end
+    File.open(landmark, &nop)
   except SystemError
   else
     return data_dir

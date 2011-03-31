@@ -10,7 +10,7 @@ class Character
 end
 
 class NonPlayerCharacter > Character
-  def act()
+  def act(ctrl)
     raise NotImplementedError.new()
   end
 end

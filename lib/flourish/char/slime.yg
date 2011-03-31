@@ -1,6 +1,7 @@
 
 from flourish.char import NonPlayerCharacter
-from flourish.core import Images
+from flourish.core import CELL_SIZE, Images
+from flourish.core.ctrl import TURN_RIGHT_TABLE
 
 images = Images.new("slime", ["walk0.png", "walk1.png"])
 
@@ -18,7 +19,20 @@ class Slime > NonPlayerCharacter
     self.img = images["walk0.png"]
   end
 
-  def act()
+  def act(ctrl)
+    loop() do
+      pos = ctrl.get_next_pos(self.x, self.y, self.direction)
+      while ctrl.wall?(pos.x, pos.y)
+        self.direction = TURN_RIGHT_TABLE[self.direction]
+        Coroutine.yield()
+        pos = ctrl.get_next_pos(self.x, self.y, self.direction)
+      end
+      CELL_SIZE.times() do
+        ctrl.move_char(self, self.direction, 1)
+        Coroutine.yield()
+      end
+      Coroutine.yield()
+    end
   end
 end
 

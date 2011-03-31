@@ -91,16 +91,18 @@ class Controller > yogame.Controller
 
   def attack_pc(strength)
     self.pc.life -= strength
-    if self.pc.life < 0
-      puts("You died ({0})".format(self.pc.life))
-    end
   end
 
   def make_coroutines()
     return Array.new(self.npc.size) do [i]
       next Coroutine.new() do
         loop() do
-          self.npc[i].act(self)
+          char = self.npc[i]
+          if 0 < char.life
+            char.act(self)
+            next
+          end
+          Coroutine.yield()
         end
       end
     end
@@ -227,8 +229,22 @@ class Controller > yogame.Controller
     puts("Conglaturation!")
   end
 
+  def attack_npc(char)
+    char.life -= self.pc.strength
+    if char.life < 0
+      puts("Slime died")
+    end
+  end
+
   def move_forward()
     pc = self.pc
+    self.npc.each() do [char]
+      if pc.attackable?(char) && (0 < char.life)
+        self.attack_npc(char)
+        return
+      end
+    end
+
     direction = pc.direction
     if direction == 'north
       x = pc.x

@@ -19,18 +19,8 @@ class Slime > NonPlayerCharacter
     self.img = images["walk0.png"]
   end
 
-  def near_pc?(pc)
-    if (self.x == pc.x) && (abs(self.y - pc.y) <= CELL_SIZE)
-      return true
-    end
-    if (self.y == pc.y) && (abs(self.x - pc.x) <= CELL_SIZE)
-      return true
-    end
-    return false
-  end
-
   def act(ctrl)
-    if self.near_pc?(ctrl.pc)
+    if self.attackable?(ctrl.pc)
       ctrl.attack_pc(self.strength)
       Coroutine.yield()
       return

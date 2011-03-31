@@ -554,8 +554,9 @@ class View
         self.draw_pc()
       end
       npc_pos.each_with_index() do [i, pos]
-        if pos == index
-          self.draw_char(self.npc[i], data)
+        char = self.npc[i]
+        if (pos == index) && (0 < char.life)
+          self.draw_char(char, data)
         end
       end
     end

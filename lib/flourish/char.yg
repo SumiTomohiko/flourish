@@ -1,4 +1,6 @@
 
+from flourish.core import CELL_SIZE
+
 class Character
   def init(life, strength, x=0, y=0, direction='north)
     self.life = life
@@ -6,6 +8,16 @@ class Character
     self.x = x
     self.y = y
     self.direction = direction # 'north, 'east, 'west or 'south
+  end
+
+  def attackable?(char)
+    if (self.x == char.x) && (abs(self.y - char.y) <= CELL_SIZE)
+      return true
+    end
+    if (self.y == char.y) && (abs(self.x - char.x) <= CELL_SIZE)
+      return true
+    end
+    return false
   end
 end
 

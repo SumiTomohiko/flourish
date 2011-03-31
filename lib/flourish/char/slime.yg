@@ -19,18 +19,32 @@ class Slime > NonPlayerCharacter
     self.img = images["walk0.png"]
   end
 
+  def near_pc?(pc)
+    if (self.x == pc.x) && (abs(self.y - pc.y) <= CELL_SIZE)
+      return true
+    end
+    if (self.y == pc.y) && (abs(self.x - pc.x) <= CELL_SIZE)
+      return true
+    end
+    return false
+  end
+
   def act(ctrl)
-    loop() do
+    if self.near_pc?(ctrl.pc)
+      ctrl.attack_pc(self.strength)
+      Coroutine.yield()
+      return
+    end
+
+    pos = ctrl.get_next_pos(self.x, self.y, self.direction)
+    while ctrl.wall?(pos.x, pos.y)
+      self.direction = TURN_RIGHT_TABLE[self.direction]
+      Coroutine.yield()
       pos = ctrl.get_next_pos(self.x, self.y, self.direction)
-      while ctrl.wall?(pos.x, pos.y)
-        self.direction = TURN_RIGHT_TABLE[self.direction]
-        Coroutine.yield()
-        pos = ctrl.get_next_pos(self.x, self.y, self.direction)
-      end
-      CELL_SIZE.times() do
-        ctrl.move_char(self, self.direction, 1)
-        Coroutine.yield()
-      end
+    end
+
+    CELL_SIZE.times() do
+      ctrl.move_char(self, self.direction, 1)
       Coroutine.yield()
     end
   end

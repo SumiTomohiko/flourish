@@ -2,7 +2,7 @@
 MAP_SIZE = 32
 
 def generate_map(data)
-  map_func = { "w": 'wall, "g": 'goal, " ":nil }.[]
+  map_func = { "w": 'wall, "g": 'goal, " ": nil }.[]
   lines = data.rtrim().split("\n")
   if lines.size != MAP_SIZE
     raise SyntaxError.new("Invalid Map height: {0}".format(lines.size))

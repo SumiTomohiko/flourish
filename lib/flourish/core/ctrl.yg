@@ -30,30 +30,29 @@ class Controller > yogame.Controller
     x = MAIN_VIEW_X + MAIN_VIEW_PC_X
     y = MAIN_VIEW_Y + MAIN_VIEW_PC_Y
     pc_cell_left_x = x - CELL_SIZE // 2
-    self.move_forward_area = Rect.new(
-      pc_cell_left_x, y - CELL_SIZE - CELL_SIZE // 2)
+    move_forward_area = Rect.new(pc_cell_left_x, y - CELL_SIZE - CELL_SIZE // 2)
 
     turn_area_y = y - CELL_SIZE
     pc_cell_right_x = x + CELL_SIZE // 2
-    self.turn_left_area = Rect.new(pc_cell_left_x - CELL_SIZE, turn_area_y)
-    self.turn_right_area = Rect.new(pc_cell_right_x, turn_area_y)
+    turn_left_area = Rect.new(pc_cell_left_x - CELL_SIZE, turn_area_y)
+    turn_right_area = Rect.new(pc_cell_right_x, turn_area_y)
 
     backward_area_height = CELL_SIZE // 2
-    self.move_backward_area = Rect.new(
+    move_backward_area = Rect.new(
       pc_cell_left_x, y + CELL_SIZE // 2,
       backward_area_height, backward_area_height)
 
     move_side_y = turn_area_y + CELL_SIZE
-    self.move_left_area = Rect.new(pc_cell_left_x - CELL_SIZE, move_side_y)
-    self.move_right_area = Rect.new(pc_cell_right_x, move_side_y)
+    move_left_area = Rect.new(pc_cell_left_x - CELL_SIZE, move_side_y)
+    move_right_area = Rect.new(pc_cell_right_x, move_side_y)
 
     self.rect2act = [
-      Rect2Act.new(self.move_forward_area, self.move_forward),
-      Rect2Act.new(self.turn_left_area, self.turn_left),
-      Rect2Act.new(self.turn_right_area, self.turn_right),
-      Rect2Act.new(self.move_backward_area, self.move_backword),
-      Rect2Act.new(self.move_left_area, self.move_left),
-      Rect2Act.new(self.move_right_area, self.move_right)]
+      Rect2Act.new(move_forward_area, self.move_forward),
+      Rect2Act.new(turn_left_area, self.turn_left),
+      Rect2Act.new(turn_right_area, self.turn_right),
+      Rect2Act.new(move_backward_area, self.move_backword),
+      Rect2Act.new(move_left_area, self.move_left),
+      Rect2Act.new(move_right_area, self.move_right)]
   end
 
   def move_char(char, direction, len)

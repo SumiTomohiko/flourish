@@ -81,11 +81,11 @@ class Controller > yogame.Controller
   end
 
   def conflict?(char, pos)
+    index = self.get_index(pos.x, pos.y)
     ([self.pc] + self.npc).each() do [c]
       if c == char
         next
       end
-      index = self.get_index(pos.x, pos.y)
       if (c.x - CHAR_POS_OFFSET_X) % CELL_SIZE == 0
         if c.x // CELL_SIZE != index.x
           next

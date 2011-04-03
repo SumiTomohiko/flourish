@@ -1,5 +1,7 @@
 
+from sdl import SDL_BUTTON, SDL_BUTTON_LEFT
 import yogame
+
 from flourish.core import CELL_SIZE, MAIN_VIEW_PC_X, MAIN_VIEW_PC_Y, MAIN_VIEW_X, MAIN_VIEW_Y, Point, Rect
 
 VELOCITY = 2
@@ -46,13 +48,27 @@ class Controller > yogame.Controller
     move_left_area = Rect.new(pc_cell_left_x - CELL_SIZE, move_side_y)
     move_right_area = Rect.new(pc_cell_right_x, move_side_y)
 
+    set_move_proc = self.set_move_proc
+    on_forward_area_pressed = partial(set_move_proc, self.move_forward)
+    on_backward_area_pressed = partial(set_move_proc, self.move_backword)
+    on_left_area_pressed = partial(set_move_proc, self.move_left)
+    on_right_area_pressed = partial(set_move_proc, self.move_right)
     self.rect2act = [
-      Rect2Act.new(move_forward_area, self.move_forward),
+      Rect2Act.new(move_forward_area, on_forward_area_pressed),
       Rect2Act.new(turn_left_area, self.turn_left),
       Rect2Act.new(turn_right_area, self.turn_right),
-      Rect2Act.new(move_backward_area, self.move_backword),
-      Rect2Act.new(move_left_area, self.move_left),
-      Rect2Act.new(move_right_area, self.move_right)]
+      Rect2Act.new(move_backward_area, on_backward_area_pressed),
+      Rect2Act.new(move_left_area, on_left_area_pressed),
+      Rect2Act.new(move_right_area, on_right_area_pressed)]
+    self.invalidate_move_proc()
+  end
+
+  def invalidate_move_proc()
+    self.set_move_proc(nop)
+  end
+
+  def set_move_proc(f)
+    self.move_proc = f
   end
 
   def movable?(char, direction)
@@ -147,15 +163,27 @@ class Controller > yogame.Controller
     end
   end
 
+  def remove_dead_coroutine()
+    if (self.coroutine != nil) && self.coroutine.dead?
+      self.coroutine = nil
+    end
+  end
+
+  def start_coroutine()
+    self.move_proc()
+    if self.coroutine == nil
+      return
+    end
+    self.coroutine.resume()
+  end
+
   def animate()
     self.coroutines.each() do [coro]
       coro.resume()
     end
+    self.remove_dead_coroutine()
     if self.coroutine == nil
-      return
-    end
-    if self.coroutine.dead?
-      self.coroutine = nil
+      self.start_coroutine()
       return
     end
     self.coroutine.resume()
@@ -255,25 +283,39 @@ class Controller > yogame.Controller
     end
   end
 
-  def turn_right()
-    pc = self.pc
-    pc.direction = TURN_RIGHT_TABLE[pc.direction]
-  end
-
-  def turn_left()
-    pc = self.pc
-    pc.direction = TURN_LEFT_TABLE[pc.direction]
-  end
-
-  def on_left_button_pressed(x, y)
+  def turn(tbl)
     if self.coroutine != nil
       return
     end
+    pc = self.pc
+    pc.direction = tbl[pc.direction]
+  end
+
+  def turn_right()
+    return self.turn(TURN_RIGHT_TABLE)
+  end
+
+  def turn_left()
+    return self.turn(TURN_LEFT_TABLE)
+  end
+
+  def on_left_button_pressed(x, y)
     self.rect2act.each() do [obj]
       if obj.pred?(x, y)
         return obj.act()
       end
     end
+  end
+
+  def on_mousemotion(state, x, y, xrel, yrel)
+    if state & SDL_BUTTON(SDL_BUTTON_LEFT) == 0
+      return
+    end
+    return self.on_left_button_pressed(x, y)
+  end
+
+  def on_left_button_released(x, y)
+    self.invalidate_move_proc()
   end
 end
 

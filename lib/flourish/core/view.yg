@@ -1,7 +1,7 @@
 
 import sdl
 
-from flourish.core import CELL_SIZE, MAIN_VIEW_HEIGHT, MAIN_VIEW_PC_X, MAIN_VIEW_PC_Y, MAIN_VIEW_WIDTH, MAIN_VIEW_X, MAIN_VIEW_Y, Point, load_image
+from flourish.core import CELL_SIZE, CHAR_POS_OFFSET_X, CHAR_POS_OFFSET_Y, MAIN_VIEW_HEIGHT, MAIN_VIEW_PC_X, MAIN_VIEW_PC_Y, MAIN_VIEW_WIDTH, MAIN_VIEW_X, MAIN_VIEW_Y, Point, load_image
 
 Delta = Point
 
@@ -489,8 +489,8 @@ class View
   end
 
   def decide_char_pos(char)
-    x = char.x - CELL_SIZE // 2
-    y = char.y - CELL_SIZE // 2
+    x = char.x - CHAR_POS_OFFSET_X
+    y = char.y - CHAR_POS_OFFSET_Y
     direction = self.pc.direction
     if direction == 'north
       return Point.new(

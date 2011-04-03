@@ -26,9 +26,10 @@ class Slime > NonPlayerCharacter
       return
     end
 
-    while !ctrl.movable?(self, self.direction)
+    if !ctrl.movable?(self, self.direction)
       self.direction = TURN_RIGHT_TABLE[self.direction]
       Coroutine.yield()
+      return
     end
 
     CELL_SIZE.times() do

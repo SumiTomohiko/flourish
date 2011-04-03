@@ -491,7 +491,7 @@ class View
   def decide_char_pos(char)
     x = char.x - CELL_SIZE // 2
     y = char.y - CELL_SIZE // 2
-    direction = char.direction
+    direction = self.pc.direction
     if direction == 'north
       return Point.new(
         (x + CELL_SIZE - 1) // CELL_SIZE,

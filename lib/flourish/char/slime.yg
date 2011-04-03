@@ -32,7 +32,8 @@ class Slime > NonPlayerCharacter
       return
     end
 
-    CELL_SIZE.times() do
+    CELL_SIZE.times() do [i]
+      self.img = images[[0, 1].include?(i % 4) ? "walk1.png" : "walk0.png"]
       ctrl.move_char(self, self.direction, 1)
       Coroutine.yield()
     end

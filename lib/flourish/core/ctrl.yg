@@ -257,9 +257,6 @@ class Controller > yogame.Controller
 
   def attack_npc(char)
     char.life -= self.pc.strength
-    if char.life < 0
-      puts("Slime died")
-    end
   end
 
   def move_forward()

@@ -21,8 +21,20 @@ class Slime > NonPlayerCharacter
 
   def act(ctrl)
     if self.attackable?(ctrl.pc)
+      4.times() do [i]
+        Coroutine.yield()
+      end
+      4.times() do [i]
+        self.img = images[i % 2 == 0 ? "walk1.png" : "walk0.png"]
+        Coroutine.yield()
+      end
+      if !self.attackable?(ctrl.pc)
+        return
+      end
       ctrl.attack_pc(self.strength)
-      Coroutine.yield()
+      4.times() do [i]
+        Coroutine.yield()
+      end
       return
     end
 

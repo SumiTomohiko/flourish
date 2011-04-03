@@ -26,11 +26,9 @@ class Slime > NonPlayerCharacter
       return
     end
 
-    pos = ctrl.get_next_pos(self.x, self.y, self.direction)
-    while ctrl.wall?(pos.x, pos.y)
+    while !ctrl.movable?(self, self.direction)
       self.direction = TURN_RIGHT_TABLE[self.direction]
       Coroutine.yield()
-      pos = ctrl.get_next_pos(self.x, self.y, self.direction)
     end
 
     CELL_SIZE.times() do

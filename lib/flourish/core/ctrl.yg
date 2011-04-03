@@ -55,6 +55,46 @@ class Controller > yogame.Controller
       Rect2Act.new(move_right_area, self.move_right)]
   end
 
+  def movable?(char, direction)
+    pos = self.get_next_pos(char.x, char.y, direction)
+    return !self.wall?(pos.x, pos.y) && !self.conflict?(char, pos)
+  end
+
+  def get_index(x, y)
+    return Point.new(x // CELL_SIZE, y // CELL_SIZE)
+  end
+
+  def conflict?(char, pos)
+    ([self.pc] + self.npc).each() do [c]
+      if c == char
+        next
+      end
+      index = self.get_index(pos.x, pos.y)
+      if (c.x - CELL_SIZE // 2) % CELL_SIZE == 0
+        if c.x // CELL_SIZE != index.x
+          next
+        end
+        if (c.y - CELL_SIZE // 2) // CELL_SIZE == index.y
+          return true
+        end
+        if (c.y + CELL_SIZE // 2 - 1) // CELL_SIZE == index.y
+          return true
+        end
+      elif (c.y - CELL_SIZE // 2) % CELL_SIZE == 0
+        if c.y // CELL_SIZE != index.y
+          next
+        end
+        if (c.x - CELL_SIZE // 2) // CELL_SIZE == index.x
+          return true
+        end
+        if (c.x + CELL_SIZE // 2 - 1) // CELL_SIZE == index.x
+          return true
+        end
+      end
+    end
+    return false
+  end
+
   def move_char(char, direction, len)
     direction = char.direction
     if direction == 'north
@@ -123,21 +163,7 @@ class Controller > yogame.Controller
 
   def move_right()
     pc = self.pc
-    direction = pc.direction
-    if direction == 'north
-      x = pc.x + CELL_SIZE
-      y = pc.y
-    elif direction == 'east
-      x = pc.x
-      y = pc.y + CELL_SIZE
-    elif direction == 'west
-      x = pc.x
-      y = pc.y - CELL_SIZE
-    else
-      x = pc.x - CELL_SIZE
-      y = pc.y
-    end
-    if self.wall?(x, y)
+    if !self.movable?(pc, TURN_RIGHT_TABLE[pc.direction])
       return
     end
 
@@ -152,21 +178,7 @@ class Controller > yogame.Controller
 
   def move_left()
     pc = self.pc
-    direction = pc.direction
-    if direction == 'north
-      x = pc.x - CELL_SIZE
-      y = pc.y
-    elif direction == 'east
-      x = pc.x
-      y = pc.y - CELL_SIZE
-    elif direction == 'west
-      x = pc.x
-      y = pc.y + CELL_SIZE
-    else
-      x = pc.x + CELL_SIZE
-      y = pc.y
-    end
-    if self.wall?(x, y)
+    if !self.movable?(pc, TURN_LEFT_TABLE[pc.direction])
       return
     end
 
@@ -181,21 +193,8 @@ class Controller > yogame.Controller
 
   def move_backword()
     pc = self.pc
-    direction = pc.direction
-    if direction == 'north
-      x = pc.x
-      y = pc.y + CELL_SIZE
-    elif direction == 'east
-      x = pc.x - CELL_SIZE
-      y = pc.y
-    elif direction == 'west
-      x = pc.x + CELL_SIZE
-      y = pc.y
-    else
-      x = pc.x
-      y = pc.y - CELL_SIZE
-    end
-    if self.wall?(x, y)
+    tbl = { 'north: 'south, 'east: 'west, 'west: 'east, 'south: 'north }
+    if !self.movable?(pc, tbl[pc.direction])
       return
     end
 
@@ -243,22 +242,7 @@ class Controller > yogame.Controller
         return
       end
     end
-
-    direction = pc.direction
-    if direction == 'north
-      x = pc.x
-      y = pc.y - CELL_SIZE
-    elif direction == 'east
-      x = pc.x + CELL_SIZE
-      y = pc.y
-    elif direction == 'west
-      x = pc.x - CELL_SIZE
-      y = pc.y
-    else
-      x = pc.x
-      y = pc.y + CELL_SIZE
-    end
-    if self.wall?(x, y)
+    if !self.movable?(pc, pc.direction)
       return
     end
 

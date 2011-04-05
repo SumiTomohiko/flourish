@@ -3,7 +3,7 @@ from flourish.char import NonPlayerCharacter
 from flourish.core import CELL_SIZE, Images
 from flourish.core.ctrl import TURN_RIGHT_TABLE
 
-images = Images.new("slime", ["walk0.png", "walk1.png"])
+images = Images.new("slime", ["walk0.png", "walk1.png", "walk2.png", "walk3.png", "walk4.png"])
 
 def allocate_resources()
   images.allocate()
@@ -45,7 +45,8 @@ class Slime > NonPlayerCharacter
     end
 
     CELL_SIZE.times() do [i]
-      self.img = images[[0, 1].include?(i % 4) ? "walk1.png" : "walk0.png"]
+      tbl = [2, 3, 3, 4, 3, 3, 2, 0, 0, 1, 0, 0]
+      self.img = images["walk{0}.png".format(tbl[i % tbl.size])]
       ctrl.move_char(self, self.direction, 1)
       Coroutine.yield()
     end

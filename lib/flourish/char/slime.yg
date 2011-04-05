@@ -3,7 +3,7 @@ from flourish.char import NonPlayerCharacter
 from flourish.core import CELL_SIZE, Images
 from flourish.core.ctrl import TURN_RIGHT_TABLE
 
-images = Images.new("slime", ["walk0.png", "walk1.png", "walk2.png", "walk3.png", "walk4.png"])
+images = Images.new("slime", ["attack0.png", "attack1.png", "attack2.png", "attack3.png", "attack4.png", "attack5.png", "attack6.png", "attack7.png", "attack8.png", "walk0.png", "walk1.png", "walk2.png", "walk3.png", "walk4.png"])
 
 def allocate_resources()
   images.allocate()
@@ -21,18 +21,17 @@ class Slime > NonPlayerCharacter
 
   def act(ctrl)
     if self.attackable?(ctrl.pc)
-      4.times() do [i]
-        Coroutine.yield()
-      end
-      4.times() do [i]
-        self.img = images[i % 2 == 0 ? "walk1.png" : "walk0.png"]
+      tbl = [0, 1, 2, 3, 4, 5, 4, 5]
+      tbl.each() do [n]
+        self.img = images["attack{0}.png".format(n)]
         Coroutine.yield()
       end
       if !self.attackable?(ctrl.pc)
         return
       end
       ctrl.attack_pc(self.strength)
-      4.times() do [i]
+      [6, 7, 8, 6, 7, 8].each() do [n]
+        self.img = images["attack{0}.png".format(n)]
         Coroutine.yield()
       end
       return

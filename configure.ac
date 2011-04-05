@@ -6,6 +6,7 @@ AC_INIT([flourish], [0.0.1], [SumiTomohiko@neko-daisuki.ddo.jp])
 AM_INIT_AUTOMAKE([dist-bzip2])
 
 # Checks for programs.
+AC_PROG_CC
 
 # Checks for libraries.
 
@@ -16,5 +17,7 @@ AM_INIT_AUTOMAKE([dist-bzip2])
 # Checks for library functions.
 
 AC_CONFIG_FILES([Makefile
-                 data/Makefile])
+                 data/Makefile
+                 data/pc/Makefile
+                 data/slime/Makefile])
 AC_OUTPUT

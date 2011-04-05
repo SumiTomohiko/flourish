@@ -1,0 +1,8 @@
+
+CLEANFILES = $(data_DATA)
+
+SUFFIXES = .xcf .png
+.xcf.png:
+	xcf2png $< > $@
+
+# vim: tabstop=8 shiftwidth=8 noexpandtab

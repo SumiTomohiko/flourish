@@ -1,6 +1,5 @@
 
-SUBDIRS = pc slime
-data_DATA = external.png floor.png mouse_area.png wall.png
+data_DATA = walk0.png walk1.png
 
 include $(top_srcdir)/data/Makefile.common
 

@@ -3,7 +3,7 @@ from yogame import init, run
 
 from flourish.char.pc import PlayerCharacter
 from flourish.char.slime import Slime
-from flourish.core import CELL_SIZE
+from flourish.core import CELL_SIZE, FPS
 from flourish.core.ctrl import Controller
 from flourish.core.view import View
 from flourish.stage import generate_map
@@ -43,7 +43,7 @@ def main(name="cave")
       try
         npc = make_npc(Slime)
         View.new(map, pc, npc, screen) do [view]
-          run(Controller.new(map, pc, npc), view, 24)
+          run(Controller.new(map, pc, npc), view, FPS)
         end
       finally
         flourish.char.slime.free_resources()

@@ -2,10 +2,7 @@
 from sdl import SDL_BUTTON, SDL_BUTTON_LEFT
 import yogame
 
-from flourish.core import CELL_SIZE, CHAR_POS_OFFSET_X, CHAR_POS_OFFSET_Y, MAIN_VIEW_PC_X, MAIN_VIEW_PC_Y, MAIN_VIEW_X, MAIN_VIEW_Y, Point, Rect
-
-VELOCITY = 2
-STEP_TO_MOVE = CELL_SIZE // VELOCITY
+from flourish.core import CELL_SIZE, CHAR_POS_OFFSET_X, CHAR_POS_OFFSET_Y, FPS, MAIN_VIEW_PC_X, MAIN_VIEW_PC_Y, MAIN_VIEW_X, MAIN_VIEW_Y, Point, Rect, TURN_LEFT_TABLE, TURN_RIGHT_TABLE
 
 class Rect2Act
   def init(rect, act)
@@ -13,11 +10,6 @@ class Rect2Act
     self.act = act
   end
 end
-
-TURN_RIGHT_TABLE = {
-  'north: 'east, 'east: 'south, 'south: 'west, 'west: 'north }
-TURN_LEFT_TABLE = {
-  'north: 'west, 'west: 'south, 'south: 'east, 'east: 'north }
 
 class Controller > yogame.Controller
   def init(map, pc, npc)
@@ -49,10 +41,10 @@ class Controller > yogame.Controller
     move_right_area = Rect.new(pc_cell_right_x, move_side_y)
 
     set_move_proc = self.set_move_proc
-    on_forward_area_pressed = partial(set_move_proc, self.move_forward)
-    on_backward_area_pressed = partial(set_move_proc, self.move_backword)
-    on_left_area_pressed = partial(set_move_proc, self.move_left)
-    on_right_area_pressed = partial(set_move_proc, self.move_right)
+    on_forward_area_pressed = set_move_proc.partial(self.move_forward)
+    on_backward_area_pressed = set_move_proc.partial(self.move_backward)
+    on_left_area_pressed = set_move_proc.partial(self.move_left)
+    on_right_area_pressed = set_move_proc.partial(self.move_right)
     self.rect2act = [
       Rect2Act.new(move_forward_area, on_forward_area_pressed),
       Rect2Act.new(turn_left_area, self.turn_left),
@@ -192,49 +184,15 @@ class Controller > yogame.Controller
   end
 
   def move_right()
-    pc = self.pc
-    if !self.movable?(pc, TURN_RIGHT_TABLE[pc.direction])
-      return
-    end
-
-    self.coroutine = Coroutine.new() do
-      STEP_TO_MOVE.times() do [i]
-        pc.move_right(VELOCITY)
-        Coroutine.yield()
-      end
-      self.check_goal()
-    end
+    self.coroutine = Coroutine.new(&self.pc.move_right.partial(self))
   end
 
   def move_left()
-    pc = self.pc
-    if !self.movable?(pc, TURN_LEFT_TABLE[pc.direction])
-      return
-    end
-
-    self.coroutine = Coroutine.new() do
-      STEP_TO_MOVE.times() do [i]
-        pc.move_left(VELOCITY)
-        Coroutine.yield()
-      end
-      self.check_goal()
-    end
+    self.coroutine = Coroutine.new(&self.pc.move_left.partial(self))
   end
 
-  def move_backword()
-    pc = self.pc
-    tbl = { 'north: 'south, 'east: 'west, 'west: 'east, 'south: 'north }
-    if !self.movable?(pc, tbl[pc.direction])
-      return
-    end
-
-    self.coroutine = Coroutine.new() do
-      STEP_TO_MOVE.times() do [i]
-        pc.move_backword(VELOCITY)
-        Coroutine.yield()
-      end
-      self.check_goal()
-    end
+  def move_backward()
+    self.coroutine = Coroutine.new(&self.pc.move_backward.partial(self))
   end
 
   def geometry?(x, y, expected)
@@ -269,17 +227,8 @@ class Controller > yogame.Controller
         return
       end
     end
-    if !self.movable?(pc, pc.direction)
-      return
-    end
 
-    self.coroutine = Coroutine.new() do
-      STEP_TO_MOVE.times() do [i]
-        pc.move_forward(VELOCITY)
-        Coroutine.yield()
-      end
-      self.check_goal()
-    end
+    self.coroutine = Coroutine.new(&pc.move_forward.partial(self))
   end
 
   def turn(tbl)

@@ -1,8 +1,8 @@
 
 from flourish.char import Character
-from flourish.core import Images
+from flourish.core import CELL_SIZE, Images, TURN_LEFT_TABLE, TURN_RIGHT_TABLE
 
-images = Images.new("pc", ["walk0.png", "walk1.png"])
+images = Images.new("pc", ["walk0.png", "walk1.png", "walk2.png", "walk3.png", "walk4.png", "walk5.png", "walk6.png", "walk7.png"])
 
 def allocate_resources()
   images.allocate()
@@ -12,76 +12,112 @@ def free_resources()
   images.free()
 end
 
+FRAMES_PER_CELL = 20
+PIXELS_PER_FRAME = CELL_SIZE // FRAMES_PER_CELL
+IMG_TBL = [1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 0, 0, 0, 0]
+
 class PlayerCharacter > Character
   def init(x, y, direction)
     super(32, 32, x, y, direction)
-    self.img_index = 0
+    self.switch_image(0)
   end
 
-  def get_img()
-    return images[self.img_index == 0 ? "walk0.png" : "walk1.png"]
-  end
-
-  img = property(get_img)
-
-  def move_right(len)
+  def move_right(ctrl)
     direction = self.direction
-    if direction == 'north
-      self.x += len
-    elif direction == 'east
-      self.y += len
-    elif direction == 'south
-      self.x -= len
-    else
-      self.y -= len
+    if !ctrl.movable?(self, TURN_RIGHT_TABLE[direction])
+      return
     end
-    self.switch_image()
+
+    FRAMES_PER_CELL.times() do [i]
+      if direction == 'north
+        self.x += PIXELS_PER_FRAME
+      elif direction == 'east
+        self.y += PIXELS_PER_FRAME
+      elif direction == 'south
+        self.x -= PIXELS_PER_FRAME
+      else
+        self.y -= PIXELS_PER_FRAME
+      end
+
+      self.switch_image(IMG_TBL[i])
+      Coroutine.yield()
+    end
+    ctrl.check_goal()
   end
 
-  def switch_image()
-    self.img_index = self.img_index == 0 ? 1 : 0
+  def switch_image(index)
+    self.img = images["walk{0}.png".format(index)]
   end
 
-  def move_left(len)
+  def move_left(ctrl)
     direction = self.direction
-    if direction == 'north
-      self.x -= len
-    elif direction == 'east
-      self.y -= len
-    elif direction == 'south
-      self.x += len
-    else
-      self.y += len
+    if !ctrl.movable?(self, TURN_LEFT_TABLE[direction])
+      return
     end
-    self.switch_image()
+
+    FRAMES_PER_CELL.times() do [i]
+      if direction == 'north
+        self.x -= PIXELS_PER_FRAME
+      elif direction == 'east
+        self.y -= PIXELS_PER_FRAME
+      elif direction == 'south
+        self.x += PIXELS_PER_FRAME
+      else
+        self.y += PIXELS_PER_FRAME
+      end
+
+      self.switch_image(IMG_TBL[i])
+      Coroutine.yield()
+    end
+    ctrl.check_goal()
   end
 
-  def move_backword(len)
+  def move_backward(len)
     direction = self.direction
-    if direction == 'north
-      self.y += len
-    elif direction == 'east
-      self.x -= len
-    elif direction == 'south
-      self.y -= len
-    else
-      self.x += len
+
+    tbl = { 'north: 'south, 'east: 'west, 'west: 'east, 'south: 'north }
+    if !ctrl.movable?(self, tbl[direction])
+      return
     end
-    self.switch_image()
+
+    FRAMES_PER_CELL.times() do [i]
+      if direction == 'north
+        self.y += PIXELS_PER_FRAME
+      elif direction == 'east
+        self.x -= PIXELS_PER_FRAME
+      elif direction == 'south
+        self.y -= PIXELS_PER_FRAME
+      else
+        self.x += PIXELS_PER_FRAME
+      end
+
+      self.switch_image(IMG_TBL[i])
+      Coroutine.yield()
+    end
+    ctrl.check_goal()
   end
 
-  def move_forward(len)
+  def move_forward(ctrl)
     direction = self.direction
-    if direction == 'north
-      self.y -= len
-    elif direction == 'east
-      self.x += len
-    elif direction == 'south
-      self.y += len
-    else
-      self.x -= len
+    if !ctrl.movable?(self, direction)
+      return
     end
-    self.switch_image()
+
+    FRAMES_PER_CELL.times() do [i]
+      if direction == 'north
+        self.y -= PIXELS_PER_FRAME
+      elif direction == 'east
+        self.x += PIXELS_PER_FRAME
+      elif direction == 'south
+        self.y += PIXELS_PER_FRAME
+      else
+        self.x -= PIXELS_PER_FRAME
+      end
+
+      self.switch_image(IMG_TBL[i])
+      Coroutine.yield()
+    end
+    ctrl.check_goal()
   end
 end
 

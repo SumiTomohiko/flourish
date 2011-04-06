@@ -2,6 +2,11 @@
 import sdl
 import yogame
 
+TURN_RIGHT_TABLE = {
+  'north: 'east, 'east: 'south, 'south: 'west, 'west: 'north }
+TURN_LEFT_TABLE = {
+  'north: 'west, 'west: 'south, 'south: 'east, 'east: 'north }
+
 def determine_data_dir()
   data_dir = __FILE__.dirname / ".." / ".." / "data"
   landmark = data_dir / "mouse_area.png"
@@ -30,6 +35,8 @@ MAIN_VIEW_WIDTH = 400
 MAIN_VIEW_HEIGHT = 400
 MAIN_VIEW_PC_X = MAIN_VIEW_WIDTH // 2
 MAIN_VIEW_PC_Y = MAIN_VIEW_HEIGHT - CELL_SIZE
+
+FPS = 24
 
 class Rect
   def init(x, y, width=CELL_SIZE, height=CELL_SIZE)

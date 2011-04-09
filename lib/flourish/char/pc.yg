@@ -103,15 +103,16 @@ class PlayerCharacter > Character
       return
     end
 
+  CORRECTION = [-2, -2, 3, 3, 4, 4, -1, -1, -4, -4, -2, -2, 3, 3, 4, 4, -1, -1, -4, -4]
     FRAMES_PER_CELL.times() do [i]
       if direction == 'north
-        self.y -= PIXELS_PER_FRAME
+        self.y -= PIXELS_PER_FRAME + CORRECTION[i]
       elif direction == 'east
-        self.x += PIXELS_PER_FRAME
+        self.x += PIXELS_PER_FRAME + CORRECTION[i]
       elif direction == 'south
-        self.y += PIXELS_PER_FRAME
+        self.y += PIXELS_PER_FRAME + CORRECTION[i]
       else
-        self.x -= PIXELS_PER_FRAME
+        self.x -= PIXELS_PER_FRAME + CORRECTION[i]
       end
 
       self.switch_image(IMG_TBL[i])

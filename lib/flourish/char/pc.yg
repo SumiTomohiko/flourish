@@ -2,7 +2,7 @@
 from flourish.char import Character
 from flourish.core import CELL_SIZE, Images, TURN_LEFT_TABLE, TURN_RIGHT_TABLE
 
-images = Images.new("pc", ["attack0.png", "attack1.png", "attack2.png", "attack3.png", "walk0.png", "walk1.png", "walk2.png", "walk3.png", "walk4.png", "walk5.png", "walk6.png", "walk7.png"])
+images = Images.new("pc", ["attack0.png", "attack1.png", "attack2.png", "attack3.png", "turn_left.png", "turn_right.png", "walk0.png", "walk1.png", "walk2.png", "walk3.png", "walk4.png", "walk5.png", "walk6.png", "walk7.png"])
 
 def allocate_resources()
   images.allocate()
@@ -127,6 +127,27 @@ class PlayerCharacter > Character
       Coroutine.yield()
     end
     ctrl.check_goal()
+  end
+
+  def wait(n)
+    n.times() do
+      Coroutine.yield()
+    end
+  end
+
+  def turn(img, tbl)
+    self.img = images[img]
+    self.wait(6)
+    self.direction = tbl[self.direction]
+    self.switch_image(0)
+  end
+
+  def turn_left()
+    self.turn("turn_left.png", TURN_LEFT_TABLE)
+  end
+
+  def turn_right()
+    self.turn("turn_right.png", TURN_RIGHT_TABLE)
   end
 end
 

@@ -2,7 +2,7 @@
 from sdl import SDL_BUTTON, SDL_BUTTON_LEFT
 import yogame
 
-from flourish.core import CELL_SIZE, CHAR_POS_OFFSET_X, CHAR_POS_OFFSET_Y, FPS, MAIN_VIEW_PC_X, MAIN_VIEW_PC_Y, MAIN_VIEW_X, MAIN_VIEW_Y, Point, Rect, TURN_LEFT_TABLE, TURN_RIGHT_TABLE
+from flourish.core import CELL_SIZE, CHAR_POS_OFFSET_X, CHAR_POS_OFFSET_Y, FPS, MAIN_VIEW_PC_X, MAIN_VIEW_PC_Y, MAIN_VIEW_X, MAIN_VIEW_Y, Point, Rect
 
 class Rect2Act
   def init(rect, act)
@@ -232,20 +232,19 @@ class Controller > yogame.Controller
     self.coroutine = Coroutine.new(&pc.move_forward.partial(self))
   end
 
-  def turn(tbl)
+  def turn(f)
     if self.coroutine != nil
       return
     end
-    pc = self.pc
-    pc.direction = tbl[pc.direction]
+    self.coroutine = Coroutine.new(&f)
   end
 
   def turn_right()
-    return self.turn(TURN_RIGHT_TABLE)
+    return self.turn(self.pc.turn_right)
   end
 
   def turn_left()
-    return self.turn(TURN_LEFT_TABLE)
+    return self.turn(self.pc.turn_left)
   end
 
   def on_left_button_pressed(x, y)

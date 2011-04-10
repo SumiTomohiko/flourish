@@ -217,13 +217,14 @@ class Controller > yogame.Controller
 
   def attack_npc(char)
     char.life -= self.pc.strength
+    self.coroutine = nil
   end
 
   def move_forward()
     pc = self.pc
     self.npc.each() do [char]
       if pc.attackable?(char) && (0 < char.life)
-        self.attack_npc(char)
+        self.coroutine = Coroutine.new(&pc.attack.partial(self, char))
         return
       end
     end

@@ -2,7 +2,7 @@
 from flourish.char import Character
 from flourish.core import CELL_SIZE, Images, TURN_LEFT_TABLE, TURN_RIGHT_TABLE
 
-images = Images.new("pc", ["walk0.png", "walk1.png", "walk2.png", "walk3.png", "walk4.png", "walk5.png", "walk6.png", "walk7.png"])
+images = Images.new("pc", ["attack0.png", "attack1.png", "attack2.png", "attack3.png", "walk0.png", "walk1.png", "walk2.png", "walk3.png", "walk4.png", "walk5.png", "walk6.png", "walk7.png"])
 
 def allocate_resources()
   images.allocate()
@@ -95,6 +95,14 @@ class PlayerCharacter > Character
       Coroutine.yield()
     end
     ctrl.check_goal()
+  end
+
+  def attack(ctrl, char)
+    [2, 2, 1, 1, 0, 0, 0, 1, 2, 3, 3].each() do [index]
+      self.img = images["attack{0}.png".format(index)]
+      Coroutine.yield()
+    end
+    ctrl.attack_npc(char)
   end
 
   def move_forward(ctrl)

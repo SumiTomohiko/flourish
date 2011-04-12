@@ -19,6 +19,9 @@ class Character
     end
     return false
   end
+
+  def die()
+  end
 end
 
 class NonPlayerCharacter > Character

@@ -1,5 +1,6 @@
 
 import sdl
+import sdl.mixer
 import yogame
 
 TURN_RIGHT_TABLE = {
@@ -23,6 +24,12 @@ DATA_DIR = determine_data_dir()
 
 def load_image(name)
   return yogame.load_image(DATA_DIR / name)
+end
+
+def play_sound(chunk)
+  if sdl.mixer.Mix_PlayChannel(-1, chunk, 0) == -1
+    raise yogame.SdlError.new("Mix_PlayChannel failed")
+  end
 end
 
 CELL_SIZE = 80
@@ -84,29 +91,61 @@ class Point
   end
 end
 
-class Images
+class Resources
   def init(dir, names)
     self.dir = dir
     self.names = names
     self.map = nil
   end
 
+  def allocate_resource(path)
+    raise NotImplementedError.new()
+  end
+
+  def free_resource(rsc)
+    raise NotImplementedError.new()
+  end
+
   def allocate()
     self.map = {}
     self.names.each() do [name]
-      self.map[name] = load_image(self.dir / name)
+      self.map[name] = self.allocate_resource(self.dir / name)
     end
   end
 
   def free()
     self.map.each() do [key, value]
-      sdl.SDL_FreeSurface(value)
+      self.free_resource(value)
     end
     self.map = nil
   end
 
   def [](name)
     return self.map[name]
+  end
+end
+
+class Images > Resources
+  def allocate_resource(path)
+    return load_image(path)
+  end
+
+  def free_resource(rsc)
+    sdl.SDL_FreeSurface(rsc)
+  end
+end
+
+class Sounds > Resources
+  def allocate_resource(path)
+    if (chunk = sdl.mixer.Mix_LoadWAV(DATA_DIR / path)) == nil
+      msg = "Mix_LoadWAV for {0} failed".format(DATA_DIR / path)
+      raise yogame.SdlError.new(msg)
+    end
+    return chunk
+  end
+
+  def free_resource(rsc)
+    sdl.mixer.Mix_FreeChunk(rsc)
   end
 end
 

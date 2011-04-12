@@ -31,7 +31,7 @@ def make_npc(npc)
 end
 
 def main(name="cave")
-  init(640, 480, 32, "Flourish", 16) do [screen]
+  init(640, 480, 32, "Flourish", 32) do [screen]
     flourish.char.pc.allocate_resources()
     try
       stage = get_stage(name)

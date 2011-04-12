@@ -217,6 +217,9 @@ class Controller > yogame.Controller
 
   def attack_npc(char)
     char.life -= self.pc.strength
+    if char.life <= 0
+      char.die()
+    end
     self.coroutine = nil
   end
 

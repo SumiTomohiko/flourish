@@ -1,0 +1,25 @@
+
+Copyright Information for Files under "data" Directory
+======================================================
+
+* pc/attack.wav
+  * Mike Koening
+  * Attribution 3.0
+  * http://soundbible.com/993-Upper-Cut.html
+
+* pc/die.wav
+  * Mike Koening
+  * Attribution 3.0
+  * http://soundbible.com/1042-Zombie-Long-Death.html
+
+* slime/attack.wav
+  * Mike Koening
+  * Attribution 3.0
+  * http://soundbible.com/995-Jab.html
+
+* slime/die.wav 
+  * Mike Koening
+  * Attribution 3.0
+  * http://soundbible.com/1097-Slime-Splash.html
+
+;; vim: filetype=rst tabstop=2 shiftwidth=2 expandtab softtabstop=2

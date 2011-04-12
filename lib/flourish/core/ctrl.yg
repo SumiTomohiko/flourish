@@ -139,7 +139,13 @@ class Controller > yogame.Controller
   end
 
   def attack_pc(strength)
+    if self.pc.life <= 0
+      return
+    end
     self.pc.life -= strength
+    if self.pc.life <= 0
+      self.pc.die()
+    end
   end
 
   def make_coroutines()

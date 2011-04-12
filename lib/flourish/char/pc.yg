@@ -4,7 +4,7 @@ from flourish.core import CELL_SIZE, Images, Sounds, TURN_LEFT_TABLE, TURN_RIGHT
 
 DIR = "pc"
 images = Images.new(DIR, ["attack0.png", "attack1.png", "attack2.png", "attack3.png", "turn_left.png", "turn_right.png", "walk0.png", "walk1.png", "walk2.png", "walk3.png", "walk4.png", "walk5.png", "walk6.png", "walk7.png"])
-sounds = Sounds.new(DIR, ["attack.wav"])
+sounds = Sounds.new(DIR, ["attack.wav", "die.wav"])
 
 def allocate_resources()
   images.allocate()
@@ -153,6 +153,10 @@ class PlayerCharacter > Character
 
   def turn_right()
     self.turn("turn_right.png", TURN_RIGHT_TABLE)
+  end
+
+  def die()
+    play_sound(sounds["die.wav"])
   end
 end
 

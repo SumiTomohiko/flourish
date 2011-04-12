@@ -1,5 +1,5 @@
 
-MAP_SIZE = 32
+from flourish.core import MAP_SIZE
 
 def generate_map(data)
   map_func = { "w": 'wall, "g": 'goal, " ": nil }.[]

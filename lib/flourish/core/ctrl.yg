@@ -1,8 +1,9 @@
 
+from random import random
 from sdl import SDL_BUTTON, SDL_BUTTON_LEFT
 import yogame
 
-from flourish.core import CELL_SIZE, CHAR_POS_OFFSET_X, CHAR_POS_OFFSET_Y, FPS, MAIN_VIEW_PC_X, MAIN_VIEW_PC_Y, MAIN_VIEW_X, MAIN_VIEW_Y, Point, Rect
+from flourish.core import CELL_SIZE, CHAR_POS_OFFSET_X, CHAR_POS_OFFSET_Y, FPS, MAIN_VIEW_PC_X, MAIN_VIEW_PC_Y, MAIN_VIEW_X, MAIN_VIEW_Y, MAP_SIZE, Point, Rect
 
 class Rect2Act
   def init(rect, act)
@@ -132,10 +133,17 @@ class Controller > yogame.Controller
     return pos
   end
 
-  def place_npc(obj)
-    # FIXME: place NPC randomly
-    obj.x = self.pc.x
-    obj.y = self.pc.y
+  def place_npc(char)
+    rand = random.partial(MAP_SIZE - 2, 1)
+    x = rand() * CELL_SIZE + CELL_SIZE // 2
+    y = rand() * CELL_SIZE + CELL_SIZE // 2
+    pos = Point.new(x, y)
+    if !self.geometry?(x, y, nil) && self.conflict?(char, pos)
+      return self.place_npc(char)
+    end
+
+    char.x = x
+    char.y = y
   end
 
   def attack_pc(strength)

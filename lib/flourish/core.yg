@@ -3,6 +3,8 @@ import sdl
 import sdl.mixer
 import yogame
 
+MAP_SIZE = 32
+
 TURN_RIGHT_TABLE = {
   'north: 'east, 'east: 'south, 'south: 'west, 'west: 'north }
 TURN_LEFT_TABLE = {

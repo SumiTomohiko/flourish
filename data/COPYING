@@ -22,4 +22,4 @@ Copyright Information for Files under "data" Directory
   * Attribution 3.0
   * http://soundbible.com/1097-Slime-Splash.html
 
-;; vim: filetype=rst tabstop=2 shiftwidth=2 expandtab softtabstop=2
+.. vim: filetype=rst tabstop=2 shiftwidth=2 expandtab softtabstop=2

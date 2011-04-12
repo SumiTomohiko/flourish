@@ -28,6 +28,10 @@ class NonPlayerCharacter > Character
   def act(ctrl)
     raise NotImplementedError.new()
   end
+
+  def regenerate()
+    raise NotImplementedError.new()
+  end
 end
 
 # vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

@@ -17,10 +17,16 @@ def free_resources()
   images.free()
 end
 
+LIFE_MAX = 4
+
 class Slime > NonPlayerCharacter
   def init()
-    super(4, 4)
+    super(LIFE_MAX, 4)
     self.img = images["walk0.png"]
+  end
+
+  def regenerate()
+    self.life = LIFE_MAX
   end
 
   def die()

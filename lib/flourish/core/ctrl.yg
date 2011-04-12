@@ -156,19 +156,20 @@ class Controller > yogame.Controller
     end
   end
 
-  def make_coroutines()
-    return Array.new(self.npc.size) do [i]
-      next Coroutine.new() do
-        loop() do
-          char = self.npc[i]
-          if 0 < char.life
-            char.act(self)
-            next
-          end
-          Coroutine.yield()
+  def make_coroutine(char)
+    return Coroutine.new() do
+      loop() do
+        if 0 < char.life
+          char.act(self)
+          next
         end
+        Coroutine.yield()
       end
     end
+  end
+
+  def make_coroutines()
+    return self.npc.map(&self.make_coroutine)
   end
 
   def remove_dead_coroutine()
@@ -229,10 +230,28 @@ class Controller > yogame.Controller
     puts("Conglaturation!")
   end
 
+  def find_npc(char)
+    # TODO: Implement Array#find.
+    self.npc.each_with_index() do [i, c]
+      if char == c
+        return i
+      end
+    end
+    # TODO: Change to better exception class.
+    raise Exception.new("NPC not found")
+  end
+
+  def kill_npc(char)
+    char.die()
+    char.regenerate()
+    self.place_npc(char)
+    self.coroutines[self.find_npc(char)] = self.make_coroutine(char)
+  end
+
   def attack_npc(char)
     char.life -= self.pc.strength
     if char.life <= 0
-      char.die()
+      self.kill_npc(char)
     end
     self.coroutine = nil
   end

@@ -1,14 +1,18 @@
 
 from flourish.char import Character
-from flourish.core import CELL_SIZE, Images, TURN_LEFT_TABLE, TURN_RIGHT_TABLE
+from flourish.core import CELL_SIZE, Images, Sounds, TURN_LEFT_TABLE, TURN_RIGHT_TABLE, play_sound
 
-images = Images.new("pc", ["attack0.png", "attack1.png", "attack2.png", "attack3.png", "turn_left.png", "turn_right.png", "walk0.png", "walk1.png", "walk2.png", "walk3.png", "walk4.png", "walk5.png", "walk6.png", "walk7.png"])
+DIR = "pc"
+images = Images.new(DIR, ["attack0.png", "attack1.png", "attack2.png", "attack3.png", "turn_left.png", "turn_right.png", "walk0.png", "walk1.png", "walk2.png", "walk3.png", "walk4.png", "walk5.png", "walk6.png", "walk7.png"])
+sounds = Sounds.new(DIR, ["attack.wav"])
 
 def allocate_resources()
   images.allocate()
+  sounds.allocate()
 end
 
 def free_resources()
+  sounds.free()
   images.free()
 end
 
@@ -102,6 +106,7 @@ class PlayerCharacter > Character
       self.img = images["attack{0}.png".format(index)]
       Coroutine.yield()
     end
+    play_sound(sounds["attack.wav"])
     ctrl.attack_npc(char)
   end
 

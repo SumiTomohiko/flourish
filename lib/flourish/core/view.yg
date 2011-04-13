@@ -69,7 +69,7 @@ class DrawData
     self.init_vertically(index)
     point = Point.new()
     dst.y.to(MAIN_VIEW_HEIGHT + 2 * CELL_SIZE, CELL_SIZE) do [y]
-      bottom? = MAIN_VIEW_HEIGHT + CELL_SIZE < y
+      bottom? = MAIN_VIEW_HEIGHT < y
       self.init_horizontally(index)
       point.y = y
       dst.x.to(MAIN_VIEW_WIDTH, CELL_SIZE) do [x]
@@ -511,6 +511,7 @@ class View
       self.draw_floor(g, dst, geometry)
       return
     end
+    # TODO: Insert assert statement to assert that g is 'wall.
     if geometry == nil
       self.draw_wall(dst)
       self.draw_ceils(dst, index)

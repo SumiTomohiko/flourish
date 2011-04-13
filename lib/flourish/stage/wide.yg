@@ -4,7 +4,7 @@ import flourish.stage
 
 class Stage > flourish.stage.Stage
   def init(&block)
-    super(<<EOF, 16, 16, 'north)
+    super(<<EOF, 16, 16, 'south)
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
@@ -20,9 +20,9 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwww   wwwwwwwwwwwwww
-wwwwwwwwwwwwwww   wwwwwwwwwwwwww
-wwwwwwwwwwwwwww   wwwwwwwwwwwwww
+wwwwwwwww              wwwwwwwww
+wwwwwwwww              wwwwwwwww
+wwwwwwwww              wwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww

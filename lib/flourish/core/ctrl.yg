@@ -135,10 +135,10 @@ class Controller > yogame.Controller
 
   def place_npc(char)
     rand = random.partial(MAP_SIZE - 2, 1)
-    x = rand() * CELL_SIZE + CELL_SIZE // 2
-    y = rand() * CELL_SIZE + CELL_SIZE // 2
+    x = rand() * CELL_SIZE + CHAR_POS_OFFSET_X
+    y = rand() * CELL_SIZE + CHAR_POS_OFFSET_Y
     pos = Point.new(x, y)
-    if !self.geometry?(x, y, nil) && self.conflict?(char, pos)
+    if !self.geometry?(x, y, nil) || self.conflict?(char, pos)
       return self.place_npc(char)
     end
 

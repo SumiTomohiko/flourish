@@ -72,7 +72,7 @@ class DrawData
       bottom? = MAIN_VIEW_HEIGHT < y
       self.init_horizontally(index)
       point.y = y
-      dst.x.to(MAIN_VIEW_WIDTH, CELL_SIZE) do [x]
+      dst.x.to(MAIN_VIEW_WIDTH + CELL_SIZE, CELL_SIZE) do [x]
         point.x = x
         block(point, index, self.get_index_of_neighbor(index), bottom?)
         self.move_horizontally(index)
@@ -328,7 +328,7 @@ class View
   end
 
   def cut_srcrect_x(srcrect, src, dst)
-    if dst.x < -src.w
+    if (dst.x < -src.w) || (MAIN_VIEW_WIDTH < dst.x)
       srcrect.w = 0
       return
     end

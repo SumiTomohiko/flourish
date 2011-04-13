@@ -76,7 +76,7 @@ class PlayerCharacter > Character
     ctrl.check_goal()
   end
 
-  def move_backward(len)
+  def move_backward(ctrl)
     direction = self.direction
 
     tbl = { 'north: 'south, 'east: 'west, 'west: 'east, 'south: 'north }

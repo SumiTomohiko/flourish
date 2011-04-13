@@ -328,6 +328,10 @@ class View
   end
 
   def cut_srcrect_x(srcrect, src, dst)
+    if dst.x < -src.w
+      srcrect.w = 0
+      return
+    end
     if dst.x < 0
       srcrect.x = -dst.x
       srcrect.w = src.w - srcrect.x

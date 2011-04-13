@@ -2,51 +2,34 @@
 from yogame import init, run
 
 from flourish.char.pc import PlayerCharacter
-from flourish.char.slime import Slime
 from flourish.core import CELL_SIZE, FPS
 from flourish.core.ctrl import Controller
 from flourish.core.view import View
 from flourish.stage import generate_map
 import flourish.char.pc
-import flourish.char.slime
-import flourish.stage.cave
-import flourish.stage.simple
 
 def index2pos(pos)
   return CELL_SIZE * pos + CELL_SIZE // 2
 end
 
-def get_stage(stage)
-  if stage == "simple"
-    return flourish.stage.simple.Stage.new()
-  end
-  return flourish.stage.cave.Stage.new()
-end
-
-def make_npc(npc)
-  MAX_NPC = 16
-  return Array.new(MAX_NPC) do
-    next npc.new()
-  end
+def create_stage(stage, &block)
+  flourish = import_package("flourish.stage.{0}".format(stage))
+  flourish.stage.get_attr(stage).Stage.new(&block)
 end
 
 def main(name="cave")
   init(640, 480, 32, "Flourish", 32) do [screen]
     flourish.char.pc.allocate_resources()
     try
-      stage = get_stage(name)
-      map = generate_map(stage.map)
-      x = index2pos(stage.x)
-      y = index2pos(stage.y)
-      pc = PlayerCharacter.new(x, y, stage.direction)
-      flourish.char.slime.allocate_resources()
-      try
-        npc = make_npc(Slime)
+      create_stage(name) do [stage]
+        map = generate_map(stage.map)
+        x = index2pos(stage.x)
+        y = index2pos(stage.y)
+        pc = PlayerCharacter.new(x, y, stage.direction)
+        npc = stage.make_npc()
         View.new(map, pc, npc, screen) do [view]
           run(Controller.new(map, pc, npc), view, FPS)
         end
-      finally
-        flourish.char.slime.free_resources()
       end
     finally
       flourish.char.pc.free_resources()

@@ -1,8 +1,9 @@
 
+from flourish.char.slime import Slime, allocate_resources, free_resources
 import flourish.stage
 
 class Stage > flourish.stage.Stage
-  def init()
+  def init(&block)
     super(<<EOF, 13, 28, 'north)
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwgw
 w    w w w w w w w w w w w w w w
@@ -37,6 +38,19 @@ w  ww   ww wwwwww w  w  w w  w w
 w     w      ww     w         ww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 EOF
+
+    flourish.char.slime.allocate_resources()
+    try
+      block(self)
+    finally
+      flourish.char.slime.free_resources()
+    end
+  end
+
+  def make_npc()
+    return Array.new(16) do
+      next Slime.new()
+    end
   end
 end
 

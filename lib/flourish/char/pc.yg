@@ -116,7 +116,7 @@ class PlayerCharacter > Character
       return
     end
 
-  CORRECTION = [-2, -2, 3, 3, 4, 4, -1, -1, -4, -4, -2, -2, 3, 3, 4, 4, -1, -1, -4, -4]
+    CORRECTION = [-2, -2, 3, 3, 4, 4, -1, -1, -4, -4, -2, -2, 3, 3, 4, 4, -1, -1, -4, -4]
     FRAMES_PER_CELL.times() do [i]
       if direction == 'north
         self.y -= PIXELS_PER_FRAME + CORRECTION[i]

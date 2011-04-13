@@ -22,11 +22,16 @@ LIFE_MAX = 4
 class Slime > NonPlayerCharacter
   def init()
     super(LIFE_MAX, 4)
+    self.reset_image()
+  end
+
+  def reset_image()
     self.img = images["walk0.png"]
   end
 
   def regenerate()
     self.life = LIFE_MAX
+    self.reset_image()
   end
 
   def die()

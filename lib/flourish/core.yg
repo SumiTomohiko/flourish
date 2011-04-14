@@ -1,6 +1,7 @@
 
 import sdl
 import sdl.mixer
+import sdl.ttf
 import yogame
 
 MAP_SIZE = 32
@@ -26,6 +27,13 @@ DATA_DIR = determine_data_dir()
 
 def load_image(name)
   return yogame.load_image(DATA_DIR / name)
+end
+
+def open_font(name, pt)
+  if (font = sdl.ttf.TTF_OpenFont(DATA_DIR / name, pt)) == nil
+    raise yogame.SdlError.new("TTF_OpenFont failed")
+  end
+  return font
 end
 
 def play_sound(chunk)

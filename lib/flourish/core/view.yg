@@ -1,7 +1,8 @@
 
 import sdl
+import sdl.ttf
 
-from flourish.core import CELL_SIZE, CHAR_POS_OFFSET_X, CHAR_POS_OFFSET_Y, MAIN_VIEW_HEIGHT, MAIN_VIEW_PC_X, MAIN_VIEW_PC_Y, MAIN_VIEW_WIDTH, MAIN_VIEW_X, MAIN_VIEW_Y, Point, load_image
+from flourish.core import CELL_SIZE, CHAR_POS_OFFSET_X, CHAR_POS_OFFSET_Y, MAIN_VIEW_HEIGHT, MAIN_VIEW_PC_X, MAIN_VIEW_PC_Y, MAIN_VIEW_WIDTH, MAIN_VIEW_X, MAIN_VIEW_Y, Point, load_image, open_font
 
 Delta = Point
 
@@ -235,13 +236,14 @@ class DrawDataSouth > DrawData
 end
 
 class View
-  def cleanup_images()
+  def cleanup()
     imgs = [
       self.mouse_area_img, self.wall_img, self.ceil_img, self.floor_img,
       self.external_img]
     imgs.select() do [img]
       next img != nil
     end.each(&sdl.SDL_FreeSurface)
+    sdl.ttf.TTF_CloseFont(self.font)
   end
 
   def init(map, pc, npc, screen, &block)
@@ -255,12 +257,14 @@ class View
     self.floor_img = nil
     self.mouse_area_img = nil
     self.external_img = nil
+    self.font = nil
     try
       self.wall_img = load_image("wall.png".to_path())
       self.ceil_img = load_image("ceil.png".to_path())
       self.floor_img = load_image("floor.png".to_path())
       self.mouse_area_img = load_image("mouse_area.png".to_path())
       self.external_img = load_image("external.png".to_path())
+      self.font = open_font("OpenBaskerville-0.0.53.otf", 24)
 
       self.draw_data = {
         'north: DrawDataNorth, 'east: DrawDataEast, 'west: DrawDataWest,
@@ -269,7 +273,7 @@ class View
 
       block(self)
     finally
-      self.cleanup_images()
+      self.cleanup()
     end
   end
 
@@ -584,12 +588,42 @@ class View
     self.blit_surface(self.mouse_area_img, srcrect, dstrect)
   end
 
+  def make_color(r, g, b)
+    color = sdl.SDL_Color.new()
+    color.r = r
+    color.g = g
+    color.b = b
+    return color
+  end
+
+  def draw_text(txt, x, y)
+    WHITE = self.make_color(255, 255, 255)
+    surface = sdl.ttf.TTF_RenderText_Solid(self.font, txt, WHITE)
+    try
+      dstrect = sdl.SDL_Rect.new()
+      dstrect.x = x
+      dstrect.y = y
+      sdl.SDL_BlitSurface(surface, nil, self.screen, dstrect)
+      return x + surface.h
+    finally
+      sdl.SDL_FreeSurface(surface)
+    end
+  end
+
+  def draw_parameters()
+    X = 4
+    y = MAIN_VIEW_Y
+    y += self.draw_text("LIFE", X, y)
+    y += self.draw_text(self.pc.life.to_s(), X, y)
+  end
+
   def draw()
     self.cls()
 
     pc = self.pc
     self.draw_main_view(self.draw_data[pc.direction].new(pc))
     self.draw_mouse_area()
+    self.draw_parameters()
 
     if sdl.SDL_Flip(self.screen) != 0
       raise SdlError.new("SDL_Flip failed")

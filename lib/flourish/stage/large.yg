@@ -38,10 +38,12 @@ w                              w
 w                              w
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 EOF
+  end
 
+  def allocate_resources(&block)
     flourish.char.slime.allocate_resources()
     try
-      block(self)
+      block()
     finally
       flourish.char.slime.free_resources()
     end

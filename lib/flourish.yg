@@ -6,33 +6,39 @@ from flourish.core import CELL_SIZE, FPS
 from flourish.core.ctrl import Controller
 from flourish.core.view import View
 from flourish.stage import generate_map
+from flourish.transition import transit
 import flourish.char.pc
 
 def index2pos(pos)
   return CELL_SIZE * pos + CELL_SIZE // 2
 end
 
-def create_stage(stage, &block)
-  flourish = import_package("flourish.stage.{0}".format(stage))
-  flourish.stage.get_attr(stage).Stage.new(&block)
+def make_initial_stage(name)
+  flourish = import_package("flourish.stage.{0}".format(name))
+  return flourish.stage.get_attr(name).Stage.new()
+end
+
+def run_stage(stage, screen)
+  stage.allocate_resources() do
+    map = generate_map(stage.map)
+    x = index2pos(stage.x)
+    y = index2pos(stage.y)
+    pc = PlayerCharacter.new(x, y, stage.direction)
+    npc = stage.make_npc()
+    View.new(map, pc, npc, screen) do [view]
+      return run(Controller.new(map, pc, npc), view, FPS)
+    end
+  end
 end
 
 def main(name="cave")
   init(640, 480, 32, "Flourish", 32) do [screen]
-    flourish.char.pc.allocate_resources()
-    try
-      create_stage(name) do [stage]
-        map = generate_map(stage.map)
-        x = index2pos(stage.x)
-        y = index2pos(stage.y)
-        pc = PlayerCharacter.new(x, y, stage.direction)
-        npc = stage.make_npc()
-        View.new(map, pc, npc, screen) do [view]
-          run(Controller.new(map, pc, npc), view, FPS)
-        end
+    stage = make_initial_stage(name)
+    flourish.char.pc.allocate_resources() do
+      status = run_stage(stage, screen)
+      while (stage = transit(stage, status)) != nil
+        status = run_stage(stage, screen)
       end
-    finally
-      flourish.char.pc.free_resources()
     end
   end
 end

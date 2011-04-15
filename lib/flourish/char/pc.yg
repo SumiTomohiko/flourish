@@ -6,14 +6,15 @@ DIR = "pc"
 images = Images.new(DIR, ["attack0.png", "attack1.png", "attack2.png", "attack3.png", "turn_left.png", "turn_right.png", "walk0.png", "walk1.png", "walk2.png", "walk3.png", "walk4.png", "walk5.png", "walk6.png", "walk7.png"])
 sounds = Sounds.new(DIR, ["attack.wav", "die.wav"])
 
-def allocate_resources()
-  images.allocate()
-  sounds.allocate()
-end
-
-def free_resources()
-  sounds.free()
-  images.free()
+def allocate_resources(&block)
+  try
+    images.allocate()
+    sounds.allocate()
+    block()
+  finally
+    sounds.free()
+    images.free()
+  end
 end
 
 FRAMES_PER_CELL = 20

@@ -29,8 +29,9 @@ def load_image(name)
   return yogame.load_image(DATA_DIR / name)
 end
 
-def open_font(name, pt)
-  if (font = sdl.ttf.TTF_OpenFont(DATA_DIR / name, pt)) == nil
+def open_font(pt)
+  path = DATA_DIR / "OpenBaskerville-0.0.53.otf"
+  if (font = sdl.ttf.TTF_OpenFont(path, pt)) == nil
     raise yogame.SdlError.new("TTF_OpenFont failed")
   end
   return font

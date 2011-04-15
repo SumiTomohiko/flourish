@@ -264,7 +264,7 @@ class View
       self.floor_img = load_image("floor.png".to_path())
       self.mouse_area_img = load_image("mouse_area.png".to_path())
       self.external_img = load_image("external.png".to_path())
-      self.font = open_font("OpenBaskerville-0.0.53.otf", 24)
+      self.font = open_font(24)
 
       self.draw_data = {
         'north: DrawDataNorth, 'east: DrawDataEast, 'west: DrawDataWest,

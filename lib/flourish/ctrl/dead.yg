@@ -1,0 +1,14 @@
+
+import yogame
+
+class Controller > yogame.Controller
+  def init(models)
+    super()
+  end
+
+  def on_left_button_pressed(x, y)
+    self.exit('ok)
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

@@ -155,6 +155,7 @@ class Controller > yogame.Controller
     self.pc.life -= strength
     if self.pc.life <= 0
       self.pc.die()
+      self.exit('dead)
     end
   end
 

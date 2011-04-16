@@ -1,11 +1,19 @@
 
-from flourish.stage.cave import Stage
+import flourish.stage.cave
+import flourish.stage.dead
+import flourish.stage.title
 
 def transit(stage, status)
   if status == 'quit
     return nil
   end
-  return Stage.new()
+  if status == 'dead
+    return flourish.stage.dead.Stage.new()
+  end
+  if status == 'ok
+    return flourish.stage.title.Stage.new()
+  end
+  return flourish.stage.cave.Stage.new()
 end
 
 # vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

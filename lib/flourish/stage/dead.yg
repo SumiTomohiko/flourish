@@ -1,0 +1,12 @@
+
+from flourish.ctrl.dead import Controller
+from flourish.stage import MiscStage
+from flourish.view.dead import View
+
+class Stage > MiscStage
+  def init()
+    super(Controller, View)
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

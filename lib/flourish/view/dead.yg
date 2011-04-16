@@ -1,5 +1,5 @@
 
-from sdl import SDL_BlitSurface, SDL_CreateRGBSurface, SDL_CreateRGBSurfaceFrom, SDL_DisplayFormatAlpha, SDL_FillRect, SDL_FreeSurface, SDL_MapRGBA, SDL_Rect, SDL_SRCALPHA, SDL_SetAlpha
+from sdl import SDL_BlitSurface, SDL_CreateRGBSurface, SDL_CreateRGBSurfaceFrom, SDL_DisplayFormatAlpha, SDL_FillRect, SDL_FreeSurface, SDL_MapRGBA, SDL_Rect, SDL_SRCALPHA
 from sdl.ttf import TTF_RenderText_Solid
 import yogame
 
@@ -33,7 +33,6 @@ class View > yogame.View
 
       foreground = SDL_CreateRGBSurface(screen.flags, w, h, BPP, rmask, gmask, bmask, amask)
       try
-        SDL_SetAlpha(foreground, SDL_SRCALPHA, 128)
         self.foreground = SDL_DisplayFormatAlpha(foreground)
       finally
         SDL_FreeSurface(foreground)

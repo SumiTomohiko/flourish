@@ -26,11 +26,6 @@ def main(name)
     flourish.char.pc.allocate_resources() do
       pc = PlayerCharacter.new()
       stage = make_initial_stage(name || "title")
-      if name != nil
-        run_stage(stage, screen, pc)
-        return
-      end
-
       status = run_stage(stage, screen, pc)
       while (stage = transit(stage, status)) != nil
         status = run_stage(stage, screen, pc)

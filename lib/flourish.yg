@@ -2,7 +2,7 @@
 from yogame import init, run
 
 from flourish.char.pc import PlayerCharacter
-from flourish.core import FPS, SCREEN_HEIGHT, SCREEN_WIDTH
+from flourish.core import BPP, FPS, SCREEN_HEIGHT, SCREEN_WIDTH
 from flourish.transition import transit
 import flourish.char.pc
 
@@ -22,7 +22,7 @@ def run_stage(stage, screen, pc)
 end
 
 def main(name)
-  init(SCREEN_WIDTH, SCREEN_HEIGHT, 32, "Flourish", 32) do [screen]
+  init(SCREEN_WIDTH, SCREEN_HEIGHT, BPP, "Flourish", 32) do [screen]
     flourish.char.pc.allocate_resources() do
       pc = PlayerCharacter.new()
       stage = make_initial_stage(name || "title")

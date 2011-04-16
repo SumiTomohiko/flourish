@@ -1,28 +1,56 @@
 
-from sdl import SDL_FreeSurface, SDL_Rect
+from sdl import SDL_BlitSurface, SDL_CreateRGBSurface, SDL_CreateRGBSurfaceFrom, SDL_DisplayFormatAlpha, SDL_FillRect, SDL_FreeSurface, SDL_MapRGBA, SDL_Rect, SDL_SRCALPHA, SDL_SetAlpha
 from sdl.ttf import TTF_RenderText_Solid
 import yogame
 
-from flourish.core import close_font, make_color, open_font
+from flourish.core import BPP, close_font, make_color, open_font
 
+# FIXME: Share WHITE with any other packages.
 WHITE = make_color(255, 255, 255)
 
 class View > yogame.View
   def init(models, screen)
     super(screen)
     self.font = nil
+    self.background = nil
+    self.foreground = nil
   end
 
   def allocate_resources(&block)
-    self.font = open_font(32)
     try
+      self.font = open_font(32)
+
+      screen = self.screen
+      format = screen.format
+      w = screen.w
+      h = screen.h
+      rmask = format.Rmask
+      gmask = format.Gmask
+      bmask = format.Bmask
+      amask = format.Amask
+      self.background = SDL_CreateRGBSurface(screen.flags, w, h, BPP, rmask, gmask, bmask, amask)
+      SDL_BlitSurface(self.screen, nil, self.background, nil)
+
+      foreground = SDL_CreateRGBSurface(screen.flags, w, h, BPP, rmask, gmask, bmask, amask)
+      try
+        SDL_SetAlpha(foreground, SDL_SRCALPHA, 128)
+        self.foreground = SDL_DisplayFormatAlpha(foreground)
+      finally
+        SDL_FreeSurface(foreground)
+      end
+      color = SDL_MapRGBA(self.foreground.format, 255, 0, 0, 128)
+      SDL_FillRect(self.foreground, nil, color)
+
       block()
     finally
+      SDL_FreeSurface(self.foreground)
+      SDL_FreeSurface(self.background)
       close_font(self.font)
     end
   end
 
   def draw_text(txt, color=WHITE, &block)
+    # FIXME: This code came from flourish.view.View.
     surface = TTF_RenderText_Solid(self.font, txt, color)
     try
       self.blit_surface(surface, nil, block(surface))
@@ -32,6 +60,7 @@ class View > yogame.View
   end
 
   def draw_message()
+    # FIXME: This code came from flourish.view.View.
     self.draw_text("YOU ARE DEAD") do [surface]
       dstrect = SDL_Rect.new()
       dstrect.x = self.screen.w // 2 - surface.w // 2
@@ -41,6 +70,8 @@ class View > yogame.View
   end
 
   def draw()
+    self.blit_surface(self.background, nil, nil)
+    self.blit_surface(self.foreground, nil, nil)
     self.draw_message()
   end
 end

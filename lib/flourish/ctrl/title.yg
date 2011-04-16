@@ -1,0 +1,28 @@
+
+import yogame
+
+class Controller > yogame.Controller
+  def init(models)
+    super()
+    self.menu = models
+  end
+
+  def find_selected_item(x, y)
+    self.menu.items.each() do [item]
+      if item.rect.include?(x, y)
+        return item
+      end
+    end
+    return nil
+  end
+
+  def on_mousemotion(state, x, y, xrel, yrel)
+    self.menu.selected = self.find_selected_item(x, y)
+  end
+
+  def on_left_button_pressed(x, y)
+    self.exit(self.menu.selected.status)
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

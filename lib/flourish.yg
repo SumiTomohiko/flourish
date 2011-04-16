@@ -2,42 +2,38 @@
 from yogame import init, run
 
 from flourish.char.pc import PlayerCharacter
-from flourish.core import CELL_SIZE, FPS
-from flourish.core.ctrl import Controller
-from flourish.core.view import View
-from flourish.stage import generate_map
+from flourish.core import FPS, SCREEN_HEIGHT, SCREEN_WIDTH
 from flourish.transition import transit
 import flourish.char.pc
-
-def index2pos(pos)
-  return CELL_SIZE * pos + CELL_SIZE // 2
-end
 
 def make_initial_stage(name)
   flourish = import_package("flourish.stage.{0}".format(name))
   return flourish.stage.get_attr(name).Stage.new()
 end
 
-def run_stage(stage, screen)
+def run_stage(stage, screen, pc)
   stage.allocate_resources() do
-    map = generate_map(stage.map)
-    x = index2pos(stage.x)
-    y = index2pos(stage.y)
-    pc = PlayerCharacter.new(x, y, stage.direction)
-    npc = stage.make_npc()
-    View.new(map, pc, npc, screen) do [view]
-      return run(Controller.new(map, pc, npc), view, FPS)
+    models = stage.make_models(pc)
+    view = stage.view.new(models, screen)
+    view.allocate_resources() do
+      return run(stage.ctrl.new(models), view, FPS)
     end
   end
 end
 
-def main(name="cave")
-  init(640, 480, 32, "Flourish", 32) do [screen]
-    stage = make_initial_stage(name)
+def main(name)
+  init(SCREEN_WIDTH, SCREEN_HEIGHT, 32, "Flourish", 32) do [screen]
     flourish.char.pc.allocate_resources() do
-      status = run_stage(stage, screen)
+      pc = PlayerCharacter.new()
+      stage = make_initial_stage(name || "title")
+      if name != nil
+        run_stage(stage, screen, pc)
+        return
+      end
+
+      status = run_stage(stage, screen, pc)
       while (stage = transit(stage, status)) != nil
-        status = run_stage(stage, screen)
+        status = run_stage(stage, screen, pc)
       end
     end
   end

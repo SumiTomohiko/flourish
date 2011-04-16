@@ -13,10 +13,12 @@ class Rect2Act
 end
 
 class Controller > yogame.Controller
-  def init(map, pc, npc)
-    self.map = map
-    self.pc = pc
-    self.npc = npc
+  def init(models)
+    super()
+
+    self.map = models['map]
+    self.pc = models['pc]
+    self.npc = models['npc]
     self.npc.each(&self.place_npc)
 
     self.coroutine = nil

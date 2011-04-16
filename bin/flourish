@@ -3,14 +3,14 @@
 echo="/bin/echo"
 
 lib=""
-stage="cave"
+stage="nil"
 yog="yog-generational"
 
 while getopts l:s:y: opt
 do
     case ${opt} in
         l) lib=${OPTARG};;
-        s) stage=${OPTARG};;
+        s) stage="\"${OPTARG}\"";;
         y) yog=${OPTARG};;
         *)
             ${echo} "usage: $0 [-l lib] [-s stage] [-y yog]"
@@ -25,9 +25,9 @@ if [ ! -z "${lib}" ]; then
     opts="${opts} --lib-path=${lib}"
 fi
 
-exec "${yog}" --heap-size=5M --young-heap-size=4M ${opts} <<EOF
+exec "${yog}" --young-heap-size=4M ${opts} <<EOF
 from flourish import main
-main("${stage}")
+main(${stage})
 EOF
 
 # vim: tabstop=4 shiftwidth=4 expandtab softtabstop=4

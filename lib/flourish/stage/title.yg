@@ -1,0 +1,38 @@
+
+from flourish.core import Rect, SCREEN_WIDTH
+from flourish.ctrl.title import Controller
+from flourish.stage import MiscStage
+from flourish.view.title import TITLE_Y, View
+
+HEIGHT = 36
+WIDTH = SCREEN_WIDTH // 4
+X = (SCREEN_WIDTH - WIDTH) // 2
+
+class Item
+  def init(txt, order, status)
+    self.txt = txt
+    self.status = status
+
+    y = TITLE_Y + HEIGHT // 2 + (order + 1) * HEIGHT
+    self.rect = Rect.new(X, y, WIDTH, HEIGHT)
+  end
+end
+
+class Menu
+  def init()
+    self.selected = nil
+    self.items = [Item.new("Start", 0, 'start), Item.new("Quit", 1, 'quit)]
+  end
+end
+
+class Stage > MiscStage
+  def init()
+    super(Controller, View)
+  end
+
+  def make_models(_)
+    return Menu.new()
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

@@ -4,6 +4,9 @@ import sdl.mixer
 import sdl.ttf
 import yogame
 
+SCREEN_WIDTH = 640
+SCREEN_HEIGHT = 480
+
 MAP_SIZE = 32
 
 TURN_RIGHT_TABLE = {
@@ -35,6 +38,18 @@ def open_font(pt)
     raise yogame.SdlError.new("TTF_OpenFont failed")
   end
   return font
+end
+
+def close_font(font)
+  sdl.ttf.TTF_CloseFont(font)
+end
+
+def make_color(r, g, b)
+  color = sdl.SDL_Color.new()
+  color.r = r
+  color.g = g
+  color.b = b
+  return color
 end
 
 def play_sound(chunk)

@@ -1,8 +1,9 @@
 
 import sdl
 import sdl.ttf
+import yogame
 
-from flourish.core import CELL_SIZE, CHAR_POS_OFFSET_X, CHAR_POS_OFFSET_Y, MAIN_VIEW_HEIGHT, MAIN_VIEW_PC_X, MAIN_VIEW_PC_Y, MAIN_VIEW_WIDTH, MAIN_VIEW_X, MAIN_VIEW_Y, Point, load_image, open_font
+from flourish.core import CELL_SIZE, CHAR_POS_OFFSET_X, CHAR_POS_OFFSET_Y, MAIN_VIEW_HEIGHT, MAIN_VIEW_PC_X, MAIN_VIEW_PC_Y, MAIN_VIEW_WIDTH, MAIN_VIEW_X, MAIN_VIEW_Y, Point, close_font, load_image, make_color, open_font
 
 Delta = Point
 
@@ -235,22 +236,13 @@ class DrawDataSouth > DrawData
   end
 end
 
-class View
-  def cleanup()
-    imgs = [
-      self.mouse_area_img, self.wall_img, self.ceil_img, self.floor_img,
-      self.external_img]
-    imgs.select() do [img]
-      next img != nil
-    end.each(&sdl.SDL_FreeSurface)
-    sdl.ttf.TTF_CloseFont(self.font)
-  end
+class View > yogame.View
+  def init(models, screen)
+    super(screen)
 
-  def init(map, pc, npc, screen, &block)
-    self.map = map
-    self.pc = pc
-    self.npc = npc
-    self.screen = screen
+    self.map = models['map]
+    self.pc = models['pc]
+    self.npc = models['npc]
 
     self.wall_img = nil
     self.ceil_img = nil
@@ -258,6 +250,13 @@ class View
     self.mouse_area_img = nil
     self.external_img = nil
     self.font = nil
+    self.draw_data = {
+      'north: DrawDataNorth, 'east: DrawDataEast, 'west: DrawDataWest,
+      'south: DrawDataSouth }
+    self.geometry2img = nil
+  end
+
+  def allocate_resources(&block)
     try
       self.wall_img = load_image("wall.png".to_path())
       self.ceil_img = load_image("ceil.png".to_path())
@@ -277,6 +276,16 @@ class View
     end
   end
 
+  def cleanup()
+    imgs = [
+      self.mouse_area_img, self.wall_img, self.ceil_img, self.floor_img,
+      self.external_img]
+    imgs.select() do [img]
+      next img != nil
+    end.each(&sdl.SDL_FreeSurface)
+    close_font(self.font)
+  end
+
   def get_geometry(index)
     if (index.x < 0) || (index.y < 0)
       return 'external
@@ -290,18 +299,6 @@ class View
 
   def get_surface(geometry)
     return self.geometry2img.get(geometry, self.floor_img)
-  end
-
-  def blit_surface(src, srcrect, dstrect)
-    if sdl.SDL_BlitSurface(src, srcrect, self.screen, dstrect) != 0
-      raise SdlError.new("SDL_BlitSurface failed")
-    end
-  end
-
-  def cls()
-    if sdl.SDL_FillRect(self.screen, nil, 0) != 0
-      raise SdlError.new("SDL_FillRect failed")
-    end
   end
 
   def shrink_floor(rect)
@@ -588,22 +585,14 @@ class View
     self.blit_surface(self.mouse_area_img, srcrect, dstrect)
   end
 
-  def make_color(r, g, b)
-    color = sdl.SDL_Color.new()
-    color.r = r
-    color.g = g
-    color.b = b
-    return color
-  end
-
   def draw_text(txt, x, y)
-    WHITE = self.make_color(255, 255, 255)
+    WHITE = make_color(255, 255, 255)
     surface = sdl.ttf.TTF_RenderText_Solid(self.font, txt, WHITE)
     try
       dstrect = sdl.SDL_Rect.new()
       dstrect.x = x
       dstrect.y = y
-      sdl.SDL_BlitSurface(surface, nil, self.screen, dstrect)
+      self.blit_surface(surface, nil, dstrect)
       return x + surface.h
     finally
       sdl.SDL_FreeSurface(surface)
@@ -618,16 +607,10 @@ class View
   end
 
   def draw()
-    self.cls()
-
     pc = self.pc
     self.draw_main_view(self.draw_data[pc.direction].new(pc))
     self.draw_mouse_area()
     self.draw_parameters()
-
-    if sdl.SDL_Flip(self.screen) != 0
-      raise SdlError.new("SDL_Flip failed")
-    end
   end
 end
 

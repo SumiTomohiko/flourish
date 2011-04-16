@@ -1,23 +1,90 @@
 
-from flourish.core import MAP_SIZE
-
-def generate_map(data)
-  map_func = { "w": 'wall, "g": 'goal, " ": nil }.[]
-  lines = data.rtrim().split("\n")
-  if lines.size != MAP_SIZE
-    raise SyntaxError.new("Invalid Map height: {0}".format(lines.size))
-  end
-  return lines.map() do [line]
-    next (line + (MAP_SIZE - line.size) * " ").split("").map(&map_func)
-  end
-end
+from flourish.core import CELL_SIZE, MAP_SIZE
+from flourish.ctrl import Controller
+from flourish.view import View
 
 class Stage
-  def init(map, x, y, direction)
+  def init(map=nil, x=nil, y=nil, direction=nil, ctrl=Controller, view=View)
     self.map = map
     self.x = x
     self.y = y
     self.direction = direction
+    self.ctrl = ctrl
+    self.view = view
+  end
+
+  def allocate_resources(&block)
+    block()
+  end
+
+  def make_models(pc)
+    return nil
+  end
+end
+
+class GameStage > Stage
+  def init(map, x=nil, y=nil, direction=nil)
+    # FIXME: super() at here cannot call Stage#init.
+    #super(map, x, y, direction)
+    self.map = self.generate_map(map)
+    self.x = x
+    self.y = y
+    self.direction = direction
+    self.ctrl = Controller
+    self.view = View
+  end
+
+  def generate_map(data)
+    if data == nil
+      return nil
+    end
+
+    map_func = { "w": 'wall, "g": 'goal, " ": nil }.[]
+    lines = data.rtrim().split("\n")
+    if lines.size != MAP_SIZE
+      raise SyntaxError.new("Invalid Map height: {0}".format(lines.size))
+    end
+    return lines.map() do [line]
+      next (line + (MAP_SIZE - line.size) * " ").split("").map(&map_func)
+    end
+  end
+
+  def index2pos(pos)
+    return CELL_SIZE * pos + CELL_SIZE // 2
+  end
+
+  def update_pc(pc)
+    if self.x != nil
+      pc.x = self.index2pos(self.x)
+    end
+    if self.y != nil
+      pc.y = self.index2pos(self.y)
+    end
+    if self.direction != nil
+      pc.direction = self.direction
+    end
+  end
+
+  def make_models(pc)
+    self.update_pc(pc)
+    return { 'pc: pc, 'map: self.map, 'npc: self.make_npc() }
+  end
+
+  def make_npc()
+    raise NotImplementedError.new()
+  end
+end
+
+class MiscStage > Stage
+  def init(ctrl, view)
+    # FIXME: super() at here cannot call Stage#init.
+    #super(ctrl: ctrl, view: view)
+    self.map = nil
+    self.x = nil
+    self.y = nil
+    self.direction = nil
+    self.ctrl = ctrl
+    self.view = view
   end
 end
 

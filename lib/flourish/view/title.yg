@@ -1,0 +1,66 @@
+
+from sdl import SDL_FillRect, SDL_FreeSurface, SDL_Rect
+from sdl.ttf import TTF_RenderText_Solid
+from yogame import SdlError
+import yogame
+
+from flourish.core import SCREEN_HEIGHT, close_font, make_color, open_font
+
+TITLE_Y = SCREEN_HEIGHT // 3
+WHITE = make_color(255, 255, 255)
+SELECTED_COLOR = make_color(165, 42, 42)
+
+class View > yogame.View
+  def init(models, screen)
+    super(screen)
+
+    self.menu = models
+    self.font = nil
+  end
+
+  def allocate_resources(&block)
+    self.font = open_font(32)
+    try
+      block(self)
+    finally
+      close_font(self.font)
+    end
+  end
+
+  def draw_text(txt, color=WHITE, &block)
+    surface = TTF_RenderText_Solid(self.font, txt, color)
+    try
+      self.blit_surface(surface, nil, block(surface))
+    finally
+      SDL_FreeSurface(surface)
+    end
+  end
+
+  def draw_title()
+    self.draw_text("Flourish") do [surface]
+      dstrect = SDL_Rect.new()
+      dstrect.x = self.screen.w // 2 - surface.w // 2
+      dstrect.y = TITLE_Y
+      next dstrect
+    end
+  end
+
+  def draw_item(item)
+    color = self.menu.selected == item ? SELECTED_COLOR : WHITE
+
+    self.draw_text(item.txt, color) do [surface]
+      dstrect = SDL_Rect.new()
+      rect = item.rect
+      dstrect.x = rect.x + rect.width // 2 - surface.w // 2
+      dstrect.y = rect.y + rect.height // 2 - surface.h // 2
+      next dstrect
+    end
+  end
+
+  def draw()
+    self.draw_title()
+    self.menu.items.each(&self.draw_item)
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

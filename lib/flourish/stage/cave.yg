@@ -1,9 +1,9 @@
 
 from flourish.char.slime import Slime, allocate_resources, free_resources
-import flourish.stage
+from flourish.stage import GameStage
 
-class Stage > flourish.stage.Stage
-  def init(&block)
+class Stage > GameStage
+  def init()
     super(<<EOF, 13, 28, 'north)
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwgw
 w    w w w w w w w w w w w w w w
@@ -41,11 +41,11 @@ EOF
   end
 
   def allocate_resources(&block)
-    flourish.char.slime.allocate_resources()
+    allocate_resources()
     try
       block()
     finally
-      flourish.char.slime.free_resources()
+      free_resources()
     end
   end
 

@@ -230,7 +230,7 @@ class Controller > yogame.Controller
     if !self.goal?()
       return
     end
-    puts("Conglaturation!")
+    self.exit('goal)
   end
 
   def find_npc(char)

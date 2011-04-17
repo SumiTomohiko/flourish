@@ -71,7 +71,7 @@ class GameStage > Stage
   end
 
   def make_npc()
-    raise NotImplementedError.new()
+    return []
   end
 end
 

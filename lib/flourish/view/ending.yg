@@ -1,0 +1,44 @@
+
+from sdl import SDL_FreeSurface, SDL_Rect
+from sdl.ttf import TTF_RenderText_Solid
+import yogame
+
+from flourish.core import close_font, make_color, open_font
+
+WHITE = make_color(255, 255, 255)
+
+class View > yogame.View
+  def init(models, screen)
+    super(screen)
+    self.font = nil
+  end
+
+  def allocate_resources(&block)
+    self.font = open_font(32)
+    try
+      block()
+    finally
+      close_font(self.font)
+    end
+  end
+
+  def draw_text(txt, color=WHITE, &block)
+    surface = TTF_RenderText_Solid(self.font, txt, color)
+    try
+      self.blit_surface(surface, nil, block(surface))
+    finally
+      SDL_FreeSurface(surface)
+    end
+  end
+
+  def draw()
+    self.draw_text("Congratulations") do [surface]
+      dstrect = SDL_Rect.new()
+      dstrect.x = self.screen.w // 2 - surface.w // 2
+      dstrect.y = self.screen.h // 3
+      next dstrect
+    end
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

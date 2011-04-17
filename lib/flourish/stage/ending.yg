@@ -1,7 +1,7 @@
 
 from flourish.ctrl.wait import Controller
 from flourish.stage import MiscStage
-from flourish.view.dead import View
+from flourish.view.ending import View
 
 class Stage > MiscStage
   def init()

@@ -1,6 +1,7 @@
 
 import flourish.stage.cave
 import flourish.stage.dead
+import flourish.stage.ending
 import flourish.stage.title
 
 def transit(stage, status)
@@ -12,6 +13,9 @@ def transit(stage, status)
   end
   if status == 'ok
     return flourish.stage.title.Stage.new()
+  end
+  if status == 'goal
+    return flourish.stage.ending.Stage.new()
   end
   return flourish.stage.cave.Stage.new()
 end

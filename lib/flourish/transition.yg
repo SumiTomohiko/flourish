@@ -1,7 +1,7 @@
 
 import flourish.stage.cave
-import flourish.stage.dead
 import flourish.stage.ending
+import flourish.stage.gameover
 import flourish.stage.title
 
 def transit(stage, status)
@@ -9,7 +9,7 @@ def transit(stage, status)
     return nil
   end
   if status == 'dead
-    return flourish.stage.dead.Stage.new()
+    return flourish.stage.gameover.Stage.new()
   end
   if status == 'ok
     return flourish.stage.title.Stage.new()

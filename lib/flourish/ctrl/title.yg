@@ -21,7 +21,9 @@ class Controller > yogame.Controller
   end
 
   def on_left_button_pressed(x, y)
-    self.exit(self.menu.selected.status)
+    if (selected = self.menu.selected) != nil
+      self.exit(selected.status)
+    end
   end
 end
 

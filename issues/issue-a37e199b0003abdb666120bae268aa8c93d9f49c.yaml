@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: PC can attack NPCs which are on the right and left side.
+desc: ""
+type: :bugfix
+component: flourish
+release: 
+reporter: SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+status: :unstarted
+disposition: 
+creation_time: 2011-04-18 17:46:32.645730 Z
+references: []
+
+id: a37e199b0003abdb666120bae268aa8c93d9f49c
+log_events: 
+- - 2011-04-18 17:46:33.368260 Z
+  - SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+  - created
+  - ""

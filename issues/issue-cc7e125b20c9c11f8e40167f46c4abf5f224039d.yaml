@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Tune attack range of PC
+desc: ""
+type: :task
+component: flourish
+release: 
+reporter: SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+status: :unstarted
+disposition: 
+creation_time: 2011-04-18 17:46:56.288647 Z
+references: []
+
+id: cc7e125b20c9c11f8e40167f46c4abf5f224039d
+log_events: 
+- - 2011-04-18 17:46:56.670152 Z
+  - SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+  - created
+  - ""

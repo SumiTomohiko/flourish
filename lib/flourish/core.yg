@@ -54,9 +54,10 @@ def make_color(r, g, b)
 end
 
 def play_sound(chunk)
-  if sdl.mixer.Mix_PlayChannel(-1, chunk, 0) == -1
-    raise yogame.SdlError.new("Mix_PlayChannel failed")
+  if chunk == nil
+    return
   end
+  sdl.mixer.Mix_PlayChannel(-1, chunk, 0)
 end
 
 CELL_SIZE = 80
@@ -164,11 +165,7 @@ end
 
 class Sounds > Resources
   def allocate_resource(path)
-    if (chunk = sdl.mixer.Mix_LoadWAV(DATA_DIR / path)) == nil
-      msg = "Mix_LoadWAV for {0} failed".format(DATA_DIR / path)
-      raise yogame.SdlError.new(msg)
-    end
-    return chunk
+    return sdl.mixer.Mix_LoadWAV(DATA_DIR / path)
   end
 
   def free_resource(rsc)

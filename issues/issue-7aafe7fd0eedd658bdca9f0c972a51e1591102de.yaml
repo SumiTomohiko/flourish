@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Increase the experience when an NPC is dropped.
+desc: ""
+type: :task
+component: flourish
+release: 
+reporter: SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+status: :unstarted
+disposition: 
+creation_time: 2011-04-18 13:36:06.778548 Z
+references: []
+
+id: 7aafe7fd0eedd658bdca9f0c972a51e1591102de
+log_events: 
+- - 2011-04-18 13:36:07.388278 Z
+  - SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+  - created
+  - ""

@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Make NPC's moving move cleverer
+desc: ""
+type: :task
+component: flourish
+release: 
+reporter: SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+status: :unstarted
+disposition: 
+creation_time: 2011-04-18 13:37:30.557892 Z
+references: []
+
+id: 3cc19fad34ebaec731157e48f2ddce24d1b019e7
+log_events: 
+- - 2011-04-18 13:37:30.976387 Z
+  - SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+  - created
+  - ""

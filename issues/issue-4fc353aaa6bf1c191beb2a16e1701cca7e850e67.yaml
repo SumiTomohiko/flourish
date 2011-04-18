@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Make darkzone
+desc: First of all, flourish.run_stage must give resources (images) to views.
+type: :task
+component: flourish
+release: 
+reporter: SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+status: :unstarted
+disposition: 
+creation_time: 2011-04-18 13:42:17.017741 Z
+references: []
+
+id: 4fc353aaa6bf1c191beb2a16e1701cca7e850e67
+log_events: 
+- - 2011-04-18 13:42:17.663389 Z
+  - SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+  - created
+  - ""

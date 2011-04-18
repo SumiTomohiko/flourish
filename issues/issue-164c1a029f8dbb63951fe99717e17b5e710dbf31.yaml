@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Show PC's strength
+desc: ""
+type: :task
+component: flourish
+release: 
+reporter: SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+status: :unstarted
+disposition: 
+creation_time: 2011-04-18 13:33:25.427043 Z
+references: []
+
+id: 164c1a029f8dbb63951fe99717e17b5e710dbf31
+log_events: 
+- - 2011-04-18 13:33:27.993151 Z
+  - SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+  - created
+  - ""

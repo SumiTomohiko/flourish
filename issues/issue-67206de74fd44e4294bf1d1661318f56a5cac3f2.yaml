@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Show the experience
+desc: ""
+type: :task
+component: flourish
+release: 
+reporter: SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+status: :unstarted
+disposition: 
+creation_time: 2011-04-18 13:33:45.446220 Z
+references: []
+
+id: 67206de74fd44e4294bf1d1661318f56a5cac3f2
+log_events: 
+- - 2011-04-18 13:33:46.245910 Z
+  - SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+  - created
+  - ""
+- - 2011-04-18 13:36:23.778320 Z
+  - SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+  - edited title
+  - ""

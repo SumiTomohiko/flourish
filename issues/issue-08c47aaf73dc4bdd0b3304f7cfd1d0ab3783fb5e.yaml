@@ -1,0 +1,21 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Show the score in the ending
+desc: |-
+  1. Number of killed NPCs
+  2. Completeness rate of maps
+  3. How long time to goal
+type: :task
+component: flourish
+release: 
+reporter: SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+status: :unstarted
+disposition: 
+creation_time: 2011-04-18 13:41:07.452836 Z
+references: []
+
+id: 08c47aaf73dc4bdd0b3304f7cfd1d0ab3783fb5e
+log_events: 
+- - 2011-04-18 13:41:09.353561 Z
+  - SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+  - created
+  - ""

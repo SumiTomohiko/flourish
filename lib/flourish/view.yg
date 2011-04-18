@@ -4,6 +4,7 @@ import sdl.ttf
 import yogame
 
 from flourish.core import CELL_SIZE, CHAR_POS_OFFSET_X, CHAR_POS_OFFSET_Y, MAIN_VIEW_HEIGHT, MAIN_VIEW_PC_X, MAIN_VIEW_PC_Y, MAIN_VIEW_WIDTH, MAIN_VIEW_X, MAIN_VIEW_Y, Point, close_font, load_image, make_color, open_font
+from flourish.geometry import Goal
 
 Delta = Point
 
@@ -263,6 +264,8 @@ class View > yogame.View
       self.floor_img = load_image("floor.png".to_path())
       self.mouse_area_img = load_image("mouse_area.png".to_path())
       self.external_img = load_image("external.png".to_path())
+      self.goal_floor_img = load_image("goal-floor.png".to_path())
+      self.goal_pass_img = load_image("goal-pass.png".to_path())
       self.font = open_font(24)
 
       self.draw_data = {
@@ -298,6 +301,10 @@ class View > yogame.View
   end
 
   def get_surface(geometry)
+    # FIXME: class object cannot be a key of dictionaries?
+    if geometry.kind_of?(Goal)
+      return self.goal_floor_img
+    end
     return self.geometry2img.get(geometry, self.floor_img)
   end
 
@@ -369,8 +376,7 @@ class View > yogame.View
     self.blit_surface(src, srcrect, dstrect)
   end
 
-  def draw_wall(dst)
-    src = self.get_surface('wall)
+  def draw_wall(dst, src)
     srcrect = sdl.SDL_Rect.new()
     self.cut_surface(srcrect, src, dst)
     self.draw_surface(src, srcrect, dst)
@@ -509,6 +515,14 @@ class View > yogame.View
     return Point.new(x // CELL_SIZE, y // CELL_SIZE)
   end
 
+  def draw_goal(g, dst, neighbor)
+    self.draw_floor(g, dst, neighbor)
+    if g.direction != self.pc.direction
+      return
+    end
+    self.draw_wall(dst + Point.new(0, -CELL_SIZE), self.goal_pass_img)
+  end
+
   def draw_geometry(dst, index, neighbor, bottom?)
     geometry = self.get_geometry(neighbor)
     g = self.get_geometry(index)
@@ -516,9 +530,13 @@ class View > yogame.View
       self.draw_floor(g, dst, geometry)
       return
     end
+    if g.kind_of?(Goal)
+      self.draw_goal(g, dst, geometry)
+      return
+    end
     # TODO: Insert assert statement to assert that g is 'wall.
-    if geometry == nil
-      self.draw_wall(dst)
+    if (geometry == nil) || geometry.kind_of?(Goal)
+      self.draw_wall(dst, self.get_surface('wall))
       self.draw_ceils(dst, index)
       return
     end

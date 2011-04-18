@@ -1,6 +1,7 @@
 
-from flourish.core import CELL_SIZE, MAP_SIZE
+from flourish.core import CELL_SIZE, MAP_SIZE, Point
 from flourish.ctrl import Controller
+from flourish.geometry import Goal
 from flourish.view import View
 
 class Stage
@@ -34,19 +35,47 @@ class GameStage > Stage
     self.view = View
   end
 
+  def decide_goal_direction(index)
+    if index.x == 0
+      return 'west
+    end
+    if index.x == MAP_SIZE - 1
+      return 'east
+    end
+    if index.y == 0
+      return 'north
+    end
+    return 'south
+  end
+
+  def map_geometry(c, index)
+    try
+      return { "w": 'wall, " ": nil }[c]
+    except KeyError
+    end
+    # TODO: assert c == 'goal
+    return Goal.new(self.decide_goal_direction(index))
+  end
+
   def generate_map(data)
     if data == nil
       return nil
     end
 
-    map_func = { "w": 'wall, "g": 'goal, " ": nil }.[]
     lines = data.rtrim().split("\n")
     if lines.size != MAP_SIZE
       raise SyntaxError.new("Invalid Map height: {0}".format(lines.size))
     end
-    return lines.map() do [line]
-      next (line + (MAP_SIZE - line.size) * " ").split("").map(&map_func)
+    map = []
+    lines.each_with_index() do [y, s]
+      line = []
+      src = (s + (MAP_SIZE - s.size) * " ").split("")
+      src.each_with_index() do [x, c]
+        line << self.map_geometry(c, Point.new(x, y))
+      end
+      map << line
     end
+    return map
   end
 
   def index2pos(pos)

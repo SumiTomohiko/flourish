@@ -4,6 +4,7 @@ from sdl import SDL_BUTTON, SDL_BUTTON_LEFT
 import yogame
 
 from flourish.core import CELL_SIZE, CHAR_POS_OFFSET_X, CHAR_POS_OFFSET_Y, FPS, MAIN_VIEW_PC_X, MAIN_VIEW_PC_Y, MAIN_VIEW_X, MAIN_VIEW_Y, MAP_SIZE, Point, Rect
+from flourish.geometry import Goal
 
 class Rect2Act
   def init(rect, act)
@@ -223,7 +224,7 @@ class Controller > yogame.Controller
 
   def goal?()
     pc = self.pc
-    return self.geometry?(pc.x, pc.y, 'goal)
+    return self.map[pc.y // CELL_SIZE][pc.x // CELL_SIZE].kind_of?(Goal)
   end
 
   def check_goal()

@@ -10,6 +10,8 @@ core
 core.*
 data/external.png
 data/floor.png
+data/goal-floor.png
+data/goal-pass.png
 data/mouse_area.png
 data/pc/*.png
 data/slime/*.png

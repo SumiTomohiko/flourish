@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Slime movement is strange.
+desc: Slime must swing left and right. In certain timing, slimes move to left twice.
+type: :bugfix
+component: flourish
+release: 
+reporter: SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+status: :unstarted
+disposition: 
+creation_time: 2011-04-18 17:08:37.427411 Z
+references: []
+
+id: 0b699de12426026c319db59eb10a30d0b342ced7
+log_events: 
+- - 2011-04-18 17:08:38.035370 Z
+  - SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+  - created
+  - ""

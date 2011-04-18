@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Sound and damage after swinging of the axe
+desc: Sound and giving damage to NPC from PC is too late.
+type: :bugfix
+component: flourish
+release: 
+reporter: SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+status: :unstarted
+disposition: 
+creation_time: 2011-04-18 17:07:15.941697 Z
+references: []
+
+id: 278c3bef64ff083311ce49f56f66b4cecbfed02b
+log_events: 
+- - 2011-04-18 17:07:16.704002 Z
+  - SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+  - created
+  - ""

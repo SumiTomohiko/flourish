@@ -103,12 +103,18 @@ class PlayerCharacter > Character
   end
 
   def attack(ctrl, char)
-    [2, 2, 1, 1, 0, 0, 0, 1, 2, 3, 3].each() do [index]
+    [2, 2, 1, 1, 0, 0, 0].each() do [index]
       self.img = images["attack{0}.png".format(index)]
       Coroutine.yield()
     end
+
     play_sound(sounds["attack.wav"])
     ctrl.attack_npc(char)
+
+    [1, 2, 3, 3].each() do [index]
+      self.img = images["attack{0}.png".format(index)]
+      Coroutine.yield()
+    end
   end
 
   def move_forward(ctrl)

@@ -5,8 +5,8 @@ type: :bugfix
 component: flourish
 release: 
 reporter: SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-04-18 17:07:15.941697 Z
 references: []
 
@@ -15,4 +15,8 @@ log_events:
 - - 2011-04-18 17:07:16.704002 Z
   - SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
   - created
+  - ""
+- - 2011-04-19 12:22:37.354998 Z
+  - SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+  - closed with disposition fixed
   - ""

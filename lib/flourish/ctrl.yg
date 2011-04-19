@@ -257,7 +257,6 @@ class Controller > yogame.Controller
     if char.life <= 0
       self.kill_npc(char)
     end
-    self.coroutine = nil
   end
 
   def move_forward()

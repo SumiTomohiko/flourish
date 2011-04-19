@@ -1,0 +1,25 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Change the cursor
+desc: |-
+  * attackable
+  * moving backward
+  * moving forward
+  * moving left
+  * moving right
+  * turning left
+  * turning right
+type: :feature
+component: flourish
+release: 
+reporter: SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+status: :unstarted
+disposition: 
+creation_time: 2011-04-19 05:29:46.543293 Z
+references: []
+
+id: 5544b33ef54eadd6040a7d2f61038f6bd06245ea
+log_events: 
+- - 2011-04-19 05:29:47.757874 Z
+  - SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+  - created
+  - ""

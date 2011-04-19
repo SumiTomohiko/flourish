@@ -2,18 +2,20 @@
 
 echo="/bin/echo"
 
+imortal="false"
 lib=""
 stage="nil"
 yog="yog-generational"
 
-while getopts l:s:y: opt
+while getopts il:s:y: opt
 do
     case ${opt} in
+        i) imortal="true";;
         l) lib=${OPTARG};;
         s) stage="\"${OPTARG}\"";;
         y) yog=${OPTARG};;
         *)
-            ${echo} "usage: $0 [-l lib] [-s stage] [-y yog]"
+            ${echo} "usage: $0 [-i] [-l lib] [-s stage] [-y yog]"
             exit 1
             ;;
     esac
@@ -27,7 +29,7 @@ fi
 
 exec "${yog}" --young-heap-size=4M ${opts} <<EOF
 from flourish import main
-main(${stage})
+main(${stage}, ${imortal})
 EOF
 
 # vim: tabstop=4 shiftwidth=4 expandtab softtabstop=4

@@ -1,5 +1,5 @@
 
-from flourish.core import CELL_SIZE
+from flourish.core import CELL_SIZE, CHAR_POS_OFFSET_X, CHAR_POS_OFFSET_Y, Rect
 
 class Character
   def init(life, strength, x=0, y=0, direction='north)
@@ -10,14 +10,25 @@ class Character
     self.direction = direction # 'north, 'east, 'west or 'south
   end
 
+  def get_diff_to_forward_cell(direction)
+    if direction == 'north
+      return 0, -1
+    end
+    if direction == 'east
+      return 1, 0
+    end
+    if direction == 'west
+      return -1, 0
+    end
+    return 0, 1
+  end
+
   def attackable?(char)
-    if (self.x == char.x) && (abs(self.y - char.y) <= CELL_SIZE)
-      return true
-    end
-    if (self.y == char.y) && (abs(self.x - char.x) <= CELL_SIZE)
-      return true
-    end
-    return false
+    diff_x, diff_y = self.get_diff_to_forward_cell(self.direction)
+    rect = Rect.new(
+      self.x - CHAR_POS_OFFSET_X + CELL_SIZE * diff_x,
+      self.y - CHAR_POS_OFFSET_Y + CELL_SIZE * diff_y)
+    return rect.include?(char.x, char.y)
   end
 
   def die()

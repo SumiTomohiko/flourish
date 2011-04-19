@@ -150,24 +150,18 @@ class Controller > yogame.Controller
   end
 
   def attack_pc(strength)
-    if self.pc.life <= 0
+    self.pc.life -= strength
+    if 0 < self.pc.life
       return
     end
-    self.pc.life -= strength
-    if self.pc.life <= 0
-      self.pc.die()
-      self.exit('dead)
-    end
+    self.pc.die()
+    self.exit('dead)
   end
 
   def make_coroutine(char)
     return Coroutine.new() do
       loop() do
-        if 0 < char.life
-          char.act(self)
-          next
-        end
-        Coroutine.yield()
+        char.act(self)
       end
     end
   end
@@ -254,15 +248,16 @@ class Controller > yogame.Controller
 
   def attack_npc(char)
     char.life -= self.pc.strength
-    if char.life <= 0
-      self.kill_npc(char)
+    if 0 < char.life
+      return
     end
+    self.kill_npc(char)
   end
 
   def move_forward()
     pc = self.pc
     self.npc.each() do [char]
-      if pc.attackable?(char) && (0 < char.life)
+      if pc.attackable?(char)
         self.coroutine = Coroutine.new(&pc.attack.partial(self, char))
         return
       end

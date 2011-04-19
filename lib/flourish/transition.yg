@@ -5,21 +5,25 @@ import flourish.stage.fadeout
 import flourish.stage.gameover
 import flourish.stage.title
 
+def transit_from_fadeout(status)
+  if status == 'ok
+    return flourish.stage.title.Stage.new()
+  end
+  if status == 'goal
+    return flourish.stage.ending.Stage.new()
+  end
+  return flourish.stage.cave.Stage.new()
+end
+
 def transit(stage, status)
   if stage.kind_of?(flourish.stage.fadeout.Stage)
-    return flourish.stage.cave.Stage.new()
+    return transit_from_fadeout(stage.status)
   end
   if status == 'quit
     return nil
   end
   if status == 'dead
     return flourish.stage.gameover.Stage.new()
-  end
-  if status == 'ok
-    return flourish.stage.title.Stage.new()
-  end
-  if status == 'goal
-    return flourish.stage.ending.Stage.new()
   end
   return flourish.stage.fadeout.Stage.new(status)
 end

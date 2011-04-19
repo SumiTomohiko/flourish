@@ -1,0 +1,36 @@
+
+from sdl import SDL_ALPHA_OPAQUE, SDL_ALPHA_TRANSPARENT
+from flourish.core import FPS
+from flourish.ctrl.fadeout import Controller
+from flourish.stage import MiscStage
+from flourish.view.fadeout import View
+
+class Fadeout
+  def init(value, step)
+    self.value = value
+    self.step = step
+  end
+
+  def progress()
+    self.value = min(SDL_ALPHA_OPAQUE, self.value + self.step)
+  end
+
+  def get_finished()
+    return self.value == SDL_ALPHA_OPAQUE
+  end
+
+  finished? = property(get_finished)
+end
+
+class Stage > MiscStage
+  def init(status)
+    super(Controller, View)
+    self.status = status
+  end
+
+  def make_models(_)
+    return Fadeout.new(SDL_ALPHA_TRANSPARENT, 4 * SDL_ALPHA_OPAQUE // FPS)
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

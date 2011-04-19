@@ -1,0 +1,61 @@
+
+from sdl import SDL_BlitSurface, SDL_CreateRGBSurface, SDL_DisplayFormatAlpha, SDL_FillRect, SDL_FreeSurface, SDL_MapRGBA
+import yogame
+
+from flourish.core import BPP
+
+class View > yogame.View
+  def init(models, screen)
+    super(screen)
+    self.fadeout = models
+    self.background = nil
+  end
+
+  def allocate_resources(&block)
+    try
+      # FIXME: This code came from
+      # flourish.view.gameover.View#allocate_resources.
+      screen = self.screen
+      format = screen.format
+      w = screen.w
+      h = screen.h
+      rmask = format.Rmask
+      gmask = format.Gmask
+      bmask = format.Bmask
+      amask = format.Amask
+      self.background = SDL_CreateRGBSurface(screen.flags, w, h, BPP, rmask, gmask, bmask, amask)
+      SDL_BlitSurface(self.screen, nil, self.background, nil)
+
+      block()
+    finally
+      SDL_FreeSurface(self.background)
+    end
+  end
+
+  def draw()
+    screen = self.screen
+    format = screen.format
+    w = screen.w
+    h = screen.h
+    rmask = format.Rmask
+    gmask = format.Gmask
+    bmask = format.Bmask
+    amask = format.Amask
+    src = SDL_CreateRGBSurface(screen.flags, w, h, BPP, rmask, gmask, bmask, amask)
+    try
+      foreground = SDL_DisplayFormatAlpha(src)
+    finally
+      SDL_FreeSurface(src)
+    end
+    try
+      color = SDL_MapRGBA(foreground.format, 0, 0, 0, self.fadeout.value)
+      SDL_FillRect(foreground, nil, color)
+      self.blit_surface(self.background, nil, nil)
+      self.blit_surface(foreground, nil, nil)
+    finally
+      SDL_FreeSurface(foreground)
+    end
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

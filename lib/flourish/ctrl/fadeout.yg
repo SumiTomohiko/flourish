@@ -1,0 +1,23 @@
+
+import yogame
+
+class Controller > yogame.Controller
+  def init(models)
+    super()
+    self.fadeout = models
+  end
+
+  def animate()
+    if self.fadeout.finished?
+      self.exit('ok)
+      return
+    end
+    self.fadeout.progress()
+  end
+
+  def on_left_button_pressed(x, y)
+    self.exit('ok)
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

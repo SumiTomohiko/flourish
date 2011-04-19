@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Resources#init must read all files under specified directory.
+desc: ""
+type: :task
+component: flourish
+release: 
+reporter: SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+status: :unstarted
+disposition: 
+creation_time: 2011-04-19 08:19:41.926546 Z
+references: []
+
+id: 40a6c63c3f24205487de96ebd05dd63fc24e23f6
+log_events: 
+- - 2011-04-19 08:19:44.016192 Z
+  - SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+  - created
+  - ""

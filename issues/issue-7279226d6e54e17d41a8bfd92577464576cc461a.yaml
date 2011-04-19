@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Remove code to check lives in flourish.ctrl.Controller.
+desc: They have no mean now.
+type: :task
+component: flourish
+release: 
+reporter: SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+status: :unstarted
+disposition: 
+creation_time: 2011-04-19 09:02:53.285903 Z
+references: []
+
+id: 7279226d6e54e17d41a8bfd92577464576cc461a
+log_events: 
+- - 2011-04-19 09:02:54.365055 Z
+  - SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+  - created
+  - ""

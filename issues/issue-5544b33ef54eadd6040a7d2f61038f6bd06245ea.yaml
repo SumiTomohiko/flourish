@@ -23,3 +23,7 @@ log_events:
   - SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
   - created
   - ""
+- - 2011-04-19 17:51:16.972079 Z
+  - SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+  - commented
+  - SDL_CreateCursor can do this, but this function needs arguments of Uint8*.

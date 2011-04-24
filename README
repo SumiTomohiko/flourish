@@ -1,0 +1,45 @@
+This is flourish vesrion 0.0.1
+==============================
+
+flourish is a dungeon game. A player controls the player character with his/her
+mouse.
+
+Requirements
+------------
+
+* Yog 0.0.10
+* SDL 1.2.14
+* SDL_image 1.2.10
+* SDL_mixer 1.2.11
+* SDL_ttf 2.0.9
+
+Documentation
+-------------
+
+Online documents are at http://SumiTomohiko.github.com/flourish/.
+
+Offline documents are available in the ``doc/html`` directory.
+
+Download
+--------
+
+See http://github.com/SumiTomohiko/flourish/downloads.
+
+Build Instructions
+------------------
+
+See ``INSTALL``.
+
+Issue Tracking System
+---------------------
+
+You can see the issues at
+http://neko-daisuki.ddo.jp/~SumiTomohiko/flourish/issues/index.html.
+Original data are in the ``issues`` dicretory of the source tree.
+
+Author
+------
+
+See ``AUTHORS``.
+
+.. vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2 filetype=rst

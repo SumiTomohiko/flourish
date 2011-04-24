@@ -5,7 +5,7 @@ echo="/bin/echo"
 immortal="false"
 lib=""
 stage="nil"
-yog="yog-generational"
+yog="yog"
 
 while getopts il:s:y: opt
 do

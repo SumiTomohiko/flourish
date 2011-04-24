@@ -1,5 +1,4 @@
 
-from sdl.mixer import Mix_PlayChannel
 from flourish.char import NonPlayerCharacter
 from flourish.core import CELL_SIZE, Images, Sounds, TURN_RIGHT_TABLE, play_sound
 

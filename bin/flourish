@@ -2,7 +2,7 @@
 
 echo="/bin/echo"
 
-imortal="false"
+immortal="false"
 lib=""
 stage="nil"
 yog="yog-generational"
@@ -10,7 +10,7 @@ yog="yog-generational"
 while getopts il:s:y: opt
 do
     case ${opt} in
-        i) imortal="true";;
+        i) immortal="true";;
         l) lib=${OPTARG};;
         s) stage="\"${OPTARG}\"";;
         y) yog=${OPTARG};;
@@ -29,7 +29,7 @@ fi
 
 exec "${yog}" --young-heap-size=4M ${opts} <<EOF
 from flourish import main
-main(${stage}, ${imortal})
+main(${stage}, ${immortal})
 EOF
 
 # vim: tabstop=4 shiftwidth=4 expandtab softtabstop=4

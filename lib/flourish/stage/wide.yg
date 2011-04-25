@@ -41,11 +41,11 @@ EOF
   end
 
   def allocate_resources(&block)
-    flourish.char.slime.allocate_resources()
+    allocate_resources()
     try
       block()
     finally
-      flourish.char.slime.free_resources()
+      free_resources()
     end
   end
 

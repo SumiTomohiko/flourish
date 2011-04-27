@@ -50,7 +50,8 @@ EOF
   end
 
   def make_npc()
-    return Array.new(1) do
+    NPC_NUM = 1
+    return Array.new(NPC_NUM) do
       next Slime.new()
     end
   end

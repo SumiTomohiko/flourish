@@ -29,7 +29,10 @@ class Slime > NonPlayerCharacter
   end
 
   def regenerate()
-    super()
+    # FIXME: super() at here cannot call NonPlayerCharacter#regenerate.
+    #super()
+    self.x = nil
+    self.y = nil
     self.life = LIFE_MAX
     self.reset_image()
   end

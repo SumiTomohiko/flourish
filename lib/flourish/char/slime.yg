@@ -29,6 +29,7 @@ class Slime > NonPlayerCharacter
   end
 
   def regenerate()
+    super()
     self.life = LIFE_MAX
     self.reset_image()
   end

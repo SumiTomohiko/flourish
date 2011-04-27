@@ -79,7 +79,7 @@ class Controller > yogame.Controller
   def conflict?(char, pos)
     index = self.get_index(pos.x, pos.y)
     ([self.pc] + self.npc).each() do [c]
-      if c == char
+      if (c == char) || (c.x == nil) || (c.y == nil)
         next
       end
       if (c.x - CHAR_POS_OFFSET_X) % CELL_SIZE == 0
@@ -137,6 +137,10 @@ class Controller > yogame.Controller
   end
 
   def place_npc(char)
+    if (char.x != nil) && (char.y != nil)
+      return
+    end
+
     rand = random.partial(MAP_SIZE - 2, 1)
     x = rand() * CELL_SIZE + CHAR_POS_OFFSET_X
     y = rand() * CELL_SIZE + CHAR_POS_OFFSET_Y

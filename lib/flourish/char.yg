@@ -2,7 +2,7 @@
 from flourish.core import CELL_SIZE, CHAR_POS_OFFSET_X, CHAR_POS_OFFSET_Y, Rect
 
 class Character
-  def init(life, strength, x=0, y=0, direction='north)
+  def init(life, strength, x=nil, y=nil, direction='north)
     self.life = life
     self.strength = strength
     self.x = x
@@ -41,7 +41,8 @@ class NonPlayerCharacter > Character
   end
 
   def regenerate()
-    raise NotImplementedError.new()
+    self.x = nil
+    self.y = nil
   end
 end
 

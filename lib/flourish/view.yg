@@ -579,7 +579,7 @@ class View > yogame.View
       end
       npc_pos.each_with_index() do [i, pos]
         char = self.npc[i]
-        if (pos == index) && (0 < char.life)
+        if pos == index
           self.draw_char(char, data)
         end
       end

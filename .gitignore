@@ -16,6 +16,7 @@ data/goal-pass.png
 data/mouse_area.png
 data/pc/*.png
 data/slime/*.png
+data/stone/*.png
 data/wall.png
 doc/how_to_move.png
 gmon.out

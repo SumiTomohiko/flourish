@@ -1,0 +1,52 @@
+
+from flourish.char import NonPlayerCharacter
+from flourish.core import CELL_SIZE, Images, Sounds, play_sound
+
+DIR = "stone"
+images = Images.new(DIR, ["walk0.png", "walk1.png", "walk2.png", "walk3.png", "walk4.png"])
+#sounds = Sounds.new(DIR, ["attack.wav", "die.wav"])
+
+def allocate_resources(&block)
+  try
+    images.allocate()
+    #sounds.allocate()
+    block()
+  finally
+    images.free()
+  end
+end
+
+SPEED = 12
+
+class Stone > NonPlayerCharacter
+  def init(x, y, direction)
+    super(0, (2 << 30) - 1, x, y, direction)
+    self.reset_image()
+    #self.act = self.stop
+    self.act = self.run
+  end
+
+  def reset_image()
+    self.img = images["walk0.png"]
+  end
+
+  def start()
+    self.act = self.run
+  end
+
+  def run(ctrl)
+    loop() do [i]
+      diff_x, diff_y = self.get_diff_to_forward_cell(self.direction)
+      self.x += SPEED * diff_x
+      self.y += SPEED * diff_y
+      self.img = images["walk{0}.png".format((i + 1) % 5)]
+      Coroutine.yield()
+    end
+  end
+
+  def stop(ctrl)
+    Coroutine.yield()
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

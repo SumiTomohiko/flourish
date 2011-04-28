@@ -1,5 +1,5 @@
 
-SUBDIRS = pc slime
+SUBDIRS = pc slime stone
 data_DATA = external.png floor.png goal-floor.png  goal-pass.png \
 	    mouse_area.png wall.png
 

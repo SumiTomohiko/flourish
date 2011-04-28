@@ -3,6 +3,7 @@ from random import random
 from sdl import SDL_BUTTON, SDL_BUTTON_LEFT
 import yogame
 
+from flourish.char.stone import Stone
 from flourish.core import CELL_SIZE, CHAR_POS_OFFSET_X, CHAR_POS_OFFSET_Y, FPS, MAIN_VIEW_PC_X, MAIN_VIEW_PC_Y, MAIN_VIEW_X, MAIN_VIEW_Y, MAP_SIZE, Point, Rect
 from flourish.geometry import Goal
 
@@ -261,7 +262,7 @@ class Controller > yogame.Controller
   def move_forward()
     pc = self.pc
     self.npc.each() do [char]
-      if pc.attackable?(char)
+      if !char.kind_of?(Stone) && pc.attackable?(char)
         self.coroutine = Coroutine.new(&pc.attack.partial(self, char))
         return
       end

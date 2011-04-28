@@ -67,7 +67,7 @@ class Slime > NonPlayerCharacter
     end
 
     CELL_SIZE.times() do [i]
-      tbl = [2, 3, 3, 4, 3, 3, 2, 0, 0, 1, 0, 0]
+      tbl = [2, 3, 4, 3, 2, 0, 1, 0]
       self.img = images["walk{0}.png".format(tbl[i % tbl.size])]
       ctrl.move_char(self, self.direction, 1)
       Coroutine.yield()

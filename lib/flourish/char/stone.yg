@@ -16,11 +16,11 @@ def allocate_resources(&block)
   end
 end
 
-SPEED = 12
+SPEED = 16
 
 class Stone > NonPlayerCharacter
   def init(x, y, direction)
-    super(0, (2 << 30) - 1, x, y, direction)
+    super(0, (1 << 30) - 1, x, y, direction)
     self.reset_image()
     #self.act = self.stop
     self.act = self.run
@@ -36,6 +36,12 @@ class Stone > NonPlayerCharacter
 
   def run(ctrl)
     loop() do [i]
+      pc = ctrl.pc
+      if ((self.x - pc.x) ** 2 + (self.y - pc.y) ** 2 < SPEED ** 2)
+        ctrl.attack_pc(self.strength)
+        Coroutine.yield()
+        next
+      end
       diff_x, diff_y = self.get_diff_to_forward_cell(self.direction)
       self.x += SPEED * diff_x
       self.y += SPEED * diff_y

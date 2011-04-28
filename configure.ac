@@ -19,5 +19,6 @@ AC_PROG_CC
 AC_CONFIG_FILES([Makefile
                  data/Makefile
                  data/pc/Makefile
-                 data/slime/Makefile])
+                 data/slime/Makefile
+                 doc/Makefile])
 AC_OUTPUT

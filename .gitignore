@@ -17,4 +17,5 @@ data/mouse_area.png
 data/pc/*.png
 data/slime/*.png
 data/wall.png
+doc/how_to_move.png
 gmon.out

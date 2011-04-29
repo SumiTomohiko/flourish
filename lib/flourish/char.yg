@@ -44,6 +44,22 @@ class NonPlayerCharacter > Character
     self.x = nil
     self.y = nil
   end
+
+  def get_up_image()
+    raise NotImplementedError.new()
+  end
+
+  def get_right_image()
+    raise NotImplementedError.new()
+  end
+
+  def get_left_image()
+    raise NotImplementedError.new()
+  end
+
+  def get_down_image()
+    raise NotImplementedError.new()
+  end
 end
 
 # vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

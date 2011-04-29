@@ -237,6 +237,29 @@ class DrawDataSouth > DrawData
   end
 end
 
+# DIRECTION_TABLE[pc.direction][npc.direction] is the instance name.
+DIRECTION_TABLE = {
+  'north: {
+    'north: 'get_up_image,
+    'east: 'get_left_image,
+    'west: 'get_right_image,
+    'south: 'get_down_image },
+  'east: {
+    'north: 'get_left_image,
+    'east: 'get_up_image,
+    'west: 'get_down_image,
+    'south: 'get_right_image },
+  'west: {
+    'north: 'get_right_image,
+    'east: 'get_down_image,
+    'west: 'get_up_image,
+    'south: 'get_left_image },
+  'south: {
+    'north: 'get_down_image,
+    'east: 'get_left_image,
+    'west: 'get_right_image,
+    'south: 'get_up_image }}
+
 class View > yogame.View
   def init(models, screen)
     super(screen)
@@ -565,7 +588,8 @@ class View > yogame.View
   end
 
   def draw_char(char, data)
-    self.draw_char_at(char.img, data.compute_char_pos(char.x, char.y))
+    img = char.get_attr(DIRECTION_TABLE[self.pc.direction][char.direction])()
+    self.draw_char_at(img, data.compute_char_pos(char.x, char.y))
   end
 
   def draw_main_view(data)

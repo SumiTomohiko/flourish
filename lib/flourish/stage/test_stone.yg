@@ -4,11 +4,11 @@ from flourish.stage import GameStage
 
 class Stage > GameStage
   def init()
-    super(<<EOF, 2, 1, 'east)
+    super(<<EOF, 2, 2, 'east)
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 w                              w
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+w                              w
+w                              w
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
@@ -45,7 +45,9 @@ EOF
   end
 
   def make_npc()
-    return [Stone.new(self.index2pos(6), self.index2pos(1), 'west)]
+    return [
+      Stone.new(self.index2pos(6), self.index2pos(1), 'west),
+      Stone.new(self.index2pos(1), self.index2pos(3), 'east)]
   end
 end
 

@@ -73,6 +73,14 @@ class Slime > NonPlayerCharacter
       Coroutine.yield()
     end
   end
+
+  def get_up_image()
+    return self.img
+  end
+
+  get_right_image = get_up_image
+  get_left_image = get_up_image
+  get_down_image = get_up_image
 end
 
 # vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

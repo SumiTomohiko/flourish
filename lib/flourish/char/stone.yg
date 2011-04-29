@@ -3,7 +3,7 @@ from flourish.char import NonPlayerCharacter
 from flourish.core import CELL_SIZE, Images, Sounds, play_sound
 
 DIR = "stone"
-images = Images.new(DIR, ["walk0.png", "walk1.png", "walk2.png", "walk3.png", "walk4.png"])
+images = Images.new(DIR, ["roll-horizontally0.png", "roll-horizontally1.png", "roll-horizontally2.png", "roll-horizontally3.png", "roll-horizontally4.png", "roll-vertically0.png", "roll-vertically1.png", "roll-vertically2.png", "roll-vertically3.png", "roll-vertically4.png"])
 #sounds = Sounds.new(DIR, ["attack.wav", "die.wav"])
 
 def allocate_resources(&block)
@@ -21,13 +21,9 @@ SPEED = 16
 class Stone > NonPlayerCharacter
   def init(x, y, direction)
     super(0, (1 << 30) - 1, x, y, direction)
-    self.reset_image()
+    self.image_index = 0
     #self.act = self.stop
     self.act = self.run
-  end
-
-  def reset_image()
-    self.img = images["walk0.png"]
   end
 
   def start()
@@ -45,13 +41,31 @@ class Stone > NonPlayerCharacter
       diff_x, diff_y = self.get_diff_to_forward_cell(self.direction)
       self.x += SPEED * diff_x
       self.y += SPEED * diff_y
-      self.img = images["walk{0}.png".format((i + 1) % 5)]
+      self.image_index = (i + 1) % 5
       Coroutine.yield()
     end
   end
 
   def stop(ctrl)
     Coroutine.yield()
+  end
+
+  def get_up_image()
+    # FIXME: Don't use the magic number.
+    return images["roll-vertically{0}.png".format(4 - self.image_index)]
+  end
+
+  def get_right_image()
+    return images["roll-horizontally{0}.png".format(self.image_index)]
+  end
+
+  def get_left_image()
+    # FIXME: Don't use the magic number.
+    return images["roll-horizontally{0}.png".format(4 - self.image_index)]
+  end
+
+  def get_down_image()
+    return images["roll-vertically{0}.png".format(self.image_index)]
   end
 end
 

@@ -17,7 +17,7 @@ def allocate_resources(&block)
   end
 end
 
-SPEED = 16
+SPEED = CELL_SIZE // 4
 
 class Stone > NonPlayerCharacter
   def init(x, y, direction)
@@ -33,27 +33,30 @@ class Stone > NonPlayerCharacter
 
   def run(ctrl)
     loop() do [i]
-      pc = ctrl.pc
-      if ((self.x - pc.x) ** 2 + (self.y - pc.y) ** 2 < SPEED ** 2)
-        ctrl.attack_pc(self.strength)
-        Coroutine.yield()
-        next
-      end
-      diff_x, diff_y = self.get_diff_to_forward_cell(self.direction)
-      x = self.x + SPEED * diff_x
-      y = self.y + SPEED * diff_y
-      if !ctrl.path?(x, y)
+      pos = ctrl.get_next_pos(self.x, self.y, self.direction)
+      if !ctrl.path?(pos.x, pos.y)
         play_sound(sounds["stop.wav"])
         self.act = self.stop
         return
       end
-      self.x = x
-      self.y = y
-      self.image_index = (i + 1) % 5
-      if i % (FPS // 2) == 0
-        play_sound(sounds["roll.wav"])
+
+      diff_x, diff_y = self.get_diff_to_forward_cell(self.direction)
+      (CELL_SIZE // SPEED).times() do
+        pc = ctrl.pc
+        if ((self.x - pc.x) ** 2 + (self.y - pc.y) ** 2 < SPEED ** 2)
+          ctrl.attack_pc(self.strength)
+          Coroutine.yield()
+          # Because PC must be dead, here is not reached.
+          next
+        end
+        self.x += SPEED * diff_x
+        self.y += SPEED * diff_y
+        self.image_index = (i + 1) % 5
+        if i % (FPS // 2) == 0
+          play_sound(sounds["roll.wav"])
+        end
+        Coroutine.yield()
       end
-      Coroutine.yield()
     end
   end
 

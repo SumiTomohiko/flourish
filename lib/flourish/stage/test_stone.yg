@@ -6,9 +6,9 @@ class Stage > GameStage
   def init()
     super(<<EOF, 2, 2, 'east)
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-w                              w
-w                              w
-w                              w
+w      wwwwwwwwwwwwwwwwwwwwwwwww
+w      wwwwwwwwwwwwwwwwwwwwwwwww
+w      wwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww

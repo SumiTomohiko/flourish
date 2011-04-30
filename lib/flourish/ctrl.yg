@@ -221,6 +221,10 @@ class Controller > yogame.Controller
     return self.geometry?(x, y, 'wall)
   end
 
+  def path?(x, y)
+    return self.geometry?(x, y, nil)
+  end
+
   def goal?()
     pc = self.pc
     return self.map[pc.y // CELL_SIZE][pc.x // CELL_SIZE].kind_of?(Goal)

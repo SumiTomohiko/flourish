@@ -40,8 +40,15 @@ class Stone > NonPlayerCharacter
         next
       end
       diff_x, diff_y = self.get_diff_to_forward_cell(self.direction)
-      self.x += SPEED * diff_x
-      self.y += SPEED * diff_y
+      x = self.x + SPEED * diff_x
+      y = self.y + SPEED * diff_y
+      if !ctrl.path?(x, y)
+        play_sound(sounds["stop.wav"])
+        self.act = self.stop
+        return
+      end
+      self.x = x
+      self.y = y
       self.image_index = (i + 1) % 5
       if i % (FPS // 2) == 0
         play_sound(sounds["roll.wav"])

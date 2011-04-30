@@ -1,17 +1,18 @@
 
 from flourish.char import NonPlayerCharacter
-from flourish.core import CELL_SIZE, Images, Sounds, play_sound
+from flourish.core import CELL_SIZE, FPS, Images, Sounds, play_sound
 
 DIR = "stone"
 images = Images.new(DIR, ["roll-horizontally0.png", "roll-horizontally1.png", "roll-horizontally2.png", "roll-horizontally3.png", "roll-horizontally4.png", "roll-vertically0.png", "roll-vertically1.png", "roll-vertically2.png", "roll-vertically3.png", "roll-vertically4.png"])
-#sounds = Sounds.new(DIR, ["attack.wav", "die.wav"])
+sounds = Sounds.new(DIR, ["roll.wav", "stop.wav"])
 
 def allocate_resources(&block)
   try
     images.allocate()
-    #sounds.allocate()
+    sounds.allocate()
     block()
   finally
+    sounds.free()
     images.free()
   end
 end
@@ -42,6 +43,9 @@ class Stone > NonPlayerCharacter
       self.x += SPEED * diff_x
       self.y += SPEED * diff_y
       self.image_index = (i + 1) % 5
+      if i % (FPS // 2) == 0
+        play_sound(sounds["roll.wav"])
+      end
       Coroutine.yield()
     end
   end

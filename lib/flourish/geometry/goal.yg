@@ -1,0 +1,8 @@
+
+class Goal
+  def init(direction)
+    self.direction = direction
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

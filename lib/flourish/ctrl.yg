@@ -5,7 +5,8 @@ import yogame
 
 from flourish.char.stone import Stone
 from flourish.core import CELL_SIZE, CHAR_POS_OFFSET_X, CHAR_POS_OFFSET_Y, FPS, MAIN_VIEW_PC_X, MAIN_VIEW_PC_Y, MAIN_VIEW_X, MAIN_VIEW_Y, MAP_SIZE, Point, Rect
-from flourish.geometry import Goal
+from flourish.geometry.goal import Goal
+from flourish.geometry.switch import Switch
 
 class Rect2Act
   def init(rect, act)
@@ -230,11 +231,17 @@ class Controller > yogame.Controller
     return self.map[pc.y // CELL_SIZE][pc.x // CELL_SIZE].kind_of?(Goal)
   end
 
-  def check_goal()
-    if !self.goal?()
+  def do_passive_action()
+    pc = self.pc
+    g = self.map[pc.y // CELL_SIZE][pc.x // CELL_SIZE]
+    if g.kind_of?(Goal)
+      self.exit('goal)
       return
     end
-    self.exit('goal)
+    if g.kind_of?(Switch)
+      g.press()
+      return
+    end
   end
 
   def find_npc(char)

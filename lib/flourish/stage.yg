@@ -1,7 +1,7 @@
 
 from flourish.core import CELL_SIZE, MAP_SIZE, Point
 from flourish.ctrl import Controller
-from flourish.geometry import Goal
+from flourish.geometry.goal import Goal
 from flourish.view import View
 
 class Stage
@@ -57,6 +57,10 @@ class GameStage > Stage
     return Goal.new(self.decide_goal_direction(index))
   end
 
+  def overwrite_map(map)
+    # Do nothing by default.
+  end
+
   def generate_map(data)
     if data == nil
       return nil
@@ -75,6 +79,7 @@ class GameStage > Stage
       end
       map << line
     end
+    self.overwrite_map(map)
     return map
   end
 

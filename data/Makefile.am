@@ -1,7 +1,7 @@
 
 SUBDIRS = pc slime stone
 data_DATA = external.png floor.png goal-floor.png  goal-pass.png \
-	    mouse_area.png wall.png
+	    mouse_area.png switch-pressed.png switch-released.png wall.png
 
 include $(top_srcdir)/Makefile.common
 

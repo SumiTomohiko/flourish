@@ -4,7 +4,8 @@ import sdl.ttf
 import yogame
 
 from flourish.core import CELL_SIZE, CHAR_POS_OFFSET_X, CHAR_POS_OFFSET_Y, MAIN_VIEW_HEIGHT, MAIN_VIEW_PC_X, MAIN_VIEW_PC_Y, MAIN_VIEW_WIDTH, MAIN_VIEW_X, MAIN_VIEW_Y, Point, close_font, load_image, make_color, open_font
-from flourish.geometry import Goal
+from flourish.geometry.goal import Goal
+from flourish.geometry.switch import Switch
 
 Delta = Point
 
@@ -289,6 +290,8 @@ class View > yogame.View
       self.external_img = load_image("external.png".to_path())
       self.goal_floor_img = load_image("goal-floor.png".to_path())
       self.goal_pass_img = load_image("goal-pass.png".to_path())
+      self.switch_released_img = load_image("switch-released.png".to_path())
+      self.switch_pressed_img = load_image("switch-pressed.png".to_path())
       self.font = open_font(24)
 
       self.draw_data = {
@@ -378,6 +381,13 @@ class View > yogame.View
   def cut_surface(srcrect, src, dst)
     self.cut_srcrect_x(srcrect, src, dst)
     self.cut_srcrect_y(srcrect, src, dst)
+  end
+
+  def draw_switch(g, dst)
+    img = g.pressed? ? self.switch_pressed_img : self.switch_released_img
+    srcrect = sdl.SDL_Rect.new()
+    self.cut_surface(srcrect, img, dst)
+    self.draw_surface(img, srcrect, dst)
   end
 
   def draw_floor(geometry, dst, neighbor)
@@ -551,6 +561,10 @@ class View > yogame.View
     g = self.get_geometry(index)
     if (g == nil) || (g == 'external)
       self.draw_floor(g, dst, geometry)
+      return
+    end
+    if g.kind_of?(Switch)
+      self.draw_switch(g, dst)
       return
     end
     if g.kind_of?(Goal)

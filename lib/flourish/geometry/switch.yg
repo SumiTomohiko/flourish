@@ -1,0 +1,19 @@
+
+class Switch
+  def init(stones)
+    self.pressed? = false
+    self.stones = stones
+  end
+
+  def press()
+    if self.pressed?
+      return
+    end
+    self.pressed? = true
+    self.stones.each() do [stone]
+      stone.start()
+    end
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

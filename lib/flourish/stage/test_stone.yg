@@ -1,18 +1,25 @@
 
 from flourish.char.stone import Stone, allocate_resources
+from flourish.geometry.switch import Switch
 from flourish.stage import GameStage
 
 class Stage > GameStage
   def init()
+    self.stones = [
+      Stone.new(self.index2pos(5), self.index2pos(7), 'north),
+      Stone.new(self.index2pos(1), self.index2pos(5), 'east),
+      Stone.new(self.index2pos(7), self.index2pos(3), 'west),
+      Stone.new(self.index2pos(4), self.index2pos(1), 'south)]
+
     super(<<EOF, 2, 4, 'east)
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-w      wwwwwwwwwwwwwwwwwwwwwwwww
-w      wwwwwwwwwwwwwwwwwwwwwwwww
-w      wwwwwwwwwwwwwwwwwwwwwwwww
-w      wwwwwwwwwwwwwwwwwwwwwwwww
-w      wwwwwwwwwwwwwwwwwwwwwwwww
-w      wwwwwwwwwwwwwwwwwwwwwwwww
-w      wwwwwwwwwwwwwwwwwwwwwwwww
+w       wwwwwwwwwwwwwwwwwwwwwwww
+w       wwwwwwwwwwwwwwwwwwwwwwww
+w       wwwwwwwwwwwwwwwwwwwwwwww
+w       wwwwwwwwwwwwwwwwwwwwwwww
+w       wwwwwwwwwwwwwwwwwwwwwwww
+w       wwwwwwwwwwwwwwwwwwwwwwww
+w       wwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
@@ -44,12 +51,12 @@ EOF
     allocate_resources(&block)
   end
 
+  def overwrite_map(map)
+    map[4][3] = Switch.new(self.stones)
+  end
+
   def make_npc()
-    return [
-      Stone.new(self.index2pos(4), self.index2pos(7), 'north),
-      Stone.new(self.index2pos(1), self.index2pos(5), 'east),
-      Stone.new(self.index2pos(6), self.index2pos(3), 'west),
-      Stone.new(self.index2pos(3), self.index2pos(1), 'south)]
+    return self.stones
   end
 end
 

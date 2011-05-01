@@ -6,15 +6,14 @@ DIR = "stone"
 images = Images.new(DIR, ["roll-horizontally0.png", "roll-horizontally1.png", "roll-horizontally2.png", "roll-horizontally3.png", "roll-horizontally4.png", "roll-vertically0.png", "roll-vertically1.png", "roll-vertically2.png", "roll-vertically3.png", "roll-vertically4.png"])
 sounds = Sounds.new(DIR, ["roll.wav", "stop.wav"])
 
-def allocate_resources(&block)
-  try
-    images.allocate()
-    sounds.allocate()
-    block()
-  finally
-    sounds.free()
-    images.free()
-  end
+def allocate_resources()
+  images.allocate()
+  sounds.allocate()
+end
+
+def free_resources()
+  sounds.free()
+  images.free()
 end
 
 SPEED = CELL_SIZE // 4

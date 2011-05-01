@@ -1,7 +1,9 @@
 
-from flourish.char.stone import Stone, allocate_resources
+from flourish.char.stone import Stone
 from flourish.geometry.switch import Switch
 from flourish.stage import GameStage
+import flourish.char.stone
+import flourish.geometry.switch
 
 class Stage > GameStage
   def init()
@@ -48,7 +50,14 @@ EOF
   end
 
   def allocate_resources(&block)
-    allocate_resources(&block)
+    try
+      flourish.char.stone.allocate_resources()
+      flourish.geometry.switch.allocate_resources()
+      block()
+    finally
+      flourish.geometry.switch.free_resources()
+      flourish.char.stone.free_resources()
+    end
   end
 
   def overwrite_map(map)

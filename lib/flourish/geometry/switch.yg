@@ -1,4 +1,16 @@
 
+from flourish.core import Sounds, play_sound
+
+sounds = Sounds.new("", ["switch.wav"])
+
+def allocate_resources()
+  sounds.allocate()
+end
+
+def free_resources()
+  sounds.free()
+end
+
 class Switch
   def init(stones)
     self.pressed? = false
@@ -9,6 +21,7 @@ class Switch
     if self.pressed?
       return
     end
+    play_sound(sounds["switch.wav"])
     self.pressed? = true
     self.stones.each() do [stone]
       stone.start()

@@ -4,38 +4,38 @@ from flourish.stage import GameStage
 
 class Stage > GameStage
   def init()
-    super(<<EOF, 13, 28, 'north)
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwgw
-w    w w w w w w w w w w w w w w
-wwww w                         w
-w      w w w w w w w w w w w w w
-w wwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-w       w   w   w              w
-www www w w w w   w wwwwwwwwww w
-w   ww  w   w wwwwwww          w
-w w  w ww w w ww    w          w
-w ww w w  w     w   w          w
-w ww w   wwwwwwww   w wwwwwwwwww
-wwww wwwww                     w
-w         w wwwwwwwwwwwwwwwwwwww
-w wwwwwww w  w w       ww      w
-w     w ww w   w w       wwww ww
-w wwwww     w  w w             w
-w     w w  www   wwww wwwwwwww w
-w www   ww   wwww        w     w
-w   wwwww     w   wwwww  w wwwww
-w       w    w  ww       w     w
-wwwwww ww     w  wwwwwwwwwwwww w
-w  www  ww  ww  wwww           w
-w         w      w    www wwwwww
-wwwwwwwww w   w   w  w     w   w
-w       w     w    w w wwww  www
-w    www    www   w w          w
-www    w    w w      wwwwww  www
-w      w          w w      w  ww
-w   www w          w  www w w  w
-w  ww   ww wwwwww w  w  w w  w w
-w     w      ww     w         ww
+    super(<<EOF, 2, 22, 'north)
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+www wwwwwwwwwwwwwwwwwwwwwwwwwwww
+www wwwwwwwwwwwwwwwwwwwwwwwwwwww
+www wwwwwwwwwwwwwwwwwwwwwwwwwwww
+www wwwwwwwwwwwwwwwwwwwwwwwwwwww
+www       wwwwwwwwww   wwwwwwwww
+www wwww  wwwwwwwww    wwwwwwwww
+www wwww      wwww  wwwwwwwwwwww
+www wwwwwwwww wwww wwwwwwwwwwwww
+w     wwwwwww ww   wwwwwwwwwwwww
+www wwwwww         wwwwwwwwwwwww
+www wwwwwwwwwwwww  wwwwwwwwwwwww
+www wwwwwwwwwwwww  wwwwwwwwwwwww
+w     www   wwwww  wwwwwwwwwwwww
+www wwwww             wwwwwwwwww
+www wwwwwwww wwww wwwwwwwwwwwwww
+www wwwwwwww wwww wwwwwwwwwwwwww
+g     wwwwww wwwwwwwwwwwwwwwwwww
+wwwwwwwww    wwwwwwwwwwwwwwwwwww
+wwwwwwwww    wwwwwwwwwwwwwwwwwww
+w   wwww   wwwwwwwwwwwwwwwwwwwww
+w        wwwwwwwwwwwwwwwwwwwwwww
+w   wwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 EOF
   end

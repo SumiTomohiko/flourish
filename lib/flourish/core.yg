@@ -24,7 +24,7 @@ def determine_data_dir()
   else
     return data_dir
   end
-  return __FILE__.dirname / ".." / ".." / "share" / "games" / "flourish"
+  return __FILE__.dirname / ".." / ".." / ".." / ".." / "share" / "flourish"
 end
 
 DATA_DIR = determine_data_dir()

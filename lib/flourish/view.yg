@@ -572,7 +572,7 @@ class View > yogame.View
       return
     end
     # TODO: Insert assert statement to assert that g is 'wall.
-    if (geometry == nil) || geometry.kind_of?(Goal)
+    if (geometry == nil) || geometry.kind_of?(Goal) || geometry.kind_of?(Switch)
       self.draw_wall(dst, self.get_surface('wall))
       self.draw_ceils(dst, index)
       return

@@ -1,5 +1,6 @@
 
-data_DATA = how_to_move.png
+resourcedir = $(htmldir)
+resource_DATA = floor.png how_to_move.png index.html main.png title.png
 
 include $(top_srcdir)/Makefile.common
 

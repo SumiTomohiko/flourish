@@ -223,7 +223,8 @@ class Controller > yogame.Controller
   end
 
   def path?(x, y)
-    return self.geometry?(x, y, nil)
+    g = self.map[y // CELL_SIZE][x // CELL_SIZE]
+    return (g == nil) || g.kind_of?(Switch)
   end
 
   def goal?()

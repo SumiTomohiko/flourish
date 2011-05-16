@@ -6,9 +6,11 @@ import flourish.geometry.switch
 
 class Stage > GameStage
   def init()
-    x = self.index2pos(3)
-    y = self.index2pos(17)
-    self.stones = [flourish.char.stone.Stone.new(x, y, 'north)]
+    index2pos = self.index2pos
+    create_stone = flourish.char.stone.Stone.new
+    self.stones = [
+      create_stone(index2pos(3), index2pos(17), 'north),
+      create_stone(index2pos(8), index2pos(5), 'west)]
 
     super(<<EOF, 2, 22, 'north)
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
@@ -16,11 +18,11 @@ www wwwwwwwwwwwwwwwwwwwwwwwwwwww
 www wwwwwwwwwwwwwwwwwwwwwwwwwwww
 www wwwwwwwwwwwwwwwwwwwwwwwwwwww
 www wwwwwwwwwwwwwwwwwwwwwwwwwwww
-www       wwwwwwwwww   wwwwwwwww
-www wwww  wwwwwwwww    wwwwwwwww
-www wwww      wwww  wwwwwwwwwwww
-www wwwwwwwww wwww wwwwwwwwwwwww
-w     wwwwwww ww   wwwwwwwwwwwww
+ww       wwwwwwwww   wwwwwwwwwww
+www ww   wwwwwwww    wwwwwwwwwww
+www ww      wwww  wwwwwwwwwwwwww
+www wwwwwww wwww wwwwwwwwwwwwwww
+w     wwwww ww   wwwwwwwwwwwwwww
 www wwwwww         wwwwwwwwwwwww
 www wwwwwwwwwwwww  wwwwwwwwwwwww
 www wwwwwwwwwwwww  wwwwwwwwwwwww

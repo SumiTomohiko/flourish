@@ -50,7 +50,7 @@ class Stone > NonPlayerCharacter
         self.x += SPEED * diff_x
         self.y += SPEED * diff_y
         self.image_index = (i + 1) % 5
-        if i % (FPS // 2) == 0
+        if i % (FPS // 6) == 0
           play_sound(sounds["roll.wav"])
         end
         Coroutine.yield()

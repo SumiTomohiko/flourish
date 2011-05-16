@@ -16,7 +16,7 @@ def free_resources()
   images.free()
 end
 
-SPEED = CELL_SIZE // 4
+SPEED = CELL_SIZE // 8
 
 class Stone > NonPlayerCharacter
   def init(x, y, direction)
@@ -30,7 +30,7 @@ class Stone > NonPlayerCharacter
   end
 
   def run(ctrl)
-    loop() do [i]
+    loop() do
       pos = ctrl.get_next_pos(self.x, self.y, self.direction)
       if !ctrl.path?(pos.x, pos.y)
         play_sound(sounds["stop.wav"])
@@ -39,7 +39,8 @@ class Stone > NonPlayerCharacter
       end
 
       diff_x, diff_y = self.get_diff_to_forward_cell(self.direction)
-      (CELL_SIZE // SPEED).times() do
+      play_sound(sounds["roll.wav"])
+      (CELL_SIZE // SPEED).times() do [i]
         pc = ctrl.pc
         if ((self.x - pc.x) ** 2 + (self.y - pc.y) ** 2 < SPEED ** 2)
           ctrl.attack_pc(self.strength)
@@ -50,9 +51,6 @@ class Stone > NonPlayerCharacter
         self.x += SPEED * diff_x
         self.y += SPEED * diff_y
         self.image_index = (i + 1) % 5
-        if i % (FPS // 6) == 0
-          play_sound(sounds["roll.wav"])
-        end
         Coroutine.yield()
       end
     end

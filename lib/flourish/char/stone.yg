@@ -29,6 +29,10 @@ class Stone > NonPlayerCharacter
     self.act = self.run
   end
 
+  def attackable?(char)
+    return ((self.x - char.x) ** 2 + (self.y - char.y) ** 2 < SPEED ** 2)
+  end
+
   def run(ctrl)
     loop() do
       pos = ctrl.get_next_pos(self.x, self.y, self.direction)
@@ -42,11 +46,13 @@ class Stone > NonPlayerCharacter
       play_sound(sounds["roll.wav"])
       (CELL_SIZE // SPEED).times() do [i]
         pc = ctrl.pc
-        if ((self.x - pc.x) ** 2 + (self.y - pc.y) ** 2 < SPEED ** 2)
+        if self.attackable?(pc)
           ctrl.attack_pc(self.strength)
-          Coroutine.yield()
-          # Because PC must be dead, here is not reached.
-          next
+        end
+        ctrl.npc.each() do [char]
+          if !char.kind_of?(Stone) && self.attackable?(char)
+            ctrl.attack_npc(char, self.strength)
+          end
         end
         self.x += SPEED * diff_x
         self.y += SPEED * diff_y

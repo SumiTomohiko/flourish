@@ -1,23 +1,6 @@
 
-from flourish.char.slime import Slime, allocate_resources, free_resources
+from flourish.char.frozen_slime import FrozenSlime, allocate_resources, free_resources
 from flourish.stage import GameStage
-
-class FrozenSlime > Slime
-  def init(life=0, strength=0, x=nil, y=nil, direction='north)
-    # FIXME: Normally this method must not be needed, but super() cannot work
-    # for the bug now.
-    self.life = 0
-    self.strength = 0
-    self.x = x
-    self.y = y
-    self.direction = direction
-    self.reset_image()
-  end
-
-  def act(ctrl)
-    Coroutine.yield()
-  end
-end
 
 class Stage > GameStage
   def init()

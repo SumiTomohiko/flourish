@@ -263,8 +263,8 @@ class Controller > yogame.Controller
     self.coroutines[self.find_npc(char)] = self.make_coroutine(char)
   end
 
-  def attack_npc(char)
-    char.life -= self.pc.strength
+  def attack_npc(char, strength)
+    char.life -= strength
     if 0 < char.life
       return
     end

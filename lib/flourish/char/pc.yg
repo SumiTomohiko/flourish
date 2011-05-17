@@ -109,7 +109,7 @@ class PlayerCharacter > Character
     end
 
     play_sound(sounds["attack.wav"])
-    ctrl.attack_npc(char)
+    ctrl.attack_npc(char, self.strength)
 
     [1, 2, 3, 3].each() do [index]
       self.img = images["attack{0}.png".format(index)]

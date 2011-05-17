@@ -1,0 +1,21 @@
+
+from flourish.char.slime import Slime, allocate_resources, free_resources
+
+class FrozenSlime > Slime
+  def init(life=0, strength=0, x=nil, y=nil, direction='north)
+    # FIXME: Normally this method must not be needed, but super() cannot work
+    # for the bug now.
+    self.life = 0
+    self.strength = 0
+    self.x = x
+    self.y = y
+    self.direction = direction
+    self.reset_image()
+  end
+
+  def act(ctrl)
+    Coroutine.yield()
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

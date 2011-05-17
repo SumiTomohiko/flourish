@@ -1,7 +1,9 @@
 
+from flourish.char.frozen_slime import FrozenSlime
 from flourish.char.stone import Stone
 from flourish.geometry.switch import Switch
 from flourish.stage import GameStage
+import flourish.char.frozen_slime
 import flourish.char.stone
 import flourish.geometry.switch
 
@@ -51,12 +53,14 @@ EOF
 
   def allocate_resources(&block)
     try
+      flourish.char.frozen_slime.allocate_resources()
       flourish.char.stone.allocate_resources()
       flourish.geometry.switch.allocate_resources()
       block()
     finally
       flourish.geometry.switch.free_resources()
       flourish.char.stone.free_resources()
+      flourish.char.frozen_slime.free_resources()
     end
   end
 
@@ -65,7 +69,10 @@ EOF
   end
 
   def make_npc()
-    return self.stones
+    index2pos = self.index2pos
+    x = index2pos(3)
+    y = index2pos(3)
+    return [FrozenSlime.new(0, 0, x, y)] + self.stones
   end
 end
 

@@ -6,10 +6,19 @@ from flourish.core import CELL_SIZE, Images, Sounds, TURN_RIGHT_TABLE, play_soun
 DIR = "slime"
 images = Images.new(DIR, ["attack0.png", "attack1.png", "attack2.png", "attack3.png", "attack4.png", "attack5.png", "attack6.png", "attack7.png", "attack8.png", "walk0.png", "walk1.png", "walk2.png", "walk3.png", "walk4.png"])
 sounds = Sounds.new(DIR, ["attack.wav", "die.wav"])
+walking_images = Array.new(CELL_SIZE)
+
+def build_walking_images(tbl)
+  seq = [2, 3, 4, 3, 2, 0, 1, 0]
+  CELL_SIZE.times() do [i]
+    tbl[i] = images["walk{0}.png".format(seq[i % seq.size])]
+  end
+end
 
 def allocate_resources()
   images.allocate()
   sounds.allocate()
+  build_walking_images(walking_images)
 end
 
 def free_resources()
@@ -70,8 +79,7 @@ class Slime > NonPlayerCharacter
     end
 
     CELL_SIZE.times() do [i]
-      tbl = [2, 3, 4, 3, 2, 0, 1, 0]
-      self.img = images["walk{0}.png".format(tbl[i % tbl.size])]
+      self.img = walking_images[i]
       ctrl.move_char(self, self.direction, 1)
       Coroutine.yield()
     end

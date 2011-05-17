@@ -9,6 +9,7 @@ config.status
 configure
 core
 core.*
+data/ceil_large.png
 data/external.png
 data/floor.png
 data/goal-floor.png

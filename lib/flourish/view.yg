@@ -271,6 +271,7 @@ class View > yogame.View
 
     self.wall_img = nil
     self.ceil_img = nil
+    self.ceil_large_img = nil
     self.floor_img = nil
     self.mouse_area_img = nil
     self.external_img = nil
@@ -285,6 +286,7 @@ class View > yogame.View
     try
       self.wall_img = load_image("wall.png".to_path())
       self.ceil_img = load_image("ceil.png".to_path())
+      self.ceil_large_img = load_image("ceil_large.png".to_path())
       self.floor_img = load_image("floor.png".to_path())
       self.mouse_area_img = load_image("mouse_area.png".to_path())
       self.external_img = load_image("external.png".to_path())
@@ -307,8 +309,8 @@ class View > yogame.View
 
   def cleanup()
     imgs = [
-      self.mouse_area_img, self.wall_img, self.ceil_img, self.floor_img,
-      self.external_img]
+      self.mouse_area_img, self.wall_img, self.ceil_img, self.ceil_large_img,
+      self.floor_img, self.external_img]
     imgs.select() do [img]
       next img != nil
     end.each(&sdl.SDL_FreeSurface)
@@ -451,37 +453,44 @@ class View > yogame.View
     return self.find_wall_end(index + diff, diff)
   end
 
-  def draw_ceil_overlapping_floor(dst, diff)
-    src = self.ceil_img
-    srcrect = sdl.SDL_Rect.new()
-    (CELL_SIZE // self.ceil_img.h).times() do [n]
-      y = dst.y - (CELL_SIZE * diff + n * src.h)
-      if y < 0
-        next
-      end
-      d = Point.new(dst.x, y)
-      self.cut_surface(srcrect, src, d)
-      self.draw_surface(src, srcrect, d)
+  def draw_ceil_large(dst, diff)
+    src = self.ceil_large_img
+    y = dst.y - CELL_SIZE * diff
+    if y < 0
+      return
     end
+    srcrect = sdl.SDL_Rect.new()
+    srcrect.x = 0
+    srcrect.y = 0
+    srcrect.w = src.w
+    srcrect.h = src.h
+    d = Point.new(dst.x, y)
+    self.cut_surface(srcrect, src, d)
+    self.draw_surface(src, srcrect, d)
   end
 
   def draw_neighbor_ceils(dst, from_index, end_index)
     direction = self.pc.direction
     if direction == 'north
-      return (end_index.y + 1).to(from_index.y + 1) do [n]
-        self.draw_ceil_overlapping_floor(dst, from_index.y - n)
+      (end_index.y + 1).to(from_index.y + 1) do [n]
+        self.draw_ceil_large(dst, from_index.y - n)
       end
-    elif direction == 'east
-      return from_index.x.to(end_index.x) do [n]
-        self.draw_ceil_overlapping_floor(dst, n - from_index.x)
-      end
-    elif direction == 'west
-      return (end_index.x + 1).to(from_index.x + 1) do [n]
-        self.draw_ceil_overlapping_floor(dst, from_index.x - n)
-      end
+      return
     end
-    return from_index.y.to(end_index.y) do [n]
-      self.draw_ceil_overlapping_floor(dst, n - from_index.y)
+    if direction == 'east
+      from_index.x.to(end_index.x) do [n]
+        self.draw_ceil_large(dst, n - from_index.x)
+      end
+      return
+    end
+    if direction == 'west
+      (end_index.x + 1).to(from_index.x + 1) do [n]
+        self.draw_ceil_large(dst, from_index.x - n)
+      end
+      return
+    end
+    from_index.y.to(end_index.y) do [n]
+      self.draw_ceil_large(dst, n - from_index.y)
     end
   end
 
@@ -580,6 +589,7 @@ class View > yogame.View
     if !bottom?
       return
     end
+
     diff = self.get_upper_point(self.pc.direction)
     end_index = self.find_wall_end(index, diff)
     self.draw_neighbor_ceils(dst, index, end_index)

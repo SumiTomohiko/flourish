@@ -1,0 +1,43 @@
+
+from flourish.stage import GameStage
+
+class Stage > GameStage
+  def init()
+    super(<<EOF, 30, 30, 'north)
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+EOF
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

@@ -29,7 +29,7 @@ class PlayerCharacter > Character
 
   def move_right(ctrl)
     direction = self.direction
-    if !ctrl.movable?(self, TURN_RIGHT_TABLE[direction])
+    if !ctrl.pc_movable?(TURN_RIGHT_TABLE[direction])
       return
     end
 
@@ -56,7 +56,7 @@ class PlayerCharacter > Character
 
   def move_left(ctrl)
     direction = self.direction
-    if !ctrl.movable?(self, TURN_LEFT_TABLE[direction])
+    if !ctrl.pc_movable?(TURN_LEFT_TABLE[direction])
       return
     end
 
@@ -81,7 +81,7 @@ class PlayerCharacter > Character
     direction = self.direction
 
     tbl = { 'north: 'south, 'east: 'west, 'west: 'east, 'south: 'north }
-    if !ctrl.movable?(self, tbl[direction])
+    if !ctrl.pc_movable?(tbl[direction])
       return
     end
 
@@ -119,7 +119,7 @@ class PlayerCharacter > Character
 
   def move_forward(ctrl)
     direction = self.direction
-    if !ctrl.movable?(self, direction)
+    if !ctrl.pc_movable?(direction)
       return
     end
 

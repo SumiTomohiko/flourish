@@ -1,0 +1,68 @@
+
+from flourish.stage import GameStage
+import flourish.char.slime
+import flourish.geometry.switch
+
+class Stage > GameStage
+  def init()
+    super(<<EOF, 1, 3, 'north)
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+w wwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+w wwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+w wwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+EOF
+  end
+
+  def allocate_resources(&block)
+    try
+      flourish.char.slime.allocate_resources()
+      flourish.geometry.switch.allocate_resources()
+      block()
+    finally
+      flourish.geometry.switch.free_resources()
+      flourish.char.slime.free_resources()
+    end
+  end
+
+  def overwrite_map(map)
+    map[2][1] = flourish.geometry.switch.Switch.new([])
+  end
+
+  def make_npc()
+    slime = flourish.char.slime.Slime.new()
+    index2pos = self.index2pos
+    slime.x = index2pos(1)
+    slime.y = index2pos(1)
+    return [slime]
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

@@ -69,7 +69,22 @@ class Controller > yogame.Controller
     self.move_proc = f
   end
 
-  def movable?(char, direction)
+  def npc_movable?(char, direction)
+    pos = self.get_next_pos(char.x, char.y, direction)
+    if self.wall?(pos.x, pos.y)
+      return false
+    end
+    if self.switch?(pos.x, pos.y)
+      return false
+    end
+    if self.conflict?(char, pos)
+      return false
+    end
+    return true
+  end
+
+  def pc_movable?(direction)
+    char = self.pc
     pos = self.get_next_pos(char.x, char.y, direction)
     return !self.wall?(pos.x, pos.y) && !self.conflict?(char, pos)
   end
@@ -220,6 +235,10 @@ class Controller > yogame.Controller
 
   def wall?(x, y)
     return self.geometry?(x, y, 'wall)
+  end
+
+  def switch?(x, y)
+    return self.map[y // CELL_SIZE][x // CELL_SIZE].kind_of?(Switch)
   end
 
   def path?(x, y)

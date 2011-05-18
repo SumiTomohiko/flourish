@@ -277,6 +277,8 @@ class Controller > yogame.Controller
 
   def kill_npc(char)
     char.die()
+    self.pc.kill_count += 1
+
     char.regenerate()
     self.place_npc(char)
     self.coroutines[self.find_npc(char)] = self.make_coroutine(char)

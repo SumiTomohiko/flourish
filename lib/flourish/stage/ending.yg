@@ -7,6 +7,10 @@ class Stage > MiscStage
   def init()
     super(Controller, View)
   end
+
+  def make_models(pc)
+    return pc
+  end
 end
 
 # vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

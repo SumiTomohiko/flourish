@@ -10,6 +10,7 @@ class Stage > MiscStage
 
   def make_models(pc)
     pc.life = pc.life_max
+    pc.kill_count = 0
   end
 end
 

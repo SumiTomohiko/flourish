@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Invalid PC life in the second game
+desc: ""
+type: :bugfix
+component: flourish
+release: 
+reporter: SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+status: :unstarted
+disposition: 
+creation_time: 2011-05-18 01:39:49.919555 Z
+references: []
+
+id: 5df8518a33b2ada03948ca9f9f3fd2844a089606
+log_events: 
+- - 2011-05-18 01:39:50.642184 Z
+  - SumiTomohiko <SumiTomohiko@neko-daisuki.ddo.jp>
+  - created
+  - ""

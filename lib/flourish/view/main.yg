@@ -1,0 +1,683 @@
+
+import sdl
+import sdl.ttf
+import yogame
+
+from flourish.core import CELL_SIZE, CHAR_POS_OFFSET_X, CHAR_POS_OFFSET_Y, MAIN_VIEW_HEIGHT, MAIN_VIEW_PC_X, MAIN_VIEW_PC_Y, MAIN_VIEW_WIDTH, MAIN_VIEW_X, MAIN_VIEW_Y, Point, close_font, load_image, make_color, open_font
+from flourish.geometry.goal import Goal
+from flourish.geometry.switch import Switch
+
+Delta = Point
+
+class DrawData
+  def init(pc, pc2top_left, top_left2dst, pos2index_diff)
+    main_view_top_left = self.compute_main_view_top_left(pc, pc2top_left)
+    self.dst = self.compute_first_dst(main_view_top_left, top_left2dst)
+    self.index = self.pos2index(main_view_top_left, pos2index_diff)
+    self.top_left = main_view_top_left
+  end
+
+  def floor(n)
+    return n // CELL_SIZE * CELL_SIZE
+  end
+
+  def pos2index(p, diff)
+    return Point.new(p.x // CELL_SIZE, p.y // CELL_SIZE)
+  end
+
+  def compute_diff(n, delta)
+    return self.floor(n) + delta - n
+  end
+
+  def compute_first_dst(top_left, top_left2dst)
+    x = self.compute_diff(top_left.x, top_left2dst.x)
+    y = self.compute_diff(top_left.y, top_left2dst.y)
+    return self.first_dst2point(x, y)
+  end
+
+  def compute_main_view_top_left(pc, pc2top_left)
+    return Point.new(pc.x + pc2top_left.x, pc.y + pc2top_left.y)
+  end
+
+  def compute_char_pos(x, y)
+    raise NotImplementedError.new()
+  end
+
+  def first_dst2point(x, y)
+    raise NotImplementedError.new()
+  end
+
+  def init_horizontally(index)
+    raise NotImplementedError.new()
+  end
+
+  def init_vertically(index)
+    raise NotImplementedError.new()
+  end
+
+  def move_horizontally(index)
+    raise NotImplementedError.new()
+  end
+
+  def move_vertically(index)
+    raise NotImplementedError.new()
+  end
+
+  def get_index_of_neighbor(index)
+    raise NotImplementedError.new()
+  end
+
+  def each_cells(&block)
+    index = Point.new()
+    dst = self.dst
+    self.init_vertically(index)
+    point = Point.new()
+    dst.y.to(MAIN_VIEW_HEIGHT + 2 * CELL_SIZE, CELL_SIZE) do [y]
+      bottom? = MAIN_VIEW_HEIGHT < y
+      self.init_horizontally(index)
+      point.y = y
+      dst.x.to(MAIN_VIEW_WIDTH + CELL_SIZE, CELL_SIZE) do [x]
+        point.x = x
+        block(point, index, self.get_index_of_neighbor(index), bottom?)
+        self.move_horizontally(index)
+      end
+      self.move_vertically(index)
+    end
+  end
+end
+
+class DrawDataNorth > DrawData
+  def init(pc)
+    pc2top_left = Delta.new(-MAIN_VIEW_PC_X, -MAIN_VIEW_PC_Y)
+    top_left2dst = Delta.new(0, CELL_SIZE)
+    super(pc, pc2top_left, top_left2dst, Delta.new(0, 0))
+  end
+
+  def compute_char_pos(x, y)
+    return Point.new(
+      x - CELL_SIZE // 2 - self.top_left.x,
+      y + CELL_SIZE // 2 - self.top_left.y)
+  end
+
+  def first_dst2point(x, y)
+    return Point.new(x, y)
+  end
+
+  def get_index_of_neighbor(index)
+    return Point.new(index.x, index.y + 1)
+  end
+
+  def init_horizontally(index)
+    index.x = self.index.x
+  end
+
+  def init_vertically(index)
+    index.y = self.index.y
+  end
+
+  def move_horizontally(index)
+    index.x += 1
+  end
+
+  def move_vertically(index)
+    index.y += 1
+  end
+end
+
+class DrawDataEast > DrawData
+  def init(pc)
+    pc2top_left = Delta.new(MAIN_VIEW_PC_Y - 1, -MAIN_VIEW_PC_X)
+    top_left2dst = Delta.new(-1, 0)
+    super(pc, pc2top_left, top_left2dst, Delta.new(0, 0))
+  end
+
+  def compute_char_pos(x, y)
+    return Point.new(
+      y - CELL_SIZE // 2 - self.top_left.y,
+      self.top_left.x - (x - CELL_SIZE // 2))
+  end
+
+  def first_dst2point(x, y)
+    return Point.new(y, -x)
+  end
+
+  def get_index_of_neighbor(index)
+    return Point.new(index.x - 1, index.y)
+  end
+
+  def init_horizontally(index)
+    index.y = self.index.y
+  end
+
+  def init_vertically(index)
+    index.x = self.index.x
+  end
+
+  def move_horizontally(index)
+    index.y += 1
+  end
+
+  def move_vertically(index)
+    index.x -= 1
+  end
+end
+
+class DrawDataWest > DrawData
+  def init(pc)
+    pc2top_left = Delta.new(-MAIN_VIEW_PC_Y, MAIN_VIEW_PC_X - 1)
+    top_left2dst = Delta.new(CELL_SIZE, CELL_SIZE - 1)
+    super(pc, pc2top_left, top_left2dst, Delta.new(0, -1))
+  end
+
+  def compute_char_pos(x, y)
+    return Point.new(
+      self.top_left.y - (y + CELL_SIZE // 2),
+      x + CELL_SIZE // 2 - self.top_left.x)
+  end
+
+  def first_dst2point(x, y)
+    return Point.new(-y, x)
+  end
+
+  def get_index_of_neighbor(index)
+    return Point.new(index.x + 1, index.y)
+  end
+
+  def init_horizontally(index)
+    index.y = self.index.y
+  end
+
+  def init_vertically(index)
+    index.x = self.index.x
+  end
+
+  def move_horizontally(index)
+    index.y -= 1
+  end
+
+  def move_vertically(index)
+    index.x += 1
+  end
+end
+
+class DrawDataSouth > DrawData
+  def init(pc)
+    pc2top_left = Delta.new(MAIN_VIEW_PC_X - 1, MAIN_VIEW_PC_Y - 1)
+    top_left2dst = Delta.new(CELL_SIZE - 1, -1)
+    super(pc, pc2top_left, top_left2dst, Delta.new(-1, 0))
+  end
+
+  def compute_char_pos(x, y)
+    return Point.new(
+      self.top_left.x - (x + CELL_SIZE // 2),
+      self.top_left.y - (y - CELL_SIZE // 2))
+  end
+
+  def first_dst2point(x, y)
+    return Point.new(-x, -y)
+  end
+
+  def get_index_of_neighbor(index)
+    return Point.new(index.x, index.y - 1)
+  end
+
+  def init_horizontally(index)
+    index.x = self.index.x
+  end
+
+  def init_vertically(index)
+    index.y = self.index.y
+  end
+
+  def move_horizontally(index)
+    index.x -= 1
+  end
+
+  def move_vertically(index)
+    index.y -= 1
+  end
+end
+
+# DIRECTION_TABLE[pc.direction][npc.direction] is the instance name.
+DIRECTION_TABLE = {
+  'north: {
+    'north: 'get_up_image,
+    'east: 'get_left_image,
+    'west: 'get_right_image,
+    'south: 'get_down_image },
+  'east: {
+    'north: 'get_left_image,
+    'east: 'get_up_image,
+    'west: 'get_down_image,
+    'south: 'get_right_image },
+  'west: {
+    'north: 'get_right_image,
+    'east: 'get_down_image,
+    'west: 'get_up_image,
+    'south: 'get_left_image },
+  'south: {
+    'north: 'get_down_image,
+    'east: 'get_left_image,
+    'west: 'get_right_image,
+    'south: 'get_up_image }}
+
+class View > yogame.View
+  def init(models, screen)
+    super(screen)
+
+    self.map = models['map]
+    self.pc = models['pc]
+    self.npc = models['npc]
+
+    self.wall_img = nil
+    self.ceil_img = nil
+    self.ceil_large_img = nil
+    self.floor_img = nil
+    self.mouse_area_img = nil
+    self.external_img = nil
+    self.font = nil
+    self.draw_data = {
+      'north: DrawDataNorth, 'east: DrawDataEast, 'west: DrawDataWest,
+      'south: DrawDataSouth }
+    self.geometry2img = nil
+  end
+
+  def allocate_resources(&block)
+    try
+      self.wall_img = load_image("wall.png".to_path())
+      self.ceil_img = load_image("ceil.png".to_path())
+      self.ceil_large_img = load_image("ceil_large.png".to_path())
+      self.floor_img = load_image("floor.png".to_path())
+      self.mouse_area_img = load_image("mouse_area.png".to_path())
+      self.external_img = load_image("external.png".to_path())
+      self.goal_floor_img = load_image("goal-floor.png".to_path())
+      self.goal_pass_img = load_image("goal-pass.png".to_path())
+      self.switch_released_img = load_image("switch-released.png".to_path())
+      self.switch_pressed_img = load_image("switch-pressed.png".to_path())
+      self.font = open_font(24)
+
+      self.draw_data = {
+        'north: DrawDataNorth, 'east: DrawDataEast, 'west: DrawDataWest,
+        'south: DrawDataSouth }
+      self.geometry2img = { 'wall: self.wall_img, 'external: self.external_img }
+
+      block(self)
+    finally
+      self.cleanup()
+    end
+  end
+
+  def cleanup()
+    imgs = [
+      self.mouse_area_img, self.wall_img, self.ceil_img, self.ceil_large_img,
+      self.floor_img, self.external_img]
+    imgs.select() do [img]
+      next img != nil
+    end.each(&sdl.SDL_FreeSurface)
+    close_font(self.font)
+  end
+
+  def get_geometry(index)
+    if (index.x < 0) || (index.y < 0)
+      return 'external
+    end
+    try
+      return self.map[index.y][index.x]
+    except IndexError
+      return 'external
+    end
+  end
+
+  def get_surface(geometry)
+    # FIXME: class object cannot be a key of dictionaries?
+    if geometry.kind_of?(Goal)
+      return self.goal_floor_img
+    end
+    return self.geometry2img.get(geometry, self.floor_img)
+  end
+
+  def shrink_floor(rect)
+    max_height = 2 * CELL_SIZE - self.wall_img.h
+    rect.h = max_height < rect.y ? 0 : max_height - rect.y
+  end
+
+  def cut_srcrect_y(srcrect, src, dst)
+    if dst.y < 0
+      srcrect.h = 0
+      return
+    end
+    top = dst.y - src.h
+    if MAIN_VIEW_HEIGHT <= top
+      srcrect.h = 0
+      return
+    end
+    if top < 0
+      srcrect.y = -top
+      srcrect.h = src.h - srcrect.y
+      return
+    end
+    if MAIN_VIEW_HEIGHT <= dst.y
+      srcrect.h = src.h - (dst.y - MAIN_VIEW_HEIGHT)
+      return
+    end
+    srcrect.h = src.h
+  end
+
+  def cut_srcrect_x(srcrect, src, dst)
+    if (dst.x < -src.w) || (MAIN_VIEW_WIDTH < dst.x)
+      srcrect.w = 0
+      return
+    end
+    if dst.x < 0
+      srcrect.x = -dst.x
+      srcrect.w = src.w - srcrect.x
+      return
+    end
+    if MAIN_VIEW_WIDTH < dst.x + src.w
+      srcrect.w = MAIN_VIEW_WIDTH - dst.x
+      return
+    end
+    srcrect.w = src.w
+  end
+
+  def cut_surface(srcrect, src, dst)
+    self.cut_srcrect_x(srcrect, src, dst)
+    self.cut_srcrect_y(srcrect, src, dst)
+  end
+
+  def draw_switch(g, dst)
+    img = g.pressed? ? self.switch_pressed_img : self.switch_released_img
+    srcrect = sdl.SDL_Rect.new()
+    self.cut_surface(srcrect, img, dst)
+    self.draw_surface(img, srcrect, dst)
+  end
+
+  def draw_floor(geometry, dst, neighbor)
+    src = self.get_surface(geometry)
+    srcrect = sdl.SDL_Rect.new()
+    self.cut_surface(srcrect, src, dst)
+    if (neighbor == 'wall) && (dst.y < MAIN_VIEW_HEIGHT)
+      self.shrink_floor(srcrect)
+    end
+    self.draw_surface(src, srcrect, dst)
+  end
+
+  def draw_surface(src, srcrect, dst)
+    dstrect = sdl.SDL_Rect.new()
+    dstrect.x = MAIN_VIEW_X + dst.x + srcrect.x
+    dstrect.w = srcrect.w
+    dstrect.y = MAIN_VIEW_Y + dst.y + srcrect.y - src.h
+    dstrect.h = srcrect.h
+    self.blit_surface(src, srcrect, dstrect)
+  end
+
+  def draw_wall(dst, src)
+    srcrect = sdl.SDL_Rect.new()
+    self.cut_surface(srcrect, src, dst)
+    self.draw_surface(src, srcrect, dst)
+  end
+
+  def draw_ceil_on_wall(dst, diff)
+    src = self.ceil_img
+    srcrect = sdl.SDL_Rect.new()
+    d = dst + Point.new(0, -self.wall_img.h - diff)
+    self.cut_surface(srcrect, src, d)
+    self.draw_surface(src, srcrect, d)
+  end
+
+  def get_upper_diff(direction)
+    if direction == 'north
+      return [0, -1]
+    end
+    if direction == 'east
+      return [1, 0]
+    end
+    if direction == 'west
+      return [-1, 0]
+    end
+    return [0, 1]
+  end
+
+  def get_upper_point(direction)
+    return Point.new(*self.get_upper_diff(direction))
+  end
+
+  def get_upper_neighbor(index)
+    return self.get_geometry(index + self.get_upper_point(self.pc.direction))
+  end
+
+  def find_wall_end(index, diff)
+    if self.get_geometry(index) != 'wall
+      return index
+    end
+    return self.find_wall_end(index + diff, diff)
+  end
+
+  def draw_ceil_large(dst, diff)
+    src = self.ceil_large_img
+    y = dst.y - CELL_SIZE * diff
+    if y < 0
+      return
+    end
+    srcrect = sdl.SDL_Rect.new()
+    srcrect.x = 0
+    srcrect.y = 0
+    srcrect.w = src.w
+    srcrect.h = src.h
+    d = Point.new(dst.x, y)
+    self.cut_surface(srcrect, src, d)
+    self.draw_surface(src, srcrect, d)
+  end
+
+  def draw_neighbor_ceils(dst, from_index, end_index)
+    direction = self.pc.direction
+    if direction == 'north
+      (end_index.y + 1).to(from_index.y + 1) do [n]
+        self.draw_ceil_large(dst, from_index.y - n)
+      end
+      return
+    end
+    if direction == 'east
+      from_index.x.to(end_index.x) do [n]
+        self.draw_ceil_large(dst, n - from_index.x)
+      end
+      return
+    end
+    if direction == 'west
+      (end_index.x + 1).to(from_index.x + 1) do [n]
+        self.draw_ceil_large(dst, from_index.x - n)
+      end
+      return
+    end
+    from_index.y.to(end_index.y) do [n]
+      self.draw_ceil_large(dst, n - from_index.y)
+    end
+  end
+
+  def draw_end_ceil(dst, index)
+    src = self.ceil_img
+    height = self.wall_img.h + src.h - CELL_SIZE
+    srcrect = sdl.SDL_Rect.new()
+    (height // src.h).times() do [n]
+      y = dst.y - n * src.h
+      if y < 0
+        next
+      end
+      d = Point.new(dst.x, y)
+      self.cut_surface(srcrect, src, d)
+      self.draw_surface(src, srcrect, d)
+    end
+  end
+
+  def compute_ceils_size(from_index, end_index)
+    direction = self.pc.direction
+    if direction == 'north
+      return from_index.y - end_index.y
+    end
+    if direction == 'east
+      return end_index.x - from_index.x
+    end
+    if direction == 'west
+      return from_index.x - end_index.x
+    end
+    return end_index.y - from_index.y
+  end
+
+  def draw_ceils(dst, index)
+    self.draw_ceil_on_wall(dst, 0)
+    if self.get_upper_neighbor(index) != 'wall
+      return
+    end
+    self.draw_ceil_on_wall(dst, self.ceil_img.h)
+
+    diff = self.get_upper_point(self.pc.direction)
+    from_index = index + diff * 2
+    end_index = self.find_wall_end(from_index, diff)
+    d = Point.new(dst.x, dst.y - 2 * CELL_SIZE)
+    self.draw_neighbor_ceils(d, from_index, end_index)
+
+    size = self.compute_ceils_size(from_index, end_index)
+    d = Point.new(dst.x, dst.y - CELL_SIZE * (2 + size))
+    self.draw_end_ceil(d, end_index + diff)
+  end
+
+  def decide_char_pos(char)
+    x = char.x - CHAR_POS_OFFSET_X
+    y = char.y - CHAR_POS_OFFSET_Y
+    direction = self.pc.direction
+    if direction == 'north
+      return Point.new(
+        (x + CELL_SIZE - 1) // CELL_SIZE,
+        (y + CELL_SIZE - 1) // CELL_SIZE)
+    elif direction == 'east
+      return Point.new(x // CELL_SIZE, (y + CELL_SIZE - 1) // CELL_SIZE)
+    elif direction == 'west
+      return Point.new((x + CELL_SIZE - 1) // CELL_SIZE, y // CELL_SIZE)
+    end
+    return Point.new(x // CELL_SIZE, y // CELL_SIZE)
+  end
+
+  def draw_goal(g, dst, neighbor)
+    self.draw_floor(g, dst, neighbor)
+    if g.direction != self.pc.direction
+      return
+    end
+    self.draw_wall(dst + Point.new(0, -CELL_SIZE), self.goal_pass_img)
+  end
+
+  def draw_geometry(dst, index, neighbor, bottom?)
+    geometry = self.get_geometry(neighbor)
+    g = self.get_geometry(index)
+    if (g == nil) || (g == 'external)
+      self.draw_floor(g, dst, geometry)
+      return
+    end
+    if g.kind_of?(Switch)
+      self.draw_switch(g, dst)
+      return
+    end
+    if g.kind_of?(Goal)
+      self.draw_goal(g, dst, geometry)
+      return
+    end
+    # TODO: Insert assert statement to assert that g is 'wall.
+    if (geometry == nil) || geometry.kind_of?(Goal) || geometry.kind_of?(Switch)
+      self.draw_wall(dst, self.get_surface('wall))
+      self.draw_ceils(dst, index)
+      return
+    end
+    if !bottom?
+      return
+    end
+
+    diff = self.get_upper_point(self.pc.direction)
+    end_index = self.find_wall_end(index, diff)
+    self.draw_neighbor_ceils(dst, index, end_index)
+
+    size = self.compute_ceils_size(index, end_index)
+    d = Point.new(dst.x, dst.y - CELL_SIZE * size)
+    self.draw_end_ceil(d, end_index + diff)
+  end
+
+  def draw_char_at(src, dst)
+    srcrect = sdl.SDL_Rect.new()
+    self.cut_surface(srcrect, src, dst)
+    self.draw_surface(src, srcrect, dst)
+  end
+
+  def draw_pc()
+    x = MAIN_VIEW_PC_X - CELL_SIZE // 2
+    y = MAIN_VIEW_PC_Y + CELL_SIZE // 2
+    self.draw_char_at(self.pc.img, Point.new(x, y))
+  end
+
+  def draw_char(char, data)
+    img = char.get_attr(DIRECTION_TABLE[self.pc.direction][char.direction])()
+    self.draw_char_at(img, data.compute_char_pos(char.x, char.y))
+  end
+
+  def draw_main_view(data)
+    pos = self.decide_char_pos(self.pc)
+    npc_pos = self.npc.map(&self.decide_char_pos)
+
+    data.each_cells() do [dst, index, neighbor, bottom?]
+      self.draw_geometry(dst, index, neighbor, bottom?)
+      if pos == index
+        self.draw_pc()
+      end
+      npc_pos.each_with_index() do [i, pos]
+        char = self.npc[i]
+        if pos == index
+          self.draw_char(char, data)
+        end
+      end
+    end
+  end
+
+  def draw_mouse_area()
+    MOUSE_AREA_WIDTH = 3 * CELL_SIZE
+    MOUSE_AREA_HIGHT = 2 * CELL_SIZE + CELL_SIZE // 2
+
+    srcrect = sdl.SDL_Rect.new()
+    srcrect.x = 0
+    srcrect.y = 0
+    srcrect.w = MOUSE_AREA_WIDTH
+    srcrect.h = MOUSE_AREA_HIGHT
+    dstrect = sdl.SDL_Rect.new()
+    dstrect.x = MAIN_VIEW_X + (MAIN_VIEW_WIDTH - MOUSE_AREA_WIDTH) // 2
+    dstrect.y = MAIN_VIEW_Y + MAIN_VIEW_HEIGHT - MOUSE_AREA_HIGHT
+    dstrect.w = srcrect.w
+    dstrect.h = srcrect.h
+    self.blit_surface(self.mouse_area_img, srcrect, dstrect)
+  end
+
+  def draw_text(txt, x, y)
+    WHITE = make_color(255, 255, 255)
+    surface = sdl.ttf.TTF_RenderText_Solid(self.font, txt, WHITE)
+    try
+      dstrect = sdl.SDL_Rect.new()
+      dstrect.x = x
+      dstrect.y = y
+      self.blit_surface(surface, nil, dstrect)
+      return x + surface.h
+    finally
+      sdl.SDL_FreeSurface(surface)
+    end
+  end
+
+  def draw_parameters()
+    X = 4
+    y = MAIN_VIEW_Y
+    y += self.draw_text("LIFE", X, y)
+    y += self.draw_text(self.pc.life.to_s(), X, y)
+  end
+
+  def draw()
+    pc = self.pc
+    self.draw_main_view(self.draw_data[pc.direction].new(pc))
+    self.draw_mouse_area()
+    self.draw_parameters()
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

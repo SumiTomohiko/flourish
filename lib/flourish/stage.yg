@@ -1,8 +1,8 @@
 
 from flourish.core import CELL_SIZE, MAP_SIZE, Point
-from flourish.ctrl import Controller
+from flourish.ctrl.main import Controller
 from flourish.geometry.goal import Goal
-from flourish.view import View
+from flourish.view.main import View
 
 class Stage
   def init(map=nil, x=nil, y=nil, direction=nil, ctrl=Controller, view=View)

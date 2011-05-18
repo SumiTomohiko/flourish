@@ -1,0 +1,14 @@
+
+import yogame
+
+class View > yogame.View
+  def init(_, screen)
+    super(screen)
+  end
+
+  def allocate_resources(&block)
+    block()
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

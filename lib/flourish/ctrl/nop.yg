@@ -1,0 +1,11 @@
+
+import yogame
+
+class Controller > yogame.Controller
+  def init(models)
+    super()
+    self.exit('ok)
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

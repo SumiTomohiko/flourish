@@ -1,0 +1,16 @@
+
+from flourish.ctrl.nop import Controller
+from flourish.stage import MiscStage
+from flourish.view.nop import View
+
+class Stage > MiscStage
+  def init()
+    super(Controller, View)
+  end
+
+  def make_models(pc)
+    pc.life = pc.life_max
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

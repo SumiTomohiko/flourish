@@ -3,6 +3,7 @@ import flourish.stage.cave
 import flourish.stage.ending
 import flourish.stage.fadeout
 import flourish.stage.gameover
+import flourish.stage.reset
 import flourish.stage.title
 
 def transit_from_fadeout(status)
@@ -12,7 +13,7 @@ def transit_from_fadeout(status)
   if status == 'goal
     return flourish.stage.ending.Stage.new()
   end
-  return flourish.stage.cave.Stage.new()
+  return flourish.stage.reset.Stage.new()
 end
 
 def transit(stage, status)
@@ -24,6 +25,9 @@ def transit(stage, status)
   end
   if status == 'dead
     return flourish.stage.gameover.Stage.new()
+  end
+  if stage.kind_of?(flourish.stage.reset.Stage)
+    return flourish.stage.cave.Stage.new()
   end
   return flourish.stage.fadeout.Stage.new(status)
 end

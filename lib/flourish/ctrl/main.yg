@@ -206,6 +206,8 @@ class Controller > yogame.Controller
   end
 
   def animate()
+    self.pc.ticks += 1
+
     self.coroutines.each() do [coro]
       coro.resume()
     end

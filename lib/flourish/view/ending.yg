@@ -3,7 +3,7 @@ from sdl import SDL_FreeSurface, SDL_Rect
 from sdl.ttf import TTF_RenderText_Solid
 import yogame
 
-from flourish.core import close_font, make_color, open_font
+from flourish.core import FPS, close_font, make_color, open_font
 
 WHITE = make_color(255, 255, 255)
 
@@ -14,6 +14,7 @@ class View > yogame.View
 
     # assert models.kind_of?(flourish.char.pc.PlayerCharacter)
     self.kill_count = models.kill_count
+    self.ticks = models.ticks
   end
 
   def allocate_resources(&block)
@@ -36,18 +37,29 @@ class View > yogame.View
 
   def draw_text_centering(txt, y)
     self.draw_text(txt) do [surface]
+      h = surface.h
+
       dstrect = SDL_Rect.new()
       dstrect.x = self.screen.w // 2 - surface.w // 2
       dstrect.y = y
       next dstrect
     end
+    return h
+  end
+
+  def draw_ticks(y)
+    sec = self.ticks // FPS
+    txt = "Time: {0} min {1} sec".format(sec // 60, sec % 60)
+    return self.draw_text_centering(txt, y)
   end
 
   def draw()
     self.draw_text_centering("Congratulations", self.screen.h // 3)
 
-    txt = "kill count: {0}".format(self.kill_count)
-    self.draw_text_centering(txt, self.screen.h // 2)
+    y = self.screen.h // 2
+    y += self.draw_text_centering("kill count: {0}".format(self.kill_count), y)
+
+    self.draw_ticks(y)
   end
 end
 

@@ -26,6 +26,7 @@ class PlayerCharacter > Character
     super(0, 2, nil, nil, nil)
     self.life_max = life_max
     self.kill_count = 0
+    self.ticks = 0
     self.switch_image(0)
   end
 

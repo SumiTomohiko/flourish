@@ -12,30 +12,30 @@ class Stage > GameStage
       create_stone(index2pos(3), index2pos(17), 'north),
       create_stone(index2pos(8), index2pos(5), 'west)]
 
-    super(<<EOF, 2, 22, 'north)
+    super(<<EOF, 19, 19, 'north)
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 www wwwwwwwwwwwwwwwwwwwwwwwwwwww
 www wwwwwwwwwwwwwwwwwwwwwwwwwwww
 www wwwwwwwwwwwwwwwwwwwwwwwwwwww
 www wwwwwwwwwwwwwwwwwwwwwwwwwwww
 ww       wwwwwwwww   wwwwwwwwwww
-www ww   wwwwwwww    wwwwwwwwwww
-www ww      wwww  wwwwwwwwwwwwww
-www wwwwwww wwww wwwwwwwwwwwwwww
-w     wwwww ww   wwwwwwwwwwwwwww
+www ww  wwwwwwwww    wwwwwwwwwww
+www ww  ww  wwww  wwwwwwwwwwwwww
+www www     wwww wwwwwwwwwwwwwww
+w     wwww  ww   wwwwwwwwwwwwwww
 www wwwwww         wwwwwwwwwwwww
 www wwwwwwwwwwwww  wwwwwwwwwwwww
 www wwwwwwwwwwwww  wwwwwwwwwwwww
 w     www   wwwww  wwwwwwwwwwwww
 www wwwww             wwwwwwwwww
-www wwwwwwww wwww wwwwwwwwwwwwww
-www wwwwwwww wwww wwwwwwwwwwwwww
-g     wwwwww wwwwwwwwwwwwwwwwwww
-wwwwwwwww    wwwwwwwwwwwwwwwwwww
-wwwwwwwww    wwwwwwwwwwwwwwwwwww
-w   wwww   wwwwwwwwwwwwwwwwwwwww
-w        wwwwwwwwwwwwwwwwwwwwwww
-w   wwwwwwwwwwwwwwwwwwwwwwwwwwww
+www wwwwwwwwwwwww wwwwwwwwwwwwww
+www wwwwwwwwwwwww wwwwwwwwwwwwww
+g     wwwwwwwwwww    wwwwwwwwwww
+wwwwwwwwwwwwwwwww    wwwwwwwwwww
+wwwwwwwwwwwwwwwww    wwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww

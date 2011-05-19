@@ -1,0 +1,15 @@
+#!/bin/sh
+
+cmd="xwininfo -name Flourish"
+
+stage="${1:-attack_demo}"
+bin/flourish -l lib -s "${stage}" &
+while [ ! "`${cmd}`" ]
+do
+  :
+done > /dev/null 2>&1
+${cmd} | grep -w "Window id" | grep -o -E "0x[0-9a-z]+" | xargs --replace recordmydesktop -windowid {} -v_quality 0 --no-frame --fps 10 -s_quality -1 --quick-subsampling
+
+# End flourish manually.
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

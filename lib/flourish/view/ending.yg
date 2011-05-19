@@ -49,7 +49,7 @@ class View > yogame.View
 
   def draw_ticks(y)
     sec = self.ticks // FPS
-    txt = "Time: {0} min {1} sec".format(sec // 60, sec % 60)
+    txt = "time: {0} min {1} sec".format(sec // 60, sec % 60)
     return self.draw_text_centering(txt, y)
   end
 

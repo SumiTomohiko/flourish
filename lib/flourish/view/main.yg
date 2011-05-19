@@ -10,11 +10,12 @@ from flourish.geometry.switch import Switch
 Delta = Point
 
 class DrawData
-  def init(pc, pc2top_left, top_left2dst, pos2index_diff)
+  def init(pc, pc2top_left, top_left2dst, pos2index_diff, upper_limit)
     main_view_top_left = self.compute_main_view_top_left(pc, pc2top_left)
     self.dst = self.compute_first_dst(main_view_top_left, top_left2dst)
     self.index = self.pos2index(main_view_top_left, pos2index_diff)
     self.top_left = main_view_top_left
+    self.upper_limit = upper_limit
   end
 
   def floor(n)
@@ -73,7 +74,7 @@ class DrawData
     self.init_vertically(index)
     point = Point.new()
     dst.y.to(MAIN_VIEW_HEIGHT + 2 * CELL_SIZE, CELL_SIZE) do [y]
-      bottom? = MAIN_VIEW_HEIGHT < y
+      bottom? = MAIN_VIEW_HEIGHT + CELL_SIZE <= y
       self.init_horizontally(index)
       point.y = y
       dst.x.to(MAIN_VIEW_WIDTH + CELL_SIZE, CELL_SIZE) do [x]
@@ -90,7 +91,12 @@ class DrawDataNorth > DrawData
   def init(pc)
     pc2top_left = Delta.new(-MAIN_VIEW_PC_X, -MAIN_VIEW_PC_Y)
     top_left2dst = Delta.new(0, CELL_SIZE)
-    super(pc, pc2top_left, top_left2dst, Delta.new(0, 0))
+    upper_limit = (pc.y - MAIN_VIEW_PC_Y) // CELL_SIZE - 1
+    super(pc, pc2top_left, top_left2dst, Delta.new(0, 0), upper_limit)
+  end
+
+  def upper_limit?(index)
+    return index.y <= self.upper_limit
   end
 
   def compute_char_pos(x, y)
@@ -128,7 +134,12 @@ class DrawDataEast > DrawData
   def init(pc)
     pc2top_left = Delta.new(MAIN_VIEW_PC_Y - 1, -MAIN_VIEW_PC_X)
     top_left2dst = Delta.new(-1, 0)
-    super(pc, pc2top_left, top_left2dst, Delta.new(0, 0))
+    upper_limit = (pc.x + MAIN_VIEW_PC_Y - 1) // CELL_SIZE + 1
+    super(pc, pc2top_left, top_left2dst, Delta.new(0, 0), upper_limit)
+  end
+
+  def upper_limit?(index)
+    return self.upper_limit <= index.x
   end
 
   def compute_char_pos(x, y)
@@ -166,7 +177,12 @@ class DrawDataWest > DrawData
   def init(pc)
     pc2top_left = Delta.new(-MAIN_VIEW_PC_Y, MAIN_VIEW_PC_X - 1)
     top_left2dst = Delta.new(CELL_SIZE, CELL_SIZE - 1)
-    super(pc, pc2top_left, top_left2dst, Delta.new(0, -1))
+    upper_limit = (pc.x - MAIN_VIEW_PC_Y) // CELL_SIZE - 1
+    super(pc, pc2top_left, top_left2dst, Delta.new(0, -1), upper_limit)
+  end
+
+  def upper_limit?(index)
+    return index.x <= self.upper_limit
   end
 
   def compute_char_pos(x, y)
@@ -204,7 +220,12 @@ class DrawDataSouth > DrawData
   def init(pc)
     pc2top_left = Delta.new(MAIN_VIEW_PC_X - 1, MAIN_VIEW_PC_Y - 1)
     top_left2dst = Delta.new(CELL_SIZE - 1, -1)
-    super(pc, pc2top_left, top_left2dst, Delta.new(-1, 0))
+    upper_limit = (pc.y + MAIN_VIEW_PC_Y - 1) // CELL_SIZE + 1
+    super(pc, pc2top_left, top_left2dst, Delta.new(-1, 0), upper_limit)
+  end
+
+  def upper_limit?(index)
+    return self.upper_limit <= index.y
   end
 
   def compute_char_pos(x, y)
@@ -446,11 +467,15 @@ class View > yogame.View
     return self.get_geometry(index + self.get_upper_point(self.pc.direction))
   end
 
-  def find_wall_end(index, diff)
-    if self.get_geometry(index) != 'wall
+  def find_wall_end(index, diff, data)
+    if data.upper_limit?(index)
       return index
     end
-    return self.find_wall_end(index + diff, diff)
+    g = self.get_geometry(index)
+    if (g != 'wall) && (g != 'external)
+      return index
+    end
+    return self.find_wall_end(index + diff, diff, data)
   end
 
   def draw_ceil_large(dst, diff)
@@ -523,16 +548,17 @@ class View > yogame.View
     return end_index.y - from_index.y
   end
 
-  def draw_ceils(dst, index)
+  def draw_ceils(dst, index, data)
     self.draw_ceil_on_wall(dst, 0)
-    if self.get_upper_neighbor(index) != 'wall
+    g = self.get_upper_neighbor(index)
+    if (g != 'wall) && (g != 'external)
       return
     end
     self.draw_ceil_on_wall(dst, self.ceil_img.h)
 
     diff = self.get_upper_point(self.pc.direction)
     from_index = index + diff * 2
-    end_index = self.find_wall_end(from_index, diff)
+    end_index = self.find_wall_end(from_index, diff, data)
     d = Point.new(dst.x, dst.y - 2 * CELL_SIZE)
     self.draw_neighbor_ceils(d, from_index, end_index)
 
@@ -565,10 +591,10 @@ class View > yogame.View
     self.draw_wall(dst + Point.new(0, -CELL_SIZE), self.goal_pass_img)
   end
 
-  def draw_geometry(dst, index, neighbor, bottom?)
+  def draw_geometry(dst, index, neighbor, bottom?, data)
     geometry = self.get_geometry(neighbor)
     g = self.get_geometry(index)
-    if (g == nil) || (g == 'external)
+    if g == nil
       self.draw_floor(g, dst, geometry)
       return
     end
@@ -580,10 +606,10 @@ class View > yogame.View
       self.draw_goal(g, dst, geometry)
       return
     end
-    # TODO: Insert assert statement to assert that g is 'wall.
+    # TODO: Insert assert (g == 'wall) || (g == 'external)
     if (geometry == nil) || geometry.kind_of?(Goal) || geometry.kind_of?(Switch)
       self.draw_wall(dst, self.get_surface('wall))
-      self.draw_ceils(dst, index)
+      self.draw_ceils(dst, index, data)
       return
     end
     if !bottom?
@@ -591,7 +617,7 @@ class View > yogame.View
     end
 
     diff = self.get_upper_point(self.pc.direction)
-    end_index = self.find_wall_end(index, diff)
+    end_index = self.find_wall_end(index, diff, data)
     self.draw_neighbor_ceils(dst, index, end_index)
 
     size = self.compute_ceils_size(index, end_index)
@@ -621,7 +647,7 @@ class View > yogame.View
     npc_pos = self.npc.map(&self.decide_char_pos)
 
     data.each_cells() do [dst, index, neighbor, bottom?]
-      self.draw_geometry(dst, index, neighbor, bottom?)
+      self.draw_geometry(dst, index, neighbor, bottom?, data)
       if pos == index
         self.draw_pc()
       end

@@ -1,0 +1,70 @@
+
+from flourish.stage import GameStage
+import flourish.char.slime
+
+class Stage > GameStage
+  def init()
+    super(<<EOF, 2, 5, 'north)
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+www       wwwwwwwwwwwwwwwwwwwwww
+www       wwwwwwwwwwwwwwwwwwwwww
+w         wwwwwwwwwwwwwwwwwwwwww
+w   wwwwwwwwwwwwwwwwwwwwwwwwwwww
+w  wwwwwwwwwwwwwwwwwwwwwwwwwwwww
+w  wwwwwwwwwwwwwwwwwwwwwwwwwwwww
+w  wwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+w                              w
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+EOF
+  end
+
+  def allocate_resources(&block)
+    try
+      flourish.char.slime.allocate_resources()
+      block()
+    finally
+      flourish.char.slime.free_resources()
+    end
+  end
+
+  def make_slime(x, y, direction)
+    slime = flourish.char.slime.Slime.new()
+    slime.x = self.index2pos(x)
+    slime.y = self.index2pos(y)
+    slime.direction = direction
+    slime.life = 4
+    return slime
+  end
+
+  def make_npc()
+    data = [
+      { 'x: 3, 'y: 1, 'direction: 'south }]
+    return data.map() do [datum]
+      next self.make_slime(**datum)
+    end
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

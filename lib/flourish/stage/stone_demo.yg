@@ -1,0 +1,70 @@
+
+from flourish.stage import GameStage
+import flourish.char.stone
+import flourish.geometry.switch
+
+class Stage > GameStage
+  def init()
+    index2pos = self.index2pos
+    create_stone = flourish.char.stone.Stone.new
+    self.stones = [
+      create_stone(index2pos(3), index2pos(17), 'north),
+      create_stone(index2pos(8), index2pos(5), 'west)]
+
+    super(<<EOF, 5, 5, 'west)
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+www wwwwwwwwwwwwwwwwwwwwwwwwwwww
+www wwwwwwwwwwwwwwwwwwwwwwwwwwww
+www wwwwwwwwwwwwwwwwwwwwwwwwwwww
+www wwwwwwwwwwwwwwwwwwwwwwwwwwww
+ww       wwwwwwwww   wwwwwwwwwww
+www ww  wwwwwwwww    wwwwwwwwwww
+www ww  ww  wwww  wwwwwwwwwwwwww
+www www     wwww wwwwwwwwwwwwwww
+w     wwww  ww   wwwwwwwwwwwwwww
+www wwwwww         wwwwwwwwwwwww
+www wwwwwwwwwwwww  wwwwwwwwwwwww
+www wwwwwwwwwwwww  wwwwwwwwwwwww
+w     www   wwwww  wwwwwwwwwwwww
+www wwwww             wwwwwwwwww
+www wwwwwwwwwwwww wwwwwwwwwwwwww
+www wwwwwwwwwwwww wwwwwwwwwwwwww
+g     wwwwwwwwwww    wwwwwwwwwww
+wwwwwwwwwwwwwwwww    wwwwwwwwwww
+wwwwwwwwwwwwwwwww    wwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+EOF
+  end
+
+  def allocate_resources(&block)
+    try
+      flourish.char.stone.allocate_resources()
+      flourish.geometry.switch.allocate_resources()
+      block()
+    finally
+      flourish.geometry.switch.free_resources()
+      flourish.char.stone.free_resources()
+    end
+  end
+
+  def overwrite_map(map)
+    map[5][3] = flourish.geometry.switch.Switch.new(self.stones)
+  end
+
+  def make_npc()
+    return self.stones
+  end
+end
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2

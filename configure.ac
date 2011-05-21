@@ -23,5 +23,7 @@ AC_CONFIG_FILES([Makefile
                  data/slime/Makefile
                  data/stone/Makefile
                  doc/Makefile
+                 doc/images/Makefile
+                 doc/thumbnails/Makefile
                  lib/Makefile])
 AC_OUTPUT

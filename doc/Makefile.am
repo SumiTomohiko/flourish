@@ -1,8 +1,9 @@
 
-FFMPEG = ffmpeg -y
-
+SUBDIRS = images thumbnails
 resourcedir = $(htmldir)
-resource_DATA = demo.ogg how_to_move.png index.html main.png title.png
+resource_DATA = demo.ogg index.html
+
+FFMPEG = ffmpeg -y
 
 demo.ogg: demo.avi Makefile
 	$(FFMPEG) -i demo.avi -vol 2048 -acodec libvorbis demo.ogg

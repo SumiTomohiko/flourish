@@ -21,5 +21,11 @@ data/stone/*.png
 data/switch-pressed.png
 data/switch-released.png
 data/wall.png
+doc/attack.avi
+doc/demo.avi
+doc/demo.ogg
+doc/demo1.avi
+doc/demo2.avi
 doc/how_to_move.png
+doc/stone.avi
 gmon.out

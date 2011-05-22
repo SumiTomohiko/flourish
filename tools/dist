@@ -1,0 +1,72 @@
+#!/bin/sh
+# Run this script at the top build directory.
+
+copy()
+{
+  local topdir="$1"
+  local src="$2"
+  mkdir -p "${topdir}/`dirname ${src}`"
+  cp "${src}" "${topdir}/${src}"
+}
+
+version=`grep -w AC_INIT < configure.ac | cut -d "," -f 2 | sed -e "s/ *\[//" | sed -e "s/\] *//"`
+tmpdir="$$"
+pkgname="flourish-${version}"
+topdir="${tmpdir}/${pkgname}"
+mkdir -p "${topdir}"
+
+srcdir="bin data doc issues lib tools"
+for dir in ${srcdir}
+do
+  while read pat
+  do
+    find "${dir}" -name "${pat}" | while read src
+    do
+      copy "${topdir}" "${src}"
+    done
+  done <<EOF
+*.html
+*.ogg
+*.ogv
+*.otf
+*.png
+*.wav
+*.xcf
+*.yaml
+*.yg
+Makefile.*
+EOF
+done
+for dir in ${srcdir}
+do
+  find "${dir}" -type f -perm 0755 | while read src
+  do
+    copy "${topdir}" "${src}"
+  done
+done
+while read src
+do
+  copy "${topdir}" "${src}"
+done <<EOF
+AUTHORS
+COPYING
+ChangeLog
+INSTALL
+Makefile.am
+Makefile.common
+Makefile.in
+NEWS
+README
+aclocal.m4
+configure
+configure.ac
+install-sh
+missing
+EOF
+
+pkg="${pkgname}.tar.bz2"
+tar jc --directory "${tmpdir}" "${pkgname}" > "${pkg}"
+
+rm -rf "${tmpdir}"
+
+# vim: tabstop=2 shiftwidth=2 expandtab softtabstop=2
